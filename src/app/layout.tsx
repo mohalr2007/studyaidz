@@ -31,8 +31,8 @@ export default function RootLayout({
       <body className={cn('font-body antialiased', process.env.NODE_ENV === 'development' ? 'debug-screens' : undefined )}>
         <AuthProvider>
           {children}
-          <Toaster />
         </AuthProvider>
+        <Toaster />
       </body>
     </html>
   );

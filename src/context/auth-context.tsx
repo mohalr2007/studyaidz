@@ -25,26 +25,39 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (fbUser) {
         // Fetch user profile from Firestore
         const userDocRef = doc(db, 'users', fbUser.uid);
-        const userDoc = await getDoc(userDocRef);
-        if (userDoc.exists()) {
-          setUser({
-            uid: fbUser.uid,
-            email: fbUser.email,
-            name: userDoc.data()?.name || fbUser.displayName,
-            photoURL: userDoc.data()?.photoURL || fbUser.photoURL,
-            role: userDoc.data()?.role || 'student',
-            verified: fbUser.emailVerified,
-          });
-        } else {
-           // This case can happen if the user record in Firestore is not created yet
-           setUser({
-            uid: fbUser.uid,
-            email: fbUser.email,
-            name: fbUser.displayName,
-            photoURL: fbUser.photoURL,
-            role: 'student',
-            verified: fbUser.emailVerified,
-          });
+        try {
+            const userDoc = await getDoc(userDocRef);
+            if (userDoc.exists()) {
+              setUser({
+                uid: fbUser.uid,
+                email: fbUser.email,
+                name: userDoc.data()?.name || fbUser.displayName,
+                photoURL: userDoc.data()?.photoURL || fbUser.photoURL,
+                role: userDoc.data()?.role || 'student',
+                verified: fbUser.emailVerified,
+              });
+            } else {
+               // This case can happen if the user record in Firestore is not created yet
+               setUser({
+                uid: fbUser.uid,
+                email: fbUser.email,
+                name: fbUser.displayName,
+                photoURL: fbUser.photoURL,
+                role: 'student',
+                verified: fbUser.emailVerified,
+              });
+            }
+        } catch (error) {
+            console.error("Error fetching user document:", error);
+            // Handle error, maybe set user to a default state or null
+            setUser({
+                uid: fbUser.uid,
+                email: fbUser.email,
+                name: fbUser.displayName,
+                photoURL: fbUser.photoURL,
+                role: 'student',
+                verified: fbUser.emailVerified,
+            });
         }
       } else {
         setUser(null);
