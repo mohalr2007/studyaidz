@@ -2,7 +2,7 @@
 
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { auth } from '@/firebase/config';
+import { auth } from '@/firebase';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {

@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useToast } from '@/hooks/use-toast';
 import { Logo } from '@/components/logo';
 import { Loader2, MailCheck, LogOut } from 'lucide-react';
-import { auth } from '@/firebase/config';
+import { auth } from '@/firebase';
 
 export default function VerifyEmailPage() {
   const { firebaseUser, loading } = useAuth();

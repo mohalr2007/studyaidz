@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { auth } from '@/firebase/config';
+import { auth } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { syncUser } from '@/app/actions/user';
@@ -36,7 +36,7 @@ export function GoogleSignInButton() {
       console.error('Google Sign-In Error:', error);
       toast({
         title: 'Erreur de connexion',
-        description: 'Une erreur s\'est produite lors de la tentative de connexion. Veuillez réessayer.',
+        description: "Une erreur s'est produite lors de la tentative de connexion. Veuillez réessayer.",
         variant: 'destructive',
       });
       setIsLoading(false);

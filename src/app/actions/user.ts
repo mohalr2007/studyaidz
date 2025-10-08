@@ -1,7 +1,7 @@
 "use server";
 
 import { doc, setDoc, serverTimestamp, getDoc } from 'firebase/firestore';
-import { db } from '@/firebase/config';
+import { db } from '@/firebase';
 import type { User as FirebaseUser } from 'firebase/auth';
 
 export async function syncUser(user: FirebaseUser) {

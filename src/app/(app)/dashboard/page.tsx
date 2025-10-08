@@ -12,9 +12,9 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import StatCard from '@/components/dashboard/stat-card';
-import { auth } from '@/firebase/config';
+import { auth } from '@/firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '@/firebase/config';
+import { db } from '@/firebase';
 import { NAV_LINKS } from '@/lib/constants';
 
 const featureCards = NAV_LINKS.filter(link => link.href !== '/dashboard');

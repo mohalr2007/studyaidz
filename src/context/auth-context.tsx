@@ -3,7 +3,7 @@
 import { createContext, useState, useEffect, ReactNode } from 'react';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
-import { auth, db } from '@/firebase/config';
+import { auth, db } from '@/firebase';
 import type { User as AppUser } from '@/types';
 
 export interface AuthContextType {
