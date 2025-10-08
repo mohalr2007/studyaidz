@@ -35,8 +35,8 @@ export function GoogleSignInButton() {
     } catch (error) {
       console.error('Google Sign-In Error:', error);
       toast({
-        title: 'خطأ في تسجيل الدخول',
-        description: 'حدث خطأ أثناء محاولة تسجيل الدخول. يرجى المحاولة مرة أخرى.',
+        title: 'Erreur de connexion',
+        description: 'Une erreur s\'est produite lors de la tentative de connexion. Veuillez réessayer.',
         variant: 'destructive',
       });
       setIsLoading(false);
