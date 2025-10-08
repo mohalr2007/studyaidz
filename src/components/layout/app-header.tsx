@@ -13,6 +13,7 @@ import {
 import { NAV_LINKS } from '@/lib/constants';
 import Link from 'next/link';
 import { Fragment } from 'react';
+import { ThemeToggle } from './theme-toggle';
 
 export function AppHeader() {
   const pathname = usePathname();
@@ -41,6 +42,9 @@ export function AppHeader() {
             )}
           </BreadcrumbList>
         </Breadcrumb>
+      </div>
+      <div className="flex items-center gap-4 ms-auto">
+        <ThemeToggle />
       </div>
     </header>
   );
