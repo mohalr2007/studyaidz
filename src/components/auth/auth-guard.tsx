@@ -15,15 +15,17 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       return; // Do nothing while loading
     }
 
-    const isAuthPage = pathname === '/login' || pathname === '/verify-email';
+    const isAuthFlowPage = pathname === '/login' || pathname === '/verify-email';
 
-    if (!user || !firebaseUser) {
-      if (!isAuthPage) {
+    // If not authenticated, redirect to login page, unless already there.
+    if (!firebaseUser) {
+      if (!isAuthFlowPage) {
         router.replace('/login');
       }
       return;
     }
 
+    // If authenticated but email is not verified, redirect to verify-email page.
     if (!firebaseUser.emailVerified) {
       if (pathname !== '/verify-email') {
         router.replace('/verify-email');
@@ -31,13 +33,14 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    if (user && firebaseUser.emailVerified && isAuthPage) {
-        router.replace('/dashboard');
+    // If authenticated and email is verified, and trying to access login/verify page, redirect to dashboard.
+    if (isAuthFlowPage) {
+      router.replace('/dashboard');
     }
 
-  }, [user, firebaseUser, loading, router, pathname]);
-  
+  }, [firebaseUser, loading, router, pathname]);
 
+  // While loading or redirecting, show a loader to prevent flicker
   if (loading) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
@@ -46,17 +49,25 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (user && firebaseUser?.emailVerified) {
-    // Prevent rendering children on auth pages when logged in and verified
-    const isAuthPage = pathname === '/login' || pathname === '/verify-email';
-    if(isAuthPage) return null;
+  const isAuthFlowPage = pathname === '/login' || pathname === '/verify-email';
+  
+  // If authenticated and verified, show children unless it's an auth flow page (handled by redirect).
+  if (firebaseUser && firebaseUser.emailVerified) {
+    if(isAuthFlowPage) return null; // Wait for redirect to complete
     return <>{children}</>;
   }
 
-  if (!user && (pathname === '/login' || pathname === '/verify-email')) {
-    return <>{children}</>;
+  // If not authenticated, show children only if it's an auth flow page.
+  if (!firebaseUser) {
+    if(isAuthFlowPage) return <>{children}</>;
+    return null; // Wait for redirect to complete
   }
 
-  // While redirecting, return null to avoid rendering anything.
+  // If authenticated but not verified, show children only if it's the verify email page.
+  if(firebaseUser && !firebaseUser.emailVerified) {
+    if(pathname === '/verify-email') return <>{children}</>;
+    return null; // Wait for redirect to complete
+  }
+
   return null;
 }

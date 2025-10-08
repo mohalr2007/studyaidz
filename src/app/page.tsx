@@ -1,13 +1,21 @@
-
 'use client';
 
-import { useRedirectIfAuthenticated } from '@/hooks/use-redirect-if-authenticated';
+import { useAuth } from '@/hooks/use-auth';
 import { Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function HomePage() {
-  // The redirection logic is now handled by this hook.
-  // This component will only be visible while the initial authentication check is in progress.
-  useRedirectIfAuthenticated();
+  const { loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    // This effect now simply decides where to go from the root path.
+    // AuthGuard will handle all further logic.
+    if (!loading) {
+        router.replace('/dashboard');
+    }
+  }, [loading, router]);
 
   return (
     <div className="flex h-screen w-full items-center justify-center bg-background">
