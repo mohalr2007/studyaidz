@@ -11,37 +11,31 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   const isAuthPage = pathname === '/login' || pathname === '/verify-email';
+  const isHomePage = pathname === '/';
 
   useEffect(() => {
     if (loading) {
-      return; // Do nothing while loading
+      return; // Do nothing while loading.
     }
 
-    // If not authenticated, redirect to login page.
-    if (!firebaseUser) {
+    if (firebaseUser) {
+      if (!firebaseUser.emailVerified) {
+        if (pathname !== '/verify-email') {
+          router.replace('/verify-email');
+        }
+      } else if (isAuthPage || isHomePage) {
+        // If logged in, verified, and on an auth page or the root, go to dashboard.
+        router.replace('/dashboard');
+      }
+    } else {
+      // If not logged in, and not already on an auth page, go to login.
       if (!isAuthPage) {
         router.replace('/login');
       }
-      return;
     }
+  }, [firebaseUser, loading, router, pathname, isAuthPage, isHomePage]);
 
-    // If authenticated but email is not verified, redirect to verify-email page.
-    if (!firebaseUser.emailVerified) {
-      if (pathname !== '/verify-email') {
-        router.replace('/verify-email');
-      }
-      return;
-    }
-
-    // If authenticated and verified, and trying to access an auth page, redirect to dashboard.
-    if (isAuthPage) {
-      router.replace('/dashboard');
-    }
-
-  }, [firebaseUser, loading, router, pathname, isAuthPage]);
-
-
-  // While loading, show a loader.
+  // While loading, or if the logic above is about to redirect, show a loader.
   if (loading) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
@@ -49,21 +43,21 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       </div>
     );
   }
-
-  // Determine what to render
+  
+  // Render logic to prevent flicker and show the correct page.
   if (!firebaseUser && isAuthPage) {
-    return <>{children}</>; // Show login/verify page if not logged in
+      return <>{children}</>; // User is not logged in, show the auth page.
   }
-
+  
   if (firebaseUser && !firebaseUser.emailVerified && pathname === '/verify-email') {
-    return <>{children}</>; // Show verify page if logged in but not verified
+      return <>{children}</>; // User is logged in but not verified, show the verify page.
+  }
+  
+  if (firebaseUser && firebaseUser.emailVerified && !isAuthPage && !isHomePage) {
+      return <>{children}</>; // User is logged in and verified, show the protected app page.
   }
 
-  if (firebaseUser && firebaseUser.emailVerified && !isAuthPage) {
-    return <>{children}</>; // Show app content if logged in and verified
-  }
-
-  // In all other cases (e.g., waiting for redirect), show a loader to prevent flicker.
+  // For any other transient state (e.g., waiting for redirect), show a loader.
   return (
     <div className="flex h-screen w-full items-center justify-center">
       <Loader2 className="h-12 w-12 animate-spin text-primary" />
