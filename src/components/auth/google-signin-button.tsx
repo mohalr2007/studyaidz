@@ -27,16 +27,19 @@ export function GoogleSignInButton() {
   const handleSignIn = async () => {
     setIsLoading(true);
     const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({
+      prompt: 'select_account'
+    });
     try {
       const result = await signInWithPopup(auth, provider);
       await syncUser(result.user);
       router.push('/');
       router.refresh();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Google Sign-In Error:', error);
       toast({
         title: 'Erreur de connexion',
-        description: "Une erreur s'est produite lors de la tentative de connexion. Veuillez réessayer.",
+        description: `Une erreur s'est produite. Code: ${error.code}`,
         variant: 'destructive',
       });
       setIsLoading(false);
