@@ -22,17 +22,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (fbUser) => {
       setFirebaseUser(fbUser);
+      // If there's no user, we are done loading.
       if (!fbUser) {
         setUser(null);
         setLoading(false);
       }
-      // The rest of the logic is handled in the snapshot listener
     });
 
     return () => unsubscribeAuth();
   }, []);
 
   useEffect(() => {
+    // If we have a firebaseUser, listen for their document in Firestore.
+    // If firebaseUser becomes null, this listener will not be set up or will be cleaned up.
     if (firebaseUser) {
       const userDocRef = doc(db, 'users', firebaseUser.uid);
       const unsubscribeSnapshot = onSnapshot(userDocRef, (userDoc) => {
@@ -47,7 +49,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             verified: firebaseUser.emailVerified,
           });
         } else {
-          // User might not be in Firestore yet, use auth details as fallback
+          // This case handles a newly signed-up user whose Firestore doc might not be created yet.
+          // We rely on syncUser action to create it. We can show a temporary state.
           setUser({
             uid: firebaseUser.uid,
             email: firebaseUser.email,
@@ -60,14 +63,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setLoading(false);
       }, (error) => {
         console.error("Error fetching user document:", error);
-        // Fallback in case of error
+        // Fallback to auth data on error
         setUser({
-          uid: firebaseUser.uid,
-          email: firebaseUser.email,
-          name: firebaseUser.displayName,
-          photoURL: firebaseUser.photoURL,
-          role: 'student',
-          verified: firebaseUser.emailVerified,
+            uid: firebaseUser.uid,
+            email: firebaseUser.email,
+            name: firebaseUser.displayName,
+            photoURL: firebaseUser.photoURL,
+            role: 'student',
+            verified: firebaseUser.emailVerified,
         });
         setLoading(false);
       });
