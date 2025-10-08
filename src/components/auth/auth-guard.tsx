@@ -6,20 +6,20 @@ import { Loader2 } from 'lucide-react';
 import { useEffect } from 'react';
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { user, firebaseUser, loading } = useAuth();
+  const { firebaseUser, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+
+  const isAuthPage = pathname === '/login' || pathname === '/verify-email';
 
   useEffect(() => {
     if (loading) {
       return; // Do nothing while loading
     }
 
-    const isAuthFlowPage = pathname === '/login' || pathname === '/verify-email';
-
-    // If not authenticated, redirect to login page, unless already there.
+    // If not authenticated, redirect to login page.
     if (!firebaseUser) {
-      if (!isAuthFlowPage) {
+      if (!isAuthPage) {
         router.replace('/login');
       }
       return;
@@ -33,14 +33,15 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // If authenticated and email is verified, and trying to access login/verify page, redirect to dashboard.
-    if (isAuthFlowPage) {
+    // If authenticated and verified, and trying to access an auth page, redirect to dashboard.
+    if (isAuthPage) {
       router.replace('/dashboard');
     }
 
-  }, [firebaseUser, loading, router, pathname]);
+  }, [firebaseUser, loading, router, pathname, isAuthPage]);
 
-  // While loading or redirecting, show a loader to prevent flicker
+
+  // While loading, show a loader.
   if (loading) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
@@ -49,25 +50,23 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     );
   }
 
-  const isAuthFlowPage = pathname === '/login' || pathname === '/verify-email';
-  
-  // If authenticated and verified, show children unless it's an auth flow page (handled by redirect).
-  if (firebaseUser && firebaseUser.emailVerified) {
-    if(isAuthFlowPage) return null; // Wait for redirect to complete
-    return <>{children}</>;
+  // Determine what to render
+  if (!firebaseUser && isAuthPage) {
+    return <>{children}</>; // Show login/verify page if not logged in
   }
 
-  // If not authenticated, show children only if it's an auth flow page.
-  if (!firebaseUser) {
-    if(isAuthFlowPage) return <>{children}</>;
-    return null; // Wait for redirect to complete
+  if (firebaseUser && !firebaseUser.emailVerified && pathname === '/verify-email') {
+    return <>{children}</>; // Show verify page if logged in but not verified
   }
 
-  // If authenticated but not verified, show children only if it's the verify email page.
-  if(firebaseUser && !firebaseUser.emailVerified) {
-    if(pathname === '/verify-email') return <>{children}</>;
-    return null; // Wait for redirect to complete
+  if (firebaseUser && firebaseUser.emailVerified && !isAuthPage) {
+    return <>{children}</>; // Show app content if logged in and verified
   }
 
-  return null;
+  // In all other cases (e.g., waiting for redirect), show a loader to prevent flicker.
+  return (
+    <div className="flex h-screen w-full items-center justify-center">
+      <Loader2 className="h-12 w-12 animate-spin text-primary" />
+    </div>
+  );
 }

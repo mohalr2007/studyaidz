@@ -6,16 +6,20 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 export default function HomePage() {
-  const { loading } = useAuth();
+  const { loading, firebaseUser } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
     // This effect now simply decides where to go from the root path.
     // AuthGuard will handle all further logic.
     if (!loading) {
+      if(firebaseUser){
         router.replace('/dashboard');
+      } else {
+        router.replace('/login');
+      }
     }
-  }, [loading, router]);
+  }, [loading, firebaseUser, router]);
 
   return (
     <div className="flex h-screen w-full items-center justify-center bg-background">

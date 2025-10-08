@@ -2,7 +2,7 @@
 
 import { createContext, useState, useEffect, ReactNode } from 'react';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '@/firebase';
 import type { User as AppUser } from '@/types';
 
@@ -20,53 +20,62 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
+    const unsubscribeAuth = onAuthStateChanged(auth, (fbUser) => {
       setFirebaseUser(fbUser);
-      if (fbUser) {
-        // Fetch user profile from Firestore
-        const userDocRef = doc(db, 'users', fbUser.uid);
-        try {
-            const userDoc = await getDoc(userDocRef);
-            if (userDoc.exists()) {
-              setUser({
-                uid: fbUser.uid,
-                email: fbUser.email,
-                name: userDoc.data()?.name || fbUser.displayName,
-                photoURL: userDoc.data()?.photoURL || fbUser.photoURL,
-                role: userDoc.data()?.role || 'student',
-                verified: fbUser.emailVerified,
-              });
-            } else {
-               // This case can happen if the user record in Firestore is not created yet
-               setUser({
-                uid: fbUser.uid,
-                email: fbUser.email,
-                name: fbUser.displayName,
-                photoURL: fbUser.photoURL,
-                role: 'student',
-                verified: fbUser.emailVerified,
-              });
-            }
-        } catch (error) {
-            console.error("Error fetching user document:", error);
-            // Handle error, maybe set user to a default state or null
-            setUser({
-                uid: fbUser.uid,
-                email: fbUser.email,
-                name: fbUser.displayName,
-                photoURL: fbUser.photoURL,
-                role: 'student',
-                verified: fbUser.emailVerified,
-            });
-        }
-      } else {
+      if (!fbUser) {
         setUser(null);
+        setLoading(false);
       }
-      setLoading(false);
+      // The rest of the logic is handled in the snapshot listener
     });
 
-    return () => unsubscribe();
+    return () => unsubscribeAuth();
   }, []);
+
+  useEffect(() => {
+    if (firebaseUser) {
+      const userDocRef = doc(db, 'users', firebaseUser.uid);
+      const unsubscribeSnapshot = onSnapshot(userDocRef, (userDoc) => {
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setUser({
+            uid: firebaseUser.uid,
+            email: firebaseUser.email,
+            name: userData?.name || firebaseUser.displayName,
+            photoURL: userData?.photoURL || firebaseUser.photoURL,
+            role: userData?.role || 'student',
+            verified: firebaseUser.emailVerified,
+          });
+        } else {
+          // User might not be in Firestore yet, use auth details as fallback
+          setUser({
+            uid: firebaseUser.uid,
+            email: firebaseUser.email,
+            name: firebaseUser.displayName,
+            photoURL: firebaseUser.photoURL,
+            role: 'student',
+            verified: firebaseUser.emailVerified,
+          });
+        }
+        setLoading(false);
+      }, (error) => {
+        console.error("Error fetching user document:", error);
+        // Fallback in case of error
+        setUser({
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          name: firebaseUser.displayName,
+          photoURL: firebaseUser.photoURL,
+          role: 'student',
+          verified: firebaseUser.emailVerified,
+        });
+        setLoading(false);
+      });
+
+      return () => unsubscribeSnapshot();
+    }
+  }, [firebaseUser]);
+
 
   const value = { user, firebaseUser, loading };
 
