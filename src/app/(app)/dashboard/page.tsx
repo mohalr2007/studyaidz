@@ -1,37 +1,25 @@
+'use client';
+
 import Link from 'next/link';
 import {
   ArrowRight,
-  LayoutDashboard,
-  MessageSquare,
-  FileText,
-  ClipboardCheck,
-  Users,
-  UserCheck,
   BookOpen,
+  FileText,
+  MessageSquare,
+  UserCheck,
 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import StatCard from '@/components/dashboard/stat-card';
-import { auth } from '@/firebase';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '@/firebase';
 import { NAV_LINKS } from '@/lib/constants';
+import { useAuth } from '@/hooks/use-auth';
+import { useEffect, useState } from 'react';
 
 const featureCards = NAV_LINKS.filter(link => link.href !== '/dashboard');
 
-async function getUserRole() {
-    const user = auth.currentUser;
-    if (!user) return 'student';
-    const userDoc = await getDoc(doc(db, 'users', user.uid));
-    return userDoc.exists() ? userDoc.data()?.role || 'student' : 'student';
-}
-
-export default async function DashboardPage() {
-    // This is a server component, but auth state is tricky on the server.
-    // For role-based access, we are assuming currentUser is populated server-side
-    // or we'd need a more robust solution with custom tokens or middleware.
-    // This simplified version assumes we can get the role.
-    const role = 'student'; // Placeholder, as getting current user on server is complex without middleware.
+export default function DashboardPage() {
+    const { user } = useAuth();
+    const role = user?.role || 'student';
 
   return (
     <div className="space-y-8">
