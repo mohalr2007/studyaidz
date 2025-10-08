@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithRedirect } from 'firebase/auth';
 import { auth } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { syncUser } from '@/app/actions/user';
 import { Loader2 } from 'lucide-react';
 
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -20,7 +18,6 @@ const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 
 export function GoogleSignInButton() {
-  const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -31,15 +28,14 @@ export function GoogleSignInButton() {
       prompt: 'select_account'
     });
     try {
-      const result = await signInWithPopup(auth, provider);
-      await syncUser(result.user);
-      router.push('/');
-      router.refresh();
+      await signInWithRedirect(auth, provider);
+      // The user will be redirected to Google's sign-in page.
+      // The result will be handled on the login page after redirect.
     } catch (error: any) {
-      console.error('Google Sign-In Error:', error);
+      console.error('Google Sign-In Redirect Error:', error);
       toast({
         title: 'Erreur de connexion',
-        description: `Une erreur s'est produite. Code: ${error.code}`,
+        description: `Une erreur s'est produite lors de la redirection. Code: ${error.code}`,
         variant: 'destructive',
       });
       setIsLoading(false);
