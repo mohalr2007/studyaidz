@@ -32,5 +32,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     return <>{children}</>;
   }
 
+  // While redirecting, return null to avoid rendering anything.
+  // This prevents brief flashes of content before the redirect happens.
   return null;
 }
