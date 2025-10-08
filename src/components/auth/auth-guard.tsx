@@ -30,22 +30,22 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       } 
       // If their email is verified
       else {
-        // And they are on an auth page or the root page, send them to the dashboard.
-        if (isAuthPage || isHomePage) {
+        // And they are on an auth page, send them to the dashboard.
+        if (isAuthPage) {
           router.replace('/dashboard');
         }
       }
     } 
     // If there is no user
     else {
-      // And they are not on a public auth page, send them to the login page.
-      if (!isAuthPage) {
+      // And they are not on a public auth page or the home page, send them to the login page.
+      if (!isAuthPage && !isHomePage) {
         router.replace('/login');
       }
     }
   }, [firebaseUser, loading, router, pathname, isAuthPage, isHomePage]);
 
-  // Show a loader while we are determining the auth state and redirecting.
+  // If we are still loading, always show the loader.
   if (loading) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
@@ -54,10 +54,14 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     );
   }
   
-  // Logic to prevent "flickering" content while redirecting.
-  // We only show children if the user is in the "correct" state for the current page.
+  // --- Content Display Logic ---
 
-  // If not logged in, only show the login/verify pages.
+  // On the root page, always let its own logic decide (or show its loader).
+  if (isHomePage) {
+      return <>{children}</>;
+  }
+
+  // If not logged in, only show the public auth pages.
   if (!firebaseUser && isAuthPage) {
       return <>{children}</>;
   }
@@ -67,7 +71,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       return <>{children}</>;
   }
   
-  // If logged in and verified, show any page that is NOT an auth page.
+  // If logged in and verified, show any page that is NOT a public auth page.
   if (firebaseUser && firebaseUser.emailVerified && !isAuthPage) {
       return <>{children}</>;
   }
