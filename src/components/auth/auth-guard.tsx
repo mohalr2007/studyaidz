@@ -11,7 +11,7 @@ import { getFirebase } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { user, firebaseUser, loading } = useAuth();
+  const { firebaseUser, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const { toast } = useToast();
@@ -19,79 +19,57 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
   const [isSyncing, setIsSyncing] = useState(true);
 
-  const publicPages = ['/login', '/signup'];
+  const publicPages = ['/login', '/signup', '/verify-email'];
   const isPublicPage = publicPages.includes(pathname);
 
   useEffect(() => {
-    // This effect handles the result from a Google Sign-In redirect.
-    if (auth) {
-        getRedirectResult(auth)
-          .then((result) => {
-            if (result) {
-              console.log("Handled redirect result for user:", result.user.uid);
-              // The onAuthStateChanged listener in AuthProvider will handle the user state update.
-            }
-          })
-          .catch((error) => {
-            console.error('Google Redirect Sign-In Error:', error);
-            toast({
-              title: 'Erreur de connexion',
-              description: `Une erreur s'est produite lors de la connexion. Code: ${error.code}`,
-              variant: 'destructive',
-            });
-          });
-    }
-
     if (loading) {
       setIsSyncing(true);
-      return; 
+      return;
     }
-    
+
     if (!firebaseUser) {
-      // No user is logged in.
       setIsSyncing(false);
       if (!isPublicPage) {
-        // If not on a public page, redirect to login.
         router.replace('/login');
       }
       return;
     }
 
-    // User is authenticated via Firebase. Now check their profile status.
+    // User is authenticated, now sync and check profile
     setIsSyncing(true);
-    syncUserAndCheckProfile(firebaseUser).then(profile => {
-        // Safe-guard: Ensure firebaseUser is still available inside the promise
+    syncUserAndCheckProfile(firebaseUser)
+      .then(profile => {
+        // Double-check firebaseUser as state can change
         if (!firebaseUser) {
-            setIsSyncing(false);
-            return;
+          setIsSyncing(false);
+          return;
         }
         
-        if (!firebaseUser.emailVerified) {
-            if (pathname !== '/verify-email') {
-                router.replace('/verify-email');
-            }
-        } else if (!profile.isProfileComplete) {
-            if (pathname !== '/complete-profile') {
-                router.replace('/complete-profile');
-            }
-        } else { // Verified and profile complete
-            if (isPublicPage || pathname === '/complete-profile' || pathname === '/verify-email' || pathname === '/') {
-                router.replace('/dashboard');
-            }
+        // This is the core redirection logic
+        if (!profile.isProfileComplete) {
+          if (pathname !== '/complete-profile') {
+            router.replace('/complete-profile');
+          }
+        } else { // Profile is complete
+          if (isPublicPage || pathname === '/complete-profile' || pathname === '/') {
+            router.replace('/dashboard');
+          }
         }
         setIsSyncing(false);
-    }).catch(error => {
+      })
+      .catch(error => {
         console.error("AuthGuard sync failed:", error);
         toast({ title: "Error", description: "Could not verify user profile. Please try again.", variant: "destructive" });
         setIsSyncing(false);
         if (auth) {
-            auth.signOut();
+          auth.signOut(); // Sign out on error
         }
         router.replace('/login');
-    });
+      });
 
-  }, [firebaseUser, loading, router, pathname, auth, isPublicPage, toast]);
-
+  }, [firebaseUser, loading, pathname, router, auth, toast, isPublicPage]);
+  
   if (loading || isSyncing) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
@@ -99,23 +77,26 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       </div>
     );
   }
-  
+
+  // If we are on a public page and user is logged in and synced, AuthGuard will redirect.
+  // While redirecting, don't show the page's children to avoid flicker.
+  if (firebaseUser && isPublicPage) {
+      return (
+        <div className="flex h-screen w-full items-center justify-center">
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
+        </div>
+      );
+  }
+
+  // If no user and not on a public page, show loading while redirecting.
   if (!firebaseUser && !isPublicPage) {
-    return null; // Render nothing while redirecting to login
+      return (
+        <div className="flex h-screen w-full items-center justify-center">
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
+        </div>
+      );
   }
 
-  if (firebaseUser) {
-    if (!firebaseUser.emailVerified && pathname !== '/verify-email') {
-        return null; // Render nothing while redirecting
-    }
-    if (firebaseUser.emailVerified && user && !user.isProfileComplete && pathname !== '/complete-profile') {
-        return null; // Render nothing while redirecting
-    }
-    if (user && user.isProfileComplete && (isPublicPage || pathname === '/complete-profile' || pathname === '/verify-email' || pathname === '/')) {
-        return null; // Render nothing while redirecting
-    }
-  }
-
-  // If we've reached this point, we are on the correct page, so render its content.
+  // Render the page content
   return <>{children}</>;
 }
