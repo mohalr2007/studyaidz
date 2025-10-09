@@ -15,53 +15,49 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { toast } = useToast();
 
-  const [isSyncing, setIsSyncing] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(true);
 
   const isAuthPage = pathname === '/login' || pathname === '/verify-email';
   const isHomePage = pathname === '/';
 
   useEffect(() => {
     const handleRedirectResult = async () => {
-      // Avoid running this on every page load, only when coming back to the login page.
-      if (pathname === '/login') {
-          try {
-            setIsSyncing(true);
-            const result = await getRedirectResult(auth);
-            if (result) {
-              // User has successfully signed in via redirect.
-              // syncUser will create a new doc or update last login.
-              await syncUser(result.user);
-              // The main useEffect below will handle redirection to the dashboard.
-            }
-          } catch (error: any) {
-            console.error('Google Redirect Sign-In Error:', error);
-            // This error is often a 403 if the domain is not authorized in Firebase Console.
-            if (error.code === 'auth/unauthorized-domain' || error.code === 'auth/network-request-failed') {
-                 toast({
-                    title: 'Erreur de configuration',
-                    description: `Le domaine de cette application n'est pas autorisé. Veuillez l'ajouter aux "Authorized domains" dans votre console Firebase.`,
-                    variant: 'destructive',
-                });
-            } else {
-                 toast({
-                    title: 'Erreur de connexion',
-                    description: `Une erreur s'est produite lors de la connexion. Code: ${error.code}`,
-                    variant: 'destructive',
-                });
-            }
-          } finally {
-             setIsSyncing(false);
-          }
+      try {
+        const result = await getRedirectResult(auth);
+        if (result) {
+          // User has successfully signed in via redirect.
+          await syncUser(result.user);
+          // The main useEffect will handle redirection.
+        }
+      } catch (error: any) {
+        console.error('Google Redirect Sign-In Error:', error);
+        if (error.code === 'auth/unauthorized-domain') {
+             toast({
+                title: 'Erreur de configuration',
+                description: `Le domaine de cette application n'est pas autorisé. Veuillez l'ajouter aux "Domaines autorisés" dans votre console Firebase.`,
+                variant: 'destructive',
+                duration: 10000,
+            });
+        } else {
+             toast({
+                title: 'Erreur de connexion',
+                description: `Une erreur s'est produite lors de la connexion. Code: ${error.code}`,
+                variant: 'destructive',
+            });
+        }
+      } finally {
+         setIsSyncing(false);
       }
     };
 
     handleRedirectResult();
-  }, [pathname, toast]);
+  }, [toast]);
 
 
   useEffect(() => {
+    // Wait until both Firebase Auth state is loaded and the redirect check is complete.
     if (loading || isSyncing) {
-      return; // Wait for the auth state and any sync process to be determined.
+      return; 
     }
 
     if (!firebaseUser) {

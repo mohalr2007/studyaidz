@@ -18,7 +18,6 @@ import { useRouter } from 'next/navigation';
 export default function LoginPage() {
   const loginHeroImage = PlaceHolderImages.find((p) => p.id === 'login-hero');
   const { firebaseUser, loading } = useAuth();
-  const router = useRouter();
   
   if (loading) {
     return (
@@ -29,10 +28,10 @@ export default function LoginPage() {
     );
   }
 
-  // If the user is somehow already authenticated, the AuthGuard will handle redirection.
-  // This page is only for unauthenticated users.
+  // If a user is already authenticated, the AuthGuard will handle redirection.
+  // This page is only for unauthenticated users. If firebaseUser exists, AuthGuard will
+  // redirect them, so we can show a loader while that happens.
   if (firebaseUser) {
-    // Show a loader while the redirect is in progress.
      return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
