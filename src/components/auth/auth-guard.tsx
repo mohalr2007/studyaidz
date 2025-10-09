@@ -99,33 +99,23 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       </div>
     );
   }
-
-  // --- Render Logic ---
-  // If we are still here, it means we have a firebaseUser.
-  // We now decide what to render based on their profile status.
   
-  // Safe-guard rendering as well
-  if (!firebaseUser) {
-      return null; // Should be handled by useEffect redirect, but as a fallback.
+  if (!firebaseUser && !isPublicPage) {
+    return null; // Render nothing while redirecting to login
   }
 
-  if (!firebaseUser.emailVerified) {
-    // If email is not verified, only show the verify-email page.
-    // All other pages will show a loader until redirection is complete.
-    return pathname === '/verify-email' ? <>{children}</> : null;
-  }
-  
-  if (user && !user.isProfileComplete) {
-    // If profile is not complete, only show the complete-profile page.
-    return pathname === '/complete-profile' ? <>{children}</> : null;
-  }
-  
-  if (isPublicPage || pathname === '/verify-email' || pathname === '/complete-profile' || pathname === '/') {
-      // If profile is complete but user is on a public/intermediate page,
-      // show nothing while redirecting to dashboard.
-      return null;
+  if (firebaseUser) {
+    if (!firebaseUser.emailVerified && pathname !== '/verify-email') {
+        return null; // Render nothing while redirecting
+    }
+    if (firebaseUser.emailVerified && user && !user.isProfileComplete && pathname !== '/complete-profile') {
+        return null; // Render nothing while redirecting
+    }
+    if (user && user.isProfileComplete && (isPublicPage || pathname === '/complete-profile' || pathname === '/verify-email' || pathname === '/')) {
+        return null; // Render nothing while redirecting
+    }
   }
 
-  // If everything is complete and user is on a protected page, show the content.
+  // If we've reached this point, we are on the correct page, so render its content.
   return <>{children}</>;
 }
