@@ -26,9 +26,9 @@
     },
     {
       "id": "login-hero",
-      "description": "Abstract representation of artificial intelligence",
+      "description": "A modern and bright university library full of students studying.",
       "imageUrl": "https://picsum.photos/seed/login-hero/1024/768",
-      "imageHint": "artificial intelligence"
+      "imageHint": "university library"
     }
   ]
 }
