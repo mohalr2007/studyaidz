@@ -1,3 +1,4 @@
+
 "use client";
 
 import { createContext, useState, useEffect, ReactNode } from 'react';
@@ -22,7 +23,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (fbUser) => {
       setFirebaseUser(fbUser);
-      // If there's no user, we are done loading.
       if (!fbUser) {
         setUser(null);
         setLoading(false);
@@ -33,24 +33,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    // If we have a firebaseUser, listen for their document in Firestore.
-    // If firebaseUser becomes null, this listener will not be set up or will be cleaned up.
     if (firebaseUser) {
       const userDocRef = doc(db, 'users', firebaseUser.uid);
       const unsubscribeSnapshot = onSnapshot(userDocRef, (userDoc) => {
         if (userDoc.exists()) {
           const userData = userDoc.data();
+          const DOB = userData.dateOfBirth ? userData.dateOfBirth.toDate() : undefined;
+
           setUser({
             uid: firebaseUser.uid,
             email: firebaseUser.email,
-            name: userData?.name || firebaseUser.displayName,
-            photoURL: userData?.photoURL || firebaseUser.photoURL,
-            role: userData?.role || 'student',
+            name: userData.name || firebaseUser.displayName,
+            photoURL: userData.photoURL || firebaseUser.photoURL,
+            role: userData.role || 'student',
             verified: firebaseUser.emailVerified,
+            isProfileComplete: userData.isProfileComplete,
+            username: userData.username,
+            gender: userData.gender,
+            dateOfBirth: DOB,
+            fieldOfStudy: userData.fieldOfStudy,
           });
         } else {
-          // This case handles a newly signed-up user whose Firestore doc might not be created yet.
-          // We rely on syncUser action to create it. We can show a temporary state.
+          // Temp user object for new sign-ups until profile is complete
           setUser({
             uid: firebaseUser.uid,
             email: firebaseUser.email,
@@ -58,12 +62,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             photoURL: firebaseUser.photoURL,
             role: 'student',
             verified: firebaseUser.emailVerified,
+            isProfileComplete: false,
           });
         }
         setLoading(false);
       }, (error) => {
         console.error("Error fetching user document:", error);
-        // Fallback to auth data on error
         setUser({
             uid: firebaseUser.uid,
             email: firebaseUser.email,
@@ -71,6 +75,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             photoURL: firebaseUser.photoURL,
             role: 'student',
             verified: firebaseUser.emailVerified,
+            isProfileComplete: false,
         });
         setLoading(false);
       });

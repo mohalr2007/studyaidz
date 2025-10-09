@@ -1,10 +1,11 @@
+
 "use client";
 
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/hooks/use-auth';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { syncUser } from '@/app/actions/user';
+import { syncUserAndCheckProfile } from '@/app/actions/user';
 import { getRedirectResult } from 'firebase/auth';
 import { auth } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
@@ -18,6 +19,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const [isSyncing, setIsSyncing] = useState(true);
 
   const isAuthPage = pathname === '/login' || pathname === '/verify-email';
+  const isProfilePage = pathname === '/complete-profile';
   const isHomePage = pathname === '/';
 
   useEffect(() => {
@@ -26,8 +28,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
         const result = await getRedirectResult(auth);
         if (result) {
           // User has successfully signed in via redirect.
-          await syncUser(result.user);
-          // The main useEffect will handle redirection.
+          // The sync will be handled by the main useEffect listening to firebaseUser change.
         }
       } catch (error: any) {
         console.error('Google Redirect Sign-In Error:', error);
@@ -55,33 +56,47 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
 
   useEffect(() => {
-    // Wait until both Firebase Auth state is loaded and the redirect check is complete.
-    if (loading || isSyncing) {
+    if (loading) {
       return; 
     }
 
     if (!firebaseUser) {
-      // If there's no user, and they are not on an auth page, redirect to login.
+      setIsSyncing(false);
       if (!isAuthPage) {
         router.replace('/login');
       }
       return;
     }
 
-    if (firebaseUser.emailVerified) {
-      // If user is verified and on an auth page or the root page, redirect to dashboard.
-      if (isAuthPage || isHomePage) {
-        router.replace('/dashboard');
-      }
-    } else {
-      // If user is not verified, and not on the verify-email page, redirect them there.
-      if (pathname !== '/verify-email') {
-        router.replace('/verify-email');
-      }
-    }
-  }, [user, firebaseUser, loading, isSyncing, router, pathname, isAuthPage, isHomePage]);
+    // User is authenticated via Firebase
+    setIsSyncing(true);
+    syncUserAndCheckProfile(firebaseUser).then(profile => {
+        if (!firebaseUser.emailVerified) {
+            if (pathname !== '/verify-email') {
+                router.replace('/verify-email');
+            }
+        } else if (!profile.isProfileComplete) {
+            if (pathname !== '/complete-profile') {
+                router.replace('/complete-profile');
+            }
+        } else { // Verified and profile complete
+            if (isAuthPage || isProfilePage || isHomePage) {
+                router.replace('/dashboard');
+            }
+        }
+        setIsSyncing(false);
+    }).catch(error => {
+        console.error("AuthGuard sync failed:", error);
+        toast({ title: "Error", description: "Could not verify user profile. Please try again.", variant: "destructive" });
+        setIsSyncing(false);
+        // Fallback: redirect to login if sync fails
+        if (!isAuthPage) {
+            router.replace('/login');
+        }
+    });
 
-  // While loading/syncing, or if a redirect is in progress, show a loader.
+  }, [firebaseUser, loading, router, pathname]);
+
   if (loading || isSyncing) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
@@ -92,25 +107,25 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
   // --- Render Logic ---
 
-  // If no user, only render auth pages.
   if (!firebaseUser) {
     return isAuthPage ? <>{children}</> : null;
   }
   
-  // If user exists but is not verified, only render verify-email page
   if (!firebaseUser.emailVerified) {
       return pathname === '/verify-email' ? <>{children}</> : null;
   }
 
-  // If user is logged in and verified, render app content but not auth pages.
-  if (firebaseUser.emailVerified && !isAuthPage) {
+  if (user && !user.isProfileComplete) {
+      return pathname === '/complete-profile' ? <>{children}</> : null;
+  }
+
+  if (user && user.isProfileComplete && !isAuthPage && !isProfilePage) {
     return <>{children}</>;
   }
 
-  // As a fallback while redirects are in flight, show a loader.
   return (
-    <div className="flex h-screen w-full items-center justify-center">
-      <Loader2 className="h-12 w-12 animate-spin text-primary" />
-    </div>
+     <div className="flex h-screen w-full items-center justify-center">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+     </div>
   );
 }

@@ -1,3 +1,6 @@
+
+import { z } from 'zod';
+
 export type User = {
   uid: string;
   email: string | null;
@@ -5,7 +8,23 @@ export type User = {
   photoURL: string | null;
   role: 'student' | 'admin';
   verified: boolean;
+  isProfileComplete?: boolean;
+  username?: string;
+  gender?: 'male' | 'female';
+  dateOfBirth?: Date;
+  fieldOfStudy?: string;
 };
+
+export const UserProfileFormSchema = z.object({
+    name: z.string().min(3, "الاسم الكامل مطلوب."),
+    username: z.string().min(3, "اسم المستخدم مطلوب.").regex(/^[a-zA-Z0-9_]+$/, "يمكن أن يحتوي اسم المستخدم على حروف وأرقام وشرطات سفلية فقط."),
+    gender: z.enum(["male", "female"], { required_error: "يرجى تحديد الجنس." }),
+    dateOfBirth: z.date({ required_error: "تاريخ الميلاد مطلوب." }),
+    fieldOfStudy: z.string().min(2, "التخصص الدراسي مطلوب."),
+});
+
+export type UserProfileFormData = z.infer<typeof UserProfileFormSchema>;
+
 
 export type QuizQuestion = {
   question: string;
