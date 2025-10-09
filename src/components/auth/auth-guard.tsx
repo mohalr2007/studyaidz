@@ -60,6 +60,12 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     // User is authenticated via Firebase. Now check their profile status.
     setIsSyncing(true);
     syncUserAndCheckProfile(firebaseUser).then(profile => {
+        // Safe-guard: Ensure firebaseUser is still available inside the promise
+        if (!firebaseUser) {
+            setIsSyncing(false);
+            return;
+        }
+        
         if (!firebaseUser.emailVerified) {
             if (pathname !== '/verify-email') {
                 router.replace('/verify-email');
@@ -97,6 +103,11 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   // --- Render Logic ---
   // If we are still here, it means we have a firebaseUser.
   // We now decide what to render based on their profile status.
+  
+  // Safe-guard rendering as well
+  if (!firebaseUser) {
+      return null; // Should be handled by useEffect redirect, but as a fallback.
+  }
 
   if (!firebaseUser.emailVerified) {
     // If email is not verified, only show the verify-email page.
