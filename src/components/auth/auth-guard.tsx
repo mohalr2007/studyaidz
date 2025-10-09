@@ -92,14 +92,14 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
   // --- Render Logic ---
 
+  // If no user, only render auth pages.
   if (!firebaseUser) {
-    // If no user, only render the login page.
-    return pathname === '/login' ? <>{children}</> : null;
+    return isAuthPage ? <>{children}</> : null;
   }
-
+  
+  // If user exists but is not verified, only render verify-email page
   if (!firebaseUser.emailVerified) {
-    // If user exists but is not verified, only render the verify-email page.
-    return pathname === '/verify-email' ? <>{children}</> : null;
+      return pathname === '/verify-email' ? <>{children}</> : null;
   }
 
   // If user is logged in and verified, render app content but not auth pages.

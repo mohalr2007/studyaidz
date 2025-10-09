@@ -15,60 +15,56 @@ import { useAuth } from '@/hooks/use-auth';
 import { Loader2 } from 'lucide-react';
 import { ThemeToggle } from '@/components/layout/theme-toggle';
 import { LanguageToggle } from '@/components/layout/language-toggle';
+import AuthGuard from '@/components/auth/auth-guard';
 
 export default function LoginPage() {
   const loginHeroImage = PlaceHolderImages.find((p) => p.id === 'login-hero');
   const { firebaseUser, loading } = useAuth();
   
-  if (loading) {
+  if (loading || firebaseUser) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
-        <p className="ms-4 text-muted-foreground">Vérification de la connexion...</p>
-      </div>
-    );
-  }
-
-  if (firebaseUser) {
-     return (
-      <div className="flex h-screen w-full items-center justify-center bg-background">
-        <Loader2 className="h-12 w-12 animate-spin text-primary" />
-        <p className="ms-4 text-muted-foreground">Redirection en cours...</p>
+        <p className="ms-4 text-muted-foreground">
+          {loading ? "Vérification de la connexion..." : "Redirection en cours..."}
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="relative min-h-screen w-full">
-       {loginHeroImage && (
-          <Image
-            src={loginHeroImage.imageUrl}
-            alt={loginHeroImage.description}
-            fill
-            className="object-cover dark:brightness-[0.2] dark:grayscale"
-            data-ai-hint={loginHeroImage.imageHint}
-          />
-        )}
-        <div className="absolute top-4 right-4 flex items-center gap-2">
-            <ThemeToggle />
-            <LanguageToggle />
+    <AuthGuard>
+        <div className="relative min-h-screen w-full">
+        {loginHeroImage && (
+            <Image
+                src={loginHeroImage.imageUrl}
+                alt={loginHeroImage.description}
+                fill
+                className="object-cover dark:brightness-[0.2] dark:grayscale"
+                data-ai-hint={loginHeroImage.imageHint}
+            />
+            )}
+            <div className="absolute top-4 right-4 flex items-center gap-2">
+                <ThemeToggle />
+                <LanguageToggle />
+            </div>
+        <div className="relative z-10 flex min-h-screen items-center justify-center py-12">
+            <Card className="w-full max-w-sm bg-background/80 backdrop-blur-sm">
+                <CardHeader className="text-center">
+                    <Logo className="justify-center" />
+                    <CardTitle className="text-3xl font-bold font-headline">
+                        أهلاً بك في StudyAI DZ
+                    </CardTitle>
+                    <CardDescription>
+                        Bوابتك الذكية للنجاح الدراسي. سجل دخولك وابدأ رحلتك.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <GoogleSignInButton />
+                </CardContent>
+            </Card>
         </div>
-      <div className="relative z-10 flex min-h-screen items-center justify-center py-12">
-        <Card className="w-full max-w-sm bg-background/80 backdrop-blur-sm">
-            <CardHeader className="text-center">
-                <Logo className="justify-center" />
-                <CardTitle className="text-3xl font-bold font-headline">
-                    أهلاً بك في StudyAI DZ
-                </CardTitle>
-                <CardDescription>
-                    Bوابتك الذكية للنجاح الدراسي. سجل دخولك وابدأ رحلتك.
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <GoogleSignInButton />
-            </CardContent>
-        </Card>
-      </div>
-    </div>
+        </div>
+    </AuthGuard>
   );
 }
