@@ -6,12 +6,11 @@ import { useAuth } from '@/hooks/use-auth';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { syncUserAndCheckProfile } from '@/app/actions/user';
-import { getRedirectResult } from 'firebase/auth';
 import { getFirebase } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { firebaseUser, loading } = useAuth();
+  const { firebaseUser, loading, user } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const { toast } = useToast();
@@ -19,7 +18,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
   const [isSyncing, setIsSyncing] = useState(true);
 
-  const publicPages = ['/login', '/signup', '/verify-email'];
+  const publicPages = ['/login', '/signup'];
   const isPublicPage = publicPages.includes(pathname);
 
   useEffect(() => {
@@ -45,8 +44,8 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
           setIsSyncing(false);
           return;
         }
-        
-        // This is the core redirection logic
+
+        // REDIRECTION LOGIC
         if (!profile.isProfileComplete) {
           if (pathname !== '/complete-profile') {
             router.replace('/complete-profile');
@@ -78,17 +77,16 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // If we are on a public page and user is logged in and synced, AuthGuard will redirect.
-  // While redirecting, don't show the page's children to avoid flicker.
-  if (firebaseUser && isPublicPage) {
-      return (
-        <div className="flex h-screen w-full items-center justify-center">
-            <Loader2 className="h-12 w-12 animate-spin text-primary" />
-        </div>
-      );
+  // While any redirection logic is processing, show a loader
+  if (firebaseUser) {
+      if (user && !user.isProfileComplete && pathname !== '/complete-profile') {
+          return <div className="flex h-screen w-full items-center justify-center"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div>;
+      }
+      if (isPublicPage || pathname === '/complete-profile' && user?.isProfileComplete) {
+          return <div className="flex h-screen w-full items-center justify-center"><Loader2 className="h-12 w-12 animate-spin text-primary" /></div>;
+      }
   }
 
-  // If no user and not on a public page, show loading while redirecting.
   if (!firebaseUser && !isPublicPage) {
       return (
         <div className="flex h-screen w-full items-center justify-center">
