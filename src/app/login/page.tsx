@@ -14,7 +14,6 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useAuth } from '@/hooks/use-auth';
 import { Loader2 } from 'lucide-react';
 import { ThemeToggle } from '@/components/layout/theme-toggle';
-import { LanguageToggle } from '@/components/layout/language-toggle';
 import AuthGuard from '@/components/auth/auth-guard';
 
 export default function LoginPage() {
@@ -46,7 +45,6 @@ export default function LoginPage() {
             )}
             <div className="absolute top-4 right-4 flex items-center gap-2">
                 <ThemeToggle />
-                <LanguageToggle />
             </div>
         <div className="relative z-10 flex min-h-screen items-center justify-center py-12">
             <Card className="w-full max-w-sm bg-background/80 backdrop-blur-sm">
