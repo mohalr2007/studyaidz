@@ -26,9 +26,9 @@
     },
     {
       "id": "login-hero",
-      "description": "A modern and bright university library full of students studying.",
-      "imageUrl": "https://picsum.photos/seed/login-hero/1024/768",
-      "imageHint": "university library"
+      "description": "A classic, scholarly bookshelf in a library.",
+      "imageUrl": "https://picsum.photos/seed/bookshelf/1024/768",
+      "imageHint": "bookshelf library"
     }
   ]
 }
