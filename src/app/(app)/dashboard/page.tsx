@@ -12,13 +12,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import StatCard from '@/components/dashboard/stat-card';
 import { NAV_LINKS } from '@/lib/constants';
-import { useAuth } from '@/hooks/use-auth';
 import { useEffect, useState } from 'react';
 
 const featureCards = NAV_LINKS.filter(link => link.href !== '/dashboard');
 
 export default function DashboardPage() {
-    const { user } = useAuth();
+    // TODO: Replace with Supabase user logic
+    const user = { role: 'student' };
     const role = user?.role || 'student';
 
   return (

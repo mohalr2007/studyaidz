@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useAuth } from '@/hooks/use-auth';
 import { answerQuestionWithAIChatbot } from '@/ai/flows/answer-questions-with-ai-chatbot';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -28,7 +27,8 @@ interface Message {
 export default function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { user } = useAuth();
+  // TODO: Replace with Supabase user logic
+  const user = null;
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -68,7 +68,7 @@ export default function ChatInterface() {
     }
   };
 
-  const getInitials = (name: string | null) => {
+  const getInitials = (name: string | null | undefined) => {
     if (!name) return 'U';
     return name.split(' ').map((n) => n[0]).join('');
   };
@@ -107,7 +107,7 @@ export default function ChatInterface() {
                 {message.isUser && (
                    <Avatar className="h-8 w-8">
                     <AvatarImage src={user?.photoURL || undefined} />
-                    <AvatarFallback>{getInitials(user?.name || null)}</AvatarFallback>
+                    <AvatarFallback>{getInitials(user?.name)}</AvatarFallback>
                   </Avatar>
                 )}
               </div>
