@@ -2,6 +2,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { GoogleSignInButton } from '@/components/auth/google-signin-button';
 import { Logo } from '@/components/logo';
 import {
@@ -22,6 +23,13 @@ import { useEffect, useState } from 'react';
 import ar from '@/lib/locales/ar.json';
 import en from '@/lib/locales/en.json';
 import fr from '@/lib/locales/fr.json';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/firebase';
+import { useToast } from '@/hooks/use-toast';
 
 const translations = { ar, en, fr };
 
@@ -30,6 +38,8 @@ export default function LoginPage() {
   const { firebaseUser, loading } = useAuth();
   const searchParams = useSearchParams();
   const [lang, setLang] = useState<'ar' | 'en' | 'fr'>('ar');
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     const langParam = searchParams.get('lang');
@@ -41,7 +51,31 @@ export default function LoginPage() {
   }, [searchParams]);
 
   const t = translations[lang].login;
-  
+
+  const handleEmailSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsLoading(true);
+    const formData = new FormData(event.currentTarget);
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+
+    if (!email || !password) {
+        toast({ title: "Erreur", description: "Veuillez entrer l'email et le mot de passe.", variant: "destructive"});
+        setIsLoading(false);
+        return;
+    }
+
+    try {
+        await signInWithEmailAndPassword(auth, email, password);
+        // AuthGuard will handle redirection
+    } catch (error: any) {
+        console.error("Email/Password Sign-In Error:", error);
+        toast({ title: "Erreur de connexion", description: "Email ou mot de passe incorrect.", variant: "destructive"});
+    } finally {
+        setIsLoading(false);
+    }
+  };
+
   if (loading || firebaseUser) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
@@ -80,8 +114,38 @@ export default function LoginPage() {
                         {t.description}
                     </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="grid gap-4">
                     <GoogleSignInButton buttonText={t.signInWithGoogle} />
+                    <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                            <span className="w-full border-t" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                            <span className="bg-background px-2 text-muted-foreground">
+                                أو أكمل بواسطة
+                            </span>
+                        </div>
+                    </div>
+                     <form onSubmit={handleEmailSignIn} className="grid gap-4">
+                        <div className="grid gap-2">
+                            <Label htmlFor="email">البريد الإلكتروني</Label>
+                            <Input id="email" name="email" type="email" placeholder="m@example.com" required />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="password">كلمة المرور</Label>
+                            <Input id="password" name="password" type="password" required />
+                        </div>
+                        <Button type="submit" className="w-full" disabled={isLoading}>
+                             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                             تسجيل الدخول
+                        </Button>
+                    </form>
+                     <div className="mt-4 text-center text-sm">
+                        ليس لديك حساب؟{' '}
+                        <Link href="/signup" className="underline">
+                            إنشاء حساب
+                        </Link>
+                    </div>
                 </CardContent>
             </Card>
         </div>
