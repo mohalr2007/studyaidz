@@ -56,9 +56,8 @@ export default function SignupPage() {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       // On successful creation, Firebase automatically signs the user in.
-      // The AuthGuard will then detect the new, unverified user
-      // and redirect them to the /complete-profile page.
-      router.push('/complete-profile');
+      // The AuthGuard will then detect the new user and redirect them
+      // to the /complete-profile page automatically. No need to push here.
     } catch (error: any) {
       console.error('Sign-up error:', error);
       let description = 'حدث خطأ أثناء إنشاء الحساب.';
