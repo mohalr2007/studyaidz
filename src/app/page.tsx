@@ -1,13 +1,9 @@
 
-import AuthGuard from '@/components/auth/auth-guard';
-import { Loader2 } from 'lucide-react';
+import { redirect } from 'next/navigation';
 
 export default function HomePage() {
-  return (
-    <AuthGuard>
-        <div className="flex h-screen w-full items-center justify-center bg-background">
-            <Loader2 className="h-12 w-12 animate-spin text-primary" />
-        </div>
-    </AuthGuard>
-  );
+  // The root page now redirects to the main authentication page.
+  // The actual landing page or dashboard logic will be handled
+  // by a protected route component later.
+  redirect('/auth');
 }
