@@ -5,15 +5,14 @@ import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
+// This page remains as a loading fallback while the initial redirect happens in AuthGuard.
 export default function HomePage() {
   const { loading, firebaseUser } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    // This effect now simply decides where to go from the root path.
-    // AuthGuard will handle all further logic.
     if (!loading) {
-      if(firebaseUser){
+      if (firebaseUser) {
         router.replace('/dashboard');
       } else {
         router.replace('/login');
