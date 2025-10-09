@@ -4,38 +4,29 @@ import { getAuth, type Auth } from "firebase/auth";
 import { getFirestore, type Firestore } from "firebase/firestore";
 import { firebaseConfig } from "./config";
 
+// This structure ensures that Firebase is initialized only once.
 let app: FirebaseApp;
-let auth: Auth;
-let db: Firestore;
-
-function initializeFirebase() {
-    if (typeof window !== "undefined") {
-        if (!getApps().length) {
-            try {
-                app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-            } catch (e) {
-                console.error("Firebase initialization error", e);
-            }
-        } else {
-            app = getApp();
-            auth = getAuth(app);
-            db = getFirestore(app);
-        }
+if (!getApps().length) {
+    try {
+        app = initializeApp(firebaseConfig);
+    } catch(e) {
+        console.error("Firebase initialization error", e);
+        // If initialization fails, we need to handle it.
+        // For now, we will throw the error to make it visible.
+        throw new Error("Failed to initialize Firebase. Please check your configuration.");
     }
+} else {
+    app = getApp();
 }
 
-initializeFirebase();
+const auth = getAuth(app);
+const db = getFirestore(app);
 
+// getFirebase is a function that returns the initialized instances.
+// This is a safer pattern than exporting the instances directly,
+// as it ensures they are always retrieved after initialization.
 function getFirebase() {
-    if (!app) {
-        initializeFirebase();
-    }
     return { app, auth, db };
 }
 
-// Export the getter function and the initialized instances.
-// The instances are exported for legacy parts of the app that might still use them directly.
-// The goal is to migrate everything to use getFirebase().
-export { app, auth, db, getFirebase };
+export { getFirebase };
