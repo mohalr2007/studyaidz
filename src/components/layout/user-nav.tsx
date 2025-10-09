@@ -23,6 +23,7 @@ export function UserNav({ user }: { user: User }) {
   const { auth } = getFirebase();
 
   const handleSignOut = async () => {
+    if (!auth) return;
     await signOut(auth);
     router.push('/login');
   };

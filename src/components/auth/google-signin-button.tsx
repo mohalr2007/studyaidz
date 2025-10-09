@@ -27,6 +27,14 @@ export function GoogleSignInButton({ buttonText = 'Sign in with Google' }: Googl
   const { auth } = getFirebase();
 
   const handleSignIn = async () => {
+    if (!auth) {
+        toast({
+            title: 'Erreur de configuration',
+            description: "Le service d'authentification n'est pas prêt.",
+            variant: 'destructive',
+        });
+        return;
+    }
     setIsLoading(true);
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({

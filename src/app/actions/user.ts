@@ -15,6 +15,11 @@ import type { UserProfileFormData } from '@/types';
  */
 export async function syncUserAndCheckProfile(user: FirebaseUser) {
   const { db } = getFirebase();
+  // If db is not available (e.g. during build), return a default profile.
+  if (!db) {
+    return { isProfileComplete: false };
+  }
+
   const userRef = doc(db, 'users', user.uid);
 
   try {
@@ -55,6 +60,10 @@ export async function syncUserAndCheckProfile(user: FirebaseUser) {
  */
 export async function completeUserProfile(uid: string, data: UserProfileFormData) {
   const { db } = getFirebase();
+  if (!db) {
+    throw new Error("Firestore is not available.");
+  }
+
   const userRef = doc(db, 'users', uid);
   try {
     await updateDoc(userRef, {

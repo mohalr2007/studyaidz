@@ -23,6 +23,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 
   useEffect(() => {
+    if (!auth) {
+      setLoading(false); // If Firebase isn't configured, we're not loading auth.
+      return;
+    }
+
     const unsubscribeAuth = onAuthStateChanged(auth, (fbUser) => {
       setFirebaseUser(fbUser);
       if (!fbUser) {
@@ -35,7 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [auth]);
 
   useEffect(() => {
-    if (firebaseUser) {
+    if (firebaseUser && db) {
       const userDocRef = doc(db, 'users', firebaseUser.uid);
       const unsubscribeSnapshot = onSnapshot(userDocRef, (userDoc) => {
         if (userDoc.exists()) {
@@ -83,6 +88,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       return () => unsubscribeSnapshot();
+    } else if (!firebaseUser) {
+        // If there's no firebaseUser, ensure user state is also null
+        setUser(null);
+        setLoading(false);
     }
   }, [firebaseUser, db]);
 

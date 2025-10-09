@@ -28,6 +28,12 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     // This effect handles the result from a Google Sign-In redirect.
     // It should run only once when the component mounts.
     const handleRedirectResult = async () => {
+      // Only run this logic if auth is available
+      if (!auth) {
+        setIsSyncing(false); // Can't sync if Firebase isn't configured
+        return;
+      };
+
       setIsSyncing(true);
       try {
         const result = await getRedirectResult(auth);
@@ -61,6 +67,13 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     if (loading) {
       // If auth state is still loading, wait.
       return; 
+    }
+    
+    // If Firebase isn't configured, don't attempt auth logic.
+    // This prevents errors in build environments or misconfigured setups.
+    if (!auth) {
+      setIsSyncing(false);
+      return;
     }
 
     if (!firebaseUser) {
@@ -103,7 +116,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
         }
     });
 
-  }, [firebaseUser, loading, router, pathname, toast]);
+  }, [firebaseUser, loading, router, pathname, toast, auth]);
 
   if (loading || isSyncing) {
     // Show a loading spinner while checking auth state or syncing the profile.

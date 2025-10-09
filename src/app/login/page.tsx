@@ -57,6 +57,10 @@ function LoginPageContent() {
 
   const handleEmailSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!auth) {
+        toast({ title: "Erreur", description: "Le service d'authentification n'est pas disponible.", variant: "destructive"});
+        return;
+    }
     setIsLoading(true);
     const formData = new FormData(event.currentTarget);
     const email = formData.get('email') as string;

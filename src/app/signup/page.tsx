@@ -32,6 +32,10 @@ export default function SignupPage() {
 
   const handleSignUp = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!auth) {
+        toast({ title: 'خطأ', description: "Le service d'authentification n'est pas disponible.", variant: 'destructive' });
+        return;
+    }
     setIsLoading(true);
 
     const formData = new FormData(event.currentTarget);
