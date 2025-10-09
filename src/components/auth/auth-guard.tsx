@@ -18,28 +18,28 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       return; // Wait for the auth state to be determined.
     }
 
-    if (firebaseUser) {
-      if (!firebaseUser.emailVerified) {
-        // If user is logged in but email is not verified,
-        // and they are not already on the verification page, redirect them.
-        if (pathname !== '/verify-email') {
-          router.replace('/verify-email');
-        }
-      } else if (isAuthPage || isHomePage) {
-        // If user is logged in, email is verified, and they are on an auth page
-        // or the root page, redirect them to the dashboard.
-        router.replace('/dashboard');
-      }
-    } else {
-      // If there is no user, and they are not on a public auth page,
-      // redirect them to the login page.
-      if (!isAuthPage) {
+    // If there is no user, and they are not on a public auth page or the homepage,
+    // redirect them to the login page.
+    if (!firebaseUser) {
+      if (!isAuthPage && !isHomePage) {
         router.replace('/login');
       }
+      return;
     }
-  }, [firebaseUser, loading, router, pathname, isAuthPage, isHomePage]);
+    
+    // If we have a user
+    if (!firebaseUser.emailVerified) {
+      // and their email is not verified, redirect to verify-email page
+      if (pathname !== '/verify-email') {
+        router.replace('/verify-email');
+      }
+    } else if (isAuthPage || isHomePage) {
+      // and their email is verified, and they are on an auth page or homepage,
+      // redirect to the dashboard.
+      router.replace('/dashboard');
+    }
 
-  // --- Render Logic ---
+  }, [firebaseUser, loading, router, pathname, isAuthPage, isHomePage]);
 
   // While loading, show a full-screen loader.
   if (loading) {
@@ -50,19 +50,21 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // If there's no user, only render the login page.
-  if (!firebaseUser && isAuthPage) {
-    return <>{children}</>;
-  }
+  // --- Render Logic ---
 
+  // If there's no user, only render public pages.
+  if (!firebaseUser) {
+    return isAuthPage || isHomePage ? <>{children}</> : null;
+  }
+  
   // If user is logged in but not verified, only render the verification page.
-  if (firebaseUser && !firebaseUser.emailVerified && pathname === '/verify-email') {
-    return <>{children}</>;
+  if (!firebaseUser.emailVerified) {
+    return pathname === '/verify-email' ? <>{children}</> : null;
   }
 
   // If user is logged in and verified, render the app content (but not auth pages).
-  if (firebaseUser && firebaseUser.emailVerified && !isAuthPage) {
-    return <>{children}</>;
+  if (firebaseUser.emailVerified) {
+     return !isAuthPage ? <>{children}</> : null;
   }
 
   // As a fallback while redirects are in flight, show a loader.
