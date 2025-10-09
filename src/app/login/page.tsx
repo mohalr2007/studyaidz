@@ -14,6 +14,7 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useAuth } from '@/hooks/use-auth';
 import { Loader2 } from 'lucide-react';
 import AuthGuard from '@/components/auth/auth-guard';
+import { ThemeToggle } from '@/components/layout/theme-toggle';
 
 export default function LoginPage() {
   const loginHeroImage = PlaceHolderImages.find((p) => p.id === 'login-hero');
@@ -42,6 +43,9 @@ export default function LoginPage() {
                 data-ai-hint={loginHeroImage.imageHint}
             />
             )}
+        <div className="absolute top-4 right-4 z-20 flex gap-2">
+            <ThemeToggle />
+        </div>
         <div className="relative z-10 flex min-h-screen items-center justify-center py-12">
             <Card className="w-full max-w-sm bg-background/80 backdrop-blur-sm">
                 <CardHeader className="text-center">
