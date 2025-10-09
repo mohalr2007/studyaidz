@@ -69,7 +69,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
                 router.replace('/complete-profile');
             }
         } else { // Verified and profile complete
-            if (isPublicPage || pathname === '/complete-profile' || pathname === '/') {
+            if (isPublicPage || pathname === '/complete-profile' || pathname === '/verify-email' || pathname === '/') {
                 router.replace('/dashboard');
             }
         }
@@ -95,30 +95,26 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   }
 
   // --- Render Logic ---
-  if (!firebaseUser) {
-    // If not logged in, only show public pages.
-    return isPublicPage ? <>{children}</> : null;
-  }
-  
+  // If we are still here, it means we have a firebaseUser.
+  // We now decide what to render based on their profile status.
+
   if (!firebaseUser.emailVerified) {
-      return pathname === '/verify-email' ? <>{children}</> : null;
-  }
-
-  if (user && !user.isProfileComplete) {
-      return pathname === '/complete-profile' ? <>{children}</> : null;
-  }
-
-  if (user && user.isProfileComplete) {
-    if (isPublicPage || pathname === '/complete-profile' || pathname === '/verify-email') {
-        // While redirecting, show a loader
-        return (
-            <div className="flex h-screen w-full items-center justify-center">
-                <Loader2 className="h-12 w-12 animate-spin text-primary" />
-            </div>
-        );
-    }
-    return <>{children}</>;
+    // If email is not verified, only show the verify-email page.
+    // All other pages will show a loader until redirection is complete.
+    return pathname === '/verify-email' ? <>{children}</> : null;
   }
   
-  return null;
+  if (user && !user.isProfileComplete) {
+    // If profile is not complete, only show the complete-profile page.
+    return pathname === '/complete-profile' ? <>{children}</> : null;
+  }
+  
+  if (isPublicPage || pathname === '/verify-email' || pathname === '/complete-profile' || pathname === '/') {
+      // If profile is complete but user is on a public/intermediate page,
+      // show nothing while redirecting to dashboard.
+      return null;
+  }
+
+  // If everything is complete and user is on a protected page, show the content.
+  return <>{children}</>;
 }
