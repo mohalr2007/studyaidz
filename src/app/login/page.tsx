@@ -1,3 +1,4 @@
+
 'use client';
 
 import Image from 'next/image';
@@ -56,7 +57,7 @@ export default function LoginPage() {
                         أهلاً بك في StudyAI DZ
                     </CardTitle>
                     <CardDescription>
-                        Bوابتك الذكية للنجاح الدراسي. سجل دخولك وابدأ رحلتك.
+                        بوابتك الذكية للنجاح الدراسي. سجل دخولك وابدأ رحلتك.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
