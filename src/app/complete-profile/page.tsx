@@ -12,8 +12,6 @@ import {
   Book,
   Check,
   Loader2,
-  FemaleSymbol,
-  MaleSymbol,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -123,11 +121,11 @@ export default function CompleteProfilePage() {
                         <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex gap-4 pt-2">
                              <Label htmlFor="male" className="flex items-center gap-2 cursor-pointer rounded-lg border p-3 flex-1 has-[:checked]:bg-primary/10 has-[:checked]:border-primary">
                                 <RadioGroupItem value="male" id="male" />
-                                <MaleSymbol className="h-5 w-5 text-blue-500" /> ذكر
+                                <span className="text-blue-500 font-semibold">ذكر</span>
                              </Label>
                              <Label htmlFor="female" className="flex items-center gap-2 cursor-pointer rounded-lg border p-3 flex-1 has-[:checked]:bg-pink-500/10 has-[:checked]:border-pink-500">
                                 <RadioGroupItem value="female" id="female" />
-                                <FemaleSymbol className="h-5 w-5 text-pink-500" /> أنثى
+                                <span className="text-pink-500 font-semibold">أنثى</span>
                              </Label>
                         </RadioGroup>
                     )}

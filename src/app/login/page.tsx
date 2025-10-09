@@ -19,7 +19,7 @@ import AuthGuard from '@/components/auth/auth-guard';
 import { ThemeToggle } from '@/components/layout/theme-toggle';
 import { LanguageToggle } from '@/components/layout/language-toggle';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import ar from '@/lib/locales/ar.json';
 import en from '@/lib/locales/en.json';
 import fr from '@/lib/locales/fr.json';
@@ -33,7 +33,7 @@ import { useToast } from '@/hooks/use-toast';
 
 const translations = { ar, en, fr };
 
-export default function LoginPage() {
+function LoginPageContent() {
   const loginHeroImage = PlaceHolderImages.find((p) => p.id === 'login-hero');
   const { firebaseUser, loading } = useAuth();
   const searchParams = useSearchParams();
@@ -45,8 +45,10 @@ export default function LoginPage() {
     const langParam = searchParams.get('lang');
     if (langParam === 'en' || langParam === 'fr' || langParam === 'ar') {
       setLang(langParam);
-      document.documentElement.lang = langParam;
-      document.documentElement.dir = langParam === 'ar' ? 'rtl' : 'ltr';
+      if (typeof window !== 'undefined') {
+        document.documentElement.lang = langParam;
+        document.documentElement.dir = langParam === 'ar' ? 'rtl' : 'ltr';
+      }
     }
   }, [searchParams]);
 
@@ -152,4 +154,16 @@ export default function LoginPage() {
         </div>
     </AuthGuard>
   );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-screen w-full items-center justify-center bg-background">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      </div>
+    }>
+      <LoginPageContent />
+    </Suspense>
+  )
 }
