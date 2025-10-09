@@ -7,6 +7,9 @@ import { useRouter } from 'next/navigation';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { Loader2 } from 'lucide-react';
 import Image from 'next/image';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -23,6 +26,17 @@ import { getFirebase } from '@/firebase';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Logo } from '@/components/logo';
 
+const SignupFormSchema = z.object({
+  email: z.string().email({ message: "الرجاء إدخال بريد إلكتروني صالح." }),
+  password: z.string().min(6, { message: "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل." }),
+  confirmPassword: z.string()
+}).refine(data => data.password === data.confirmPassword, {
+  message: "كلمتا المرور غير متطابقتين.",
+  path: ["confirmPassword"],
+});
+
+type SignupFormData = z.infer<typeof SignupFormSchema>;
+
 export default function SignupPage() {
   const router = useRouter();
   const { toast } = useToast();
@@ -30,34 +44,24 @@ export default function SignupPage() {
   const loginHeroImage = PlaceHolderImages.find((p) => p.id === 'login-hero');
   const { auth } = getFirebase();
 
-  const handleSignUp = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignupFormData>({
+    resolver: zodResolver(SignupFormSchema),
+  });
+
+  const handleSignUp = async (data: SignupFormData) => {
     if (!auth) {
         toast({ title: 'خطأ', description: "Le service d'authentification n'est pas disponible.", variant: 'destructive' });
         return;
     }
     setIsLoading(true);
 
-    const formData = new FormData(event.currentTarget);
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-    const confirmPassword = formData.get('confirmPassword') as string;
-
-    if (password !== confirmPassword) {
-      toast({
-        title: 'خطأ',
-        description: 'كلمتا المرور غير متطابقتين.',
-        variant: 'destructive',
-      });
-      setIsLoading(false);
-      return;
-    }
-
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      // On successful creation, Firebase automatically signs the user in.
-      // The AuthGuard will then detect the new user and redirect them
-      // to the /complete-profile page automatically. No need to push here.
+      await createUserWithEmailAndPassword(auth, data.email, data.password);
+      // The AuthGuard will automatically handle redirection to /complete-profile
     } catch (error: any) {
       console.error('Sign-up error:', error);
       let description = 'حدث خطأ أثناء إنشاء الحساب.';
@@ -97,24 +101,26 @@ export default function SignupPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSignUp} className="grid gap-4">
+            <form onSubmit={handleSubmit(handleSignUp)} className="grid gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="email">البريد الإلكتروني</Label>
                 <Input
                   id="email"
-                  name="email"
                   type="email"
                   placeholder="name@example.com"
-                  required
+                  {...register("email")}
                 />
+                {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="password">كلمة المرور</Label>
-                <Input id="password" name="password" type="password" required />
+                <Input id="password" type="password" {...register("password")} />
+                {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="confirmPassword">تأكيد كلمة المرور</Label>
-                <Input id="confirmPassword" name="confirmPassword" type="password" required />
+                <Input id="confirmPassword" type="password" {...register("confirmPassword")} />
+                {errors.confirmPassword && <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>}
               </div>
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
