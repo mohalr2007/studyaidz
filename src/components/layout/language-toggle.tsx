@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -10,14 +11,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { usePathname, useRouter } from "next/navigation"
 
 export function LanguageToggle() {
-  // Note: This is a placeholder for the language switching logic.
-  // A full i18n setup is required to make this functional.
+  const router = useRouter();
+  const pathname = usePathname();
+
   const switchLanguage = (lang: 'en' | 'fr' | 'ar') => {
-    console.log(`Language switching to ${lang} is not yet implemented.`);
     // In a real app, you would use a library like 'next-international'
-    // or 'next-i18next' to change the locale.
+    // or 'next-i18next' to change the locale. For now, we use search params.
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set('lang', lang);
+    router.replace(currentUrl.toString());
   };
 
   return (

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -16,8 +17,11 @@ const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
     </svg>
 );
 
+interface GoogleSignInButtonProps {
+    buttonText?: string;
+}
 
-export function GoogleSignInButton() {
+export function GoogleSignInButton({ buttonText = 'Sign in with Google' }: GoogleSignInButtonProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -49,7 +53,7 @@ export function GoogleSignInButton() {
         ) : (
             <GoogleIcon className="ms-2 h-4 w-4" />
         )}
-      تسجيل الدخول باستخدام Google
+      {buttonText}
     </Button>
   );
 }
