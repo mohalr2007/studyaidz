@@ -1,8 +1,9 @@
+
 "use client";
 
 import { signOut } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
-import { auth } from '@/firebase';
+import { getFirebase } from '@/firebase';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
@@ -19,6 +20,7 @@ import { LogOut, User as UserIcon } from 'lucide-react';
 
 export function UserNav({ user }: { user: User }) {
   const router = useRouter();
+  const { auth } = getFirebase();
 
   const handleSignOut = async () => {
     await signOut(auth);

@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { GoogleAuthProvider, signInWithRedirect } from 'firebase/auth';
-import { auth } from '@/firebase';
+import { getFirebase } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
@@ -24,6 +24,7 @@ interface GoogleSignInButtonProps {
 export function GoogleSignInButton({ buttonText = 'Sign in with Google' }: GoogleSignInButtonProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const { auth } = getFirebase();
 
   const handleSignIn = async () => {
     setIsLoading(true);

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -9,7 +10,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useToast } from '@/hooks/use-toast';
 import { Logo } from '@/components/logo';
 import { Loader2, MailCheck, LogOut } from 'lucide-react';
-import { auth } from '@/firebase';
+import { getFirebase } from '@/firebase';
 import AuthGuard from '@/components/auth/auth-guard';
 
 export default function VerifyEmailPage() {
@@ -17,6 +18,7 @@ export default function VerifyEmailPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isSending, setIsSending] = useState(false);
+  const { auth } = getFirebase();
 
   const handleResendVerification = async () => {
     if (!firebaseUser) return;

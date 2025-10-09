@@ -7,7 +7,7 @@ import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { syncUserAndCheckProfile } from '@/app/actions/user';
 import { getRedirectResult } from 'firebase/auth';
-import { auth } from '@/firebase';
+import { getFirebase } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
@@ -15,6 +15,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const { toast } = useToast();
+  const { auth } = getFirebase();
 
   const [isSyncing, setIsSyncing] = useState(true);
 
@@ -52,7 +53,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     };
 
     handleRedirectResult();
-  }, [toast]);
+  }, [auth, toast]);
 
 
   useEffect(() => {
@@ -95,7 +96,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
         }
     });
 
-  }, [firebaseUser, loading, router, pathname]);
+  }, [firebaseUser, loading, router, pathname, toast]);
 
   if (loading || isSyncing) {
     return (

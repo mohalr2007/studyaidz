@@ -8,20 +8,34 @@ let app: FirebaseApp;
 let auth: Auth;
 let db: Firestore;
 
-if (typeof window !== "undefined" && !getApps().length) {
-    // This check ensures Firebase is only initialized on the client side.
-    try {
-        app = initializeApp(firebaseConfig);
-        auth = getAuth(app);
-        db = getFirestore(app);
-    } catch (e) {
-        console.error("Firebase initialization error", e);
+function initializeFirebase() {
+    if (typeof window !== "undefined") {
+        if (!getApps().length) {
+            try {
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+            } catch (e) {
+                console.error("Firebase initialization error", e);
+            }
+        } else {
+            app = getApp();
+            auth = getAuth(app);
+            db = getFirestore(app);
+        }
     }
-} else if (getApps().length) {
-    app = getApp();
-    auth = getAuth(app);
-    db = getFirestore(app);
 }
 
-// @ts-ignore
-export { app, auth, db };
+initializeFirebase();
+
+function getFirebase() {
+    if (!app) {
+        initializeFirebase();
+    }
+    return { app, auth, db };
+}
+
+// Export the getter function and the initialized instances.
+// The instances are exported for legacy parts of the app that might still use them directly.
+// The goal is to migrate everything to use getFirebase().
+export { app, auth, db, getFirebase };

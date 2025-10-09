@@ -2,7 +2,7 @@
 "use server";
 
 import { doc, setDoc, serverTimestamp, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from '@/firebase';
+import { getFirebase } from '@/firebase';
 import type { User as FirebaseUser } from 'firebase/auth';
 import type { UserProfileFormData } from '@/types';
 
@@ -14,6 +14,7 @@ import type { UserProfileFormData } from '@/types';
  * @returns An object containing the user's profile data and a flag indicating if the profile is complete.
  */
 export async function syncUserAndCheckProfile(user: FirebaseUser) {
+  const { db } = getFirebase();
   const userRef = doc(db, 'users', user.uid);
 
   try {
@@ -53,6 +54,7 @@ export async function syncUserAndCheckProfile(user: FirebaseUser) {
  * @param data The data from the profile completion form.
  */
 export async function completeUserProfile(uid: string, data: UserProfileFormData) {
+  const { db } = getFirebase();
   const userRef = doc(db, 'users', uid);
   try {
     await updateDoc(userRef, {

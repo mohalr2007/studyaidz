@@ -4,7 +4,7 @@
 import { createContext, useState, useEffect, ReactNode } from 'react';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { doc, onSnapshot } from 'firebase/firestore';
-import { auth, db } from '@/firebase';
+import { getFirebase } from '@/firebase';
 import type { User as AppUser } from '@/types';
 
 export interface AuthContextType {
@@ -19,6 +19,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AppUser | null>(null);
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const { auth, db } = getFirebase();
+
 
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (fbUser) => {
@@ -30,7 +32,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
 
     return () => unsubscribeAuth();
-  }, []);
+  }, [auth]);
 
   useEffect(() => {
     if (firebaseUser) {
@@ -82,7 +84,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       return () => unsubscribeSnapshot();
     }
-  }, [firebaseUser]);
+  }, [firebaseUser, db]);
 
 
   const value = { user, firebaseUser, loading };

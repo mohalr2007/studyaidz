@@ -28,7 +28,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/firebase';
+import { getFirebase } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 
 const translations = { ar, en, fr };
@@ -40,6 +40,7 @@ function LoginPageContent() {
   const [lang, setLang] = useState<'ar' | 'en' | 'fr'>('ar');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { auth } = getFirebase();
 
   useEffect(() => {
     const langParam = searchParams.get('lang');
