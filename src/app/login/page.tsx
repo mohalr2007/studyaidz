@@ -11,60 +11,32 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { useEffect, useState } from 'react';
-import { getRedirectResult } from 'firebase/auth';
-import { auth } from '@/firebase';
-import { syncUser } from '../actions/user';
-import { useRouter } from 'next/navigation';
-import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
+import { Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
   const loginHeroImage = PlaceHolderImages.find((p) => p.id === 'login-hero');
+  const { firebaseUser, loading } = useAuth();
   const router = useRouter();
-  const { toast } = useToast();
-  const { firebaseUser } = useAuth();
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // If the user is already authenticated, redirect them away.
-    if (firebaseUser) {
-      router.replace('/dashboard');
-      return;
-    }
-
-    const checkRedirect = async () => {
-      try {
-        const result = await getRedirectResult(auth);
-        if (result) {
-          // User has successfully signed in via redirect.
-          await syncUser(result.user);
-          // The AuthGuard will handle the redirect to the dashboard.
-          // No need to router.push here, which can cause race conditions.
-        } else {
-          // No redirect result, so just show the login page.
-          setIsLoading(false);
-        }
-      } catch (error: any) {
-        console.error('Google Redirect Sign-In Error:', error);
-        toast({
-          title: 'Erreur de connexion',
-          description: `Une erreur s'est produite lors de la connexion. Code: ${error.code}`,
-          variant: 'destructive',
-        });
-        setIsLoading(false);
-      }
-    };
-
-    checkRedirect();
-  }, [firebaseUser, router, toast]);
-
-  if (isLoading) {
+  
+  if (loading) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-background">
         <Loader2 className="h-12 w-12 animate-spin text-primary" />
         <p className="ms-4 text-muted-foreground">Vérification de la connexion...</p>
+      </div>
+    );
+  }
+
+  // If the user is somehow already authenticated, the AuthGuard will handle redirection.
+  // This page is only for unauthenticated users.
+  if (firebaseUser) {
+    // Show a loader while the redirect is in progress.
+     return (
+      <div className="flex h-screen w-full items-center justify-center bg-background">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+        <p className="ms-4 text-muted-foreground">Redirection en cours...</p>
       </div>
     );
   }
