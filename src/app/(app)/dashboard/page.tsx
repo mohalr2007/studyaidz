@@ -14,6 +14,9 @@ import { Button } from '@/components/ui/button';
 import StatCard from '@/components/dashboard/stat-card';
 import { NAV_LINKS } from '@/lib/constants';
 
+// NOTE: This should come from NAV_LINKS, but without the dashboard link
+const featureCards = NAV_LINKS.filter(link => link.href !== '/dashboard');
+
 export default function DashboardPage() {
     // TODO: Replace with Supabase user logic
     const user = { role: 'student' };

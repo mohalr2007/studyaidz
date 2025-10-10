@@ -93,7 +93,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
   // If there is a user and the profile is not complete, show the complete-profile page
   if (user && pathname === '/complete-profile') {
-      return <>{children};
+      return <>{children}</>;
   }
 
   // If there is a user and the profile is complete, show the protected content.
