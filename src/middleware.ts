@@ -1,7 +1,6 @@
 
+import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
-import { createServerClient } from '@supabase/ssr'
-import type { Database } from '@/types/supabase'
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
@@ -10,7 +9,7 @@ export async function middleware(request: NextRequest) {
     },
   })
 
-  const supabase = createServerClient<Database>(
+  const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -18,7 +17,9 @@ export async function middleware(request: NextRequest) {
         get(name: string) {
           return request.cookies.get(name)?.value
         },
-        set(name: string, value: string, options) {
+        set(name: string, value: string, options: CookieOptions) {
+          // If the cookie is updated, update the request cookies and re-assign the
+          // response so that it has the updated cookies
           request.cookies.set({
             name,
             value,
@@ -35,7 +36,9 @@ export async function middleware(request: NextRequest) {
             ...options,
           })
         },
-        remove(name: string, options) {
+        remove(name: string, options: CookieOptions) {
+          // If the cookie is removed, update the request cookies and re-assign the
+          // response so that it has the updated cookies
           request.cookies.set({
             name,
             value: '',
@@ -56,7 +59,7 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  // this will refresh the user session
+  // refreshing the session cookie
   await supabase.auth.getUser()
 
   return response
