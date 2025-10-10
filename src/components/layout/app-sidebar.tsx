@@ -15,9 +15,9 @@ import {
 } from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
 import { NAV_LINKS } from '@/lib/constants';
-import { UserNav } from './user-nav';
+import type { ReactNode } from 'react';
 
-export function AppSidebar() {
+export function AppSidebar({ userNav }: { userNav: ReactNode }) {
   const pathname = usePathname();
 
   return (
@@ -43,7 +43,7 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
-        <UserNav />
+        {userNav}
       </SidebarFooter>
     </Sidebar>
   );
