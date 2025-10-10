@@ -1,8 +1,8 @@
-
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
 // Define the structure of your environment variables
+// This ensures that TypeScript knows about these environment variables
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
@@ -16,6 +16,7 @@ export function createClient() {
   const cookieStore = cookies()
 
   // Create a server-side client for Supabase that manages user sessions
+  // These variables are set in Vercel's environment variables settings
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
