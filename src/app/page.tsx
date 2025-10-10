@@ -18,20 +18,7 @@ export default async function AuthPage() {
   const { data: { session }} = await supabase.auth.getSession();
 
   if (session) {
-    // This is a temporary measure. In a real app, you'd redirect to a dashboard
-    // or a page that requires authentication. For now, we'll just show a placeholder
-    // if the user is logged in. A proper dashboard will be built later.
-    return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4">
-            <Card className="w-full max-w-sm p-8 text-center">
-                <h1 className="text-2xl font-bold">Vous êtes connecté!</h1>
-                <p className="text-muted-foreground mt-2">Le tableau de bord sera bientôt disponible ici.</p>
-                 <form action="/auth/logout" method="post">
-                    <button type="submit" className="mt-4 text-sm text-primary hover:underline">Se déconnecter</button>
-                </form>
-            </Card>
-        </div>
-    );
+    redirect('/dashboard');
   }
 
   const loginHeroImage = PlaceHolderImages.find((p) => p.id === 'login-hero');

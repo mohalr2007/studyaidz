@@ -1,0 +1,39 @@
+
+'use server';
+
+import { createClient } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
+
+export async function completeUserProfile(formData: FormData) {
+  const supabase = createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return redirect('/?error=User not found');
+  }
+
+  const userData = {
+    username: formData.get('username') as string,
+    full_name: formData.get('name') as string,
+    gender: formData.get('gender') as 'male' | 'female',
+    date_of_birth: formData.get('dateOfBirth') as string,
+    field_of_study: formData.get('fieldOfStudy') as string,
+    is_profile_complete: true,
+  };
+  
+  // Upsert the student profile
+  const { error } = await supabase.from('students').update(userData).eq('id', user.id);
+
+
+  if (error) {
+    console.error('Error updating profile:', error);
+    return redirect(`/complete-profile?error=${error.message}`);
+  }
+
+  revalidatePath('/', 'layout');
+  redirect('/dashboard');
+}

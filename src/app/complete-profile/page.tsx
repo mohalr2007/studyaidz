@@ -1,0 +1,207 @@
+
+'use client';
+
+import { useForm, type SubmitHandler } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { UserProfileFormSchema, type UserProfileFormData } from '@/types';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { Calendar as CalendarIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
+import { completeUserProfile } from './actions';
+import { useFormStatus } from 'react-dom';
+import { Logo } from '@/components/logo';
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return (
+    <Button type="submit" disabled={pending} className="w-full">
+      {pending ? 'جاري الحفظ...' : 'إكمال التسجيل'}
+    </Button>
+  );
+}
+
+export default function CompleteProfilePage() {
+  const form = useForm<UserProfileFormData>({
+    resolver: zodResolver(UserProfileFormSchema),
+    defaultValues: {
+      name: '',
+      username: '',
+      fieldOfStudy: '',
+    },
+  });
+
+  const onSubmit: SubmitHandler<UserProfileFormData> = async (data) => {
+    const formData = new FormData();
+    formData.append('name', data.name);
+    formData.append('username', data.username);
+    formData.append('gender', data.gender);
+    formData.append('dateOfBirth', data.dateOfBirth.toISOString());
+    formData.append('fieldOfStudy', data.fieldOfStudy);
+
+    await completeUserProfile(formData);
+  };
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
+      <Card className="w-full max-w-lg">
+        <CardHeader className="text-center">
+            <div className="mx-auto mb-4">
+                <Logo />
+            </div>
+          <CardTitle>إكمال ملفك الشخصي</CardTitle>
+          <CardDescription>
+            نحتاج إلى بعض المعلومات الإضافية قبل أن تتمكن من المتابعة.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-6"
+            >
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>الاسم الكامل</FormLabel>
+                    <FormControl>
+                      <Input placeholder="مثال: أحمد علي" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>اسم المستخدم</FormLabel>
+                    <FormControl>
+                      <Input placeholder="مثال: ahmed_ali" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <FormField
+                        control={form.control}
+                        name="gender"
+                        render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>الجنس</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                                <SelectTrigger>
+                                <SelectValue placeholder="اختر جنسك" />
+                                </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                                <SelectItem value="male">ذكر</SelectItem>
+                                <SelectItem value="female">أنثى</SelectItem>
+                            </SelectContent>
+                            </Select>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+
+                    <FormField
+                        control={form.control}
+                        name="dateOfBirth"
+                        render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                            <FormLabel>تاريخ الميلاد</FormLabel>
+                            <Popover>
+                            <PopoverTrigger asChild>
+                                <FormControl>
+                                <Button
+                                    variant={'outline'}
+                                    className={cn(
+                                    'w-full pl-3 text-left font-normal',
+                                    !field.value && 'text-muted-foreground'
+                                    )}
+                                >
+                                    {field.value ? (
+                                    format(field.value, 'PPP')
+                                    ) : (
+                                    <span>اختر تاريخًا</span>
+                                    )}
+                                    <CalendarIcon className="mr-auto h-4 w-4 opacity-50" />
+                                </Button>
+                                </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                                <Calendar
+                                mode="single"
+                                selected={field.value}
+                                onSelect={field.onChange}
+                                disabled={(date) =>
+                                    date > new Date() || date < new Date('1900-01-01')
+                                }
+                                initialFocus
+                                />
+                            </PopoverContent>
+                            </Popover>
+                            <FormMessage />
+                        </FormItem>
+                        )}
+                    />
+                </div>
+
+              <FormField
+                control={form.control}
+                name="fieldOfStudy"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>التخصص الدراسي</FormLabel>
+                    <FormControl>
+                      <Input placeholder="مثال: علوم وتكنولوجيا" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <SubmitButton />
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
