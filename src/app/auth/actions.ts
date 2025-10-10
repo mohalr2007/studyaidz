@@ -20,11 +20,11 @@ export async function login(formData: FormData) {
   if (error) {
     // TODO: Add better error handling and display to user
     console.error("Login Error:", error.message);
-    redirect("/auth?error=Could not authenticate user");
+    return redirect("/?error=Could not authenticate user");
   }
 
   revalidatePath("/", "layout");
-  redirect("/dashboard");
+  return redirect("/");
 }
 
 export async function signup(formData: FormData) {
@@ -40,22 +40,20 @@ export async function signup(formData: FormData) {
   if (error) {
     console.error("Signup Error:", error.message);
     if (error.message.includes('Password should be at least 6 characters')) {
-      return redirect('/auth?error=Password should be at least 6 characters');
+      return redirect('/?error=Password should be at least 6 characters');
     }
-    return redirect("/auth?error=Could not authenticate user");
+    return redirect("/?error=Could not authenticate user");
   }
 
-  // A new user is created, but their profile is not.
-  // The AuthGuard will redirect them to /complete-profile
   revalidatePath("/", "layout");
-  redirect("/dashboard");
+  return redirect("/");
 }
 
 
 export async function loginWithProvider(formData: FormData) {
   const provider = formData.get('provider') as Provider | null;
   if (!provider) {
-    return redirect('/auth?error=No provider selected');
+    return redirect('/?error=No provider selected');
   }
 
   const supabase = createClient();
@@ -70,7 +68,7 @@ export async function loginWithProvider(formData: FormData) {
 
   if (error) {
     console.error('OAuth Error:', error);
-    return redirect('/auth?error=Could not authenticate with provider');
+    return redirect('/?error=Could not authenticate with provider');
   }
 
   return redirect(data.url);

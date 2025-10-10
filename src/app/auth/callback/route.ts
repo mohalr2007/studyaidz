@@ -5,18 +5,15 @@ import { createClient } from '@/lib/supabase/server'
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
-  // if "next" is in param, use it as the redirect URL
-  const next = searchParams.get('next') ?? '/'
-
+  
   if (code) {
     const supabase = createClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
-        // The AuthGuard will handle redirection to /complete-profile if needed
-        return NextResponse.redirect(`${origin}/dashboard`)
+        return NextResponse.redirect(origin)
     }
   }
 
   // return the user to an error page with instructions
-  return NextResponse.redirect(`${origin}/auth?error=Could not process authentication`)
+  return NextResponse.redirect(`${origin}/?error=Could not process authentication`)
 }
