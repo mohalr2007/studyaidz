@@ -20,41 +20,43 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       const { data: { session } } = await supabase.auth.getSession();
       const user = session?.user;
 
-      // 1. If no user, redirect to /auth unless already there
-      if (!user) {
-        if (pathname !== '/auth') {
-          router.replace('/auth');
+      // Public routes that don't need auth
+      const isPublicRoute = ['/auth'].includes(pathname);
+       // The route for completing the profile, which requires a user but not a complete profile
+      const isProfileCompletionRoute = pathname === '/complete-profile';
+
+
+      // 1. If no user session, and the route is not public, redirect to /auth
+      if (!user && !isPublicRoute) {
+        router.replace('/auth');
+        return;
+      }
+
+      // 2. If a user session exists
+      if (user) {
+        // Check for profile completion
+        const { data: studentProfile } = await supabase
+          .from('students')
+          .select('is_profile_complete')
+          .eq('id', user.id)
+          .single();
+          
+        const isProfileComplete = studentProfile?.is_profile_complete ?? false;
+
+        // If profile is not complete, and we are NOT on the completion page, redirect there
+        if (!isProfileComplete && !isProfileCompletionRoute) {
+            router.replace('/complete-profile');
+            return;
         }
-        setLoading(false);
-        return;
-      }
 
-      // 2. If user exists, check for profile completion
-      const { data: studentProfile } = await supabase
-        .from('students')
-        .select('is_profile_complete')
-        .eq('id', user.id)
-        .single();
-        
-      const isProfileComplete = studentProfile?.is_profile_complete ?? false;
-
-      // 3. If profile is not complete, redirect to /complete-profile unless already there
-      if (!isProfileComplete) {
-        if (pathname !== '/complete-profile') {
-          router.replace('/complete-profile');
+        // If profile IS complete, and we are on a public or profile completion page, redirect to dashboard
+        if (isProfileComplete && (isPublicRoute || isProfileCompletionRoute)) {
+            router.replace('/dashboard');
+            return;
         }
-        setLoading(false);
-        return;
       }
 
-      // 4. If profile is complete, redirect to /dashboard if on /auth or /complete-profile
-      if (isProfileComplete && (pathname === '/auth' || pathname === '/complete-profile')) {
-        router.replace('/dashboard');
-        setLoading(false);
-        return;
-      }
-
-      // 5. If everything is fine, stop loading
+      // If none of the above conditions were met, stop loading and show the page
       setLoading(false);
     };
 
