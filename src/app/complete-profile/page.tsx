@@ -1,3 +1,4 @@
+
 'use client'
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -29,10 +30,14 @@ import {
 import { Calendar } from "@/components/ui/calendar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
-import { CalendarIcon } from "lucide-react"
+import { CalendarIcon, Loader2 } from "lucide-react"
 import { format } from "date-fns"
 import { updateProfile } from "./actions"
 import { Logo } from "@/components/logo"
+import { createClient } from "@/lib/supabase/client"
+import { useEffect, useState } from "react"
+import type { User } from "@supabase/supabase-js"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 
 // In a real app, this list would be more comprehensive
@@ -66,6 +71,30 @@ export type ProfileFormValues = z.infer<typeof profileFormSchema>
 
 
 export default function CompleteProfilePage() {
+    const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const supabase = createClient();
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const { data, error } = await supabase.auth.getUser();
+                if (error) {
+                    throw error;
+                }
+                setUser(data.user);
+            } catch (e: any) {
+                setError("Temporary issue fetching your data, please try again.");
+                console.error(e);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchUser();
+    }, [supabase]);
+
+
     const form = useForm<ProfileFormValues>({
         resolver: zodResolver(profileFormSchema),
         mode: "onChange",
@@ -82,19 +111,55 @@ export default function CompleteProfilePage() {
         await updateProfile(formData)
     }
 
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+        )
+    }
+    
+    if (error) {
+        return (
+            <div className="flex items-center justify-center h-screen">
+                 <Card className="w-full max-w-lg">
+                    <CardHeader>
+                        <CardTitle>Error</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p>{error}</p>
+                    </CardContent>
+                 </Card>
+            </div>
+        )
+    }
+
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-muted/40 p-4">
              <Card className="w-full max-w-lg shadow-2xl">
                 <CardHeader className="text-center">
                     <Logo className="justify-center" />
                     <CardTitle className="text-3xl font-bold font-headline">
-                        خطوة أخيرة!
+                        {user ? "User Profile" : "خطوة أخيرة!"}
                     </CardTitle>
                     <CardDescription>
-                        نحتاج بعض المعلومات الإضافية لإعداد حسابك.
+                        {user ? "Here is your information from Supabase." : "نحتاج بعض المعلومات الإضافية لإعداد حسابك."}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
+                    {user && (
+                        <div className="mb-8 flex flex-col items-center gap-4">
+                            <Avatar className="h-24 w-24">
+                                <AvatarImage src={user.user_metadata.avatar_url} alt={user.user_metadata.full_name || 'User'}/>
+                                <AvatarFallback>{(user.user_metadata.full_name || user.email || 'U').charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <div className="text-center">
+                                <p className="text-xl font-semibold">{user.user_metadata.full_name || 'Name not provided'}</p>
+                                <p className="text-muted-foreground">{user.email}</p>
+                            </div>
+                        </div>
+                    )}
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                             <FormField
@@ -218,3 +283,5 @@ export default function CompleteProfilePage() {
         </div>
     )
 }
+
+    
