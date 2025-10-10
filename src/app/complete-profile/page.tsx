@@ -79,14 +79,18 @@ export default function CompleteProfilePage() {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const { data, error } = await supabase.auth.getUser();
+                const { data: { session }, error } = await supabase.auth.getSession();
                 if (error) {
                     throw error;
                 }
-                setUser(data.user);
+                if (session) {
+                    setUser(session.user);
+                }
             } catch (e: any) {
-                setError("Temporary issue fetching your data, please try again.");
-                console.error(e);
+                if (e.name !== 'AuthSessionMissingError') {
+                    setError("Temporary issue fetching your data, please try again.");
+                    console.error(e);
+                }
             } finally {
                 setLoading(false);
             }
@@ -283,5 +287,3 @@ export default function CompleteProfilePage() {
         </div>
     )
 }
-
-    

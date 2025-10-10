@@ -1,6 +1,5 @@
-
-import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { createServerClient } from '@supabase/ssr'
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
@@ -17,50 +16,29 @@ export async function middleware(request: NextRequest) {
         get(name: string) {
           return request.cookies.get(name)?.value
         },
-        set(name: string, value: string, options: CookieOptions) {
-          // If the cookie is updated, update the request cookies and re-assign the
-          // response so that it has the updated cookies
-          request.cookies.set({
-            name,
-            value,
-            ...options,
-          })
+        set(name: string, value: string, options) {
+          request.cookies.set({ name, value, ...options })
           response = NextResponse.next({
             request: {
               headers: request.headers,
             },
           })
-          response.cookies.set({
-            name,
-            value,
-            ...options,
-          })
+          response.cookies.set({ name, value, ...options })
         },
-        remove(name: string, options: CookieOptions) {
-          // If the cookie is removed, update the request cookies and re-assign the
-          // response so that it has the updated cookies
-          request.cookies.set({
-            name,
-            value: '',
-            ...options,
-          })
+        remove(name: string, options) {
+          request.cookies.set({ name, value: '', ...options })
           response = NextResponse.next({
             request: {
               headers: request.headers,
             },
           })
-          response.cookies.set({
-            name,
-            value: '',
-            ...options,
-          })
+          response.cookies.set({ name, value: '', ...options })
         },
       },
     }
   )
 
-  // refreshing the session cookie
-  await supabase.auth.getUser()
+  await supabase.auth.getSession()
 
   return response
 }
