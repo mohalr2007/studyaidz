@@ -1,3 +1,4 @@
+
 "use server";
 
 import { revalidatePath } from "next/cache";
@@ -51,7 +52,12 @@ export async function signup(formData: FormData) {
 }
 
 
-export async function loginWithProvider(provider: Provider) {
+export async function loginWithProvider(formData: FormData) {
+  const provider = formData.get('provider') as Provider | null;
+  if (!provider) {
+    return redirect('/auth?error=No provider selected');
+  }
+
   const supabase = createClient();
   const origin = headers().get("origin");
 

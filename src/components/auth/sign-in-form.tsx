@@ -1,3 +1,4 @@
+
 import {
   CardHeader,
   CardTitle,
@@ -10,7 +11,7 @@ import { login, loginWithProvider } from '@/app/auth/actions';
 import { Github, KeyRound, Mail } from 'lucide-react';
 
 const GoogleIcon = () => (
-    <svg role="img" viewBox="0 0 24 24" className="h-4 w-4">
+    <svg role="img" viewBox="0 0 24 24" className="h-5 w-5">
       <path
         fill="currentColor"
         d="M12.48 10.92v3.28h7.84c-.24 1.84-.85 3.18-1.73 4.1-1.02 1.02-2.6 1.62-4.88 1.62-4.41 0-7.99-3.59-7.99-7.99s3.58-7.99 7.99-7.99c2.32 0 4.01.88 5.2 2.05l2.66-2.66C18.43 2.1 15.68 1 12.48 1 6.9 1 2.48 5.42 2.48 11s4.42 10 10 10c2.99 0 5.41-1 7.23-2.76 1.9-1.84 2.62-4.38 2.62-6.92 0-.6-.05-1.18-.16-1.72h-9.56z"
@@ -19,7 +20,7 @@ const GoogleIcon = () => (
 );
 
 const FacebookIcon = () => (
-    <svg role="img" viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor">
+    <svg role="img" viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
     </svg>
 );
@@ -62,18 +63,21 @@ export function SignInForm() {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-2">
-                    <form action={loginWithProvider.bind(null, 'google')}>
+                <div className="grid grid-cols-3 gap-3">
+                    <form action={loginWithProvider}>
+                        <input type="hidden" name="provider" value="google" />
                         <Button variant="outline" type="submit" className="w-full">
                             <GoogleIcon />
                         </Button>
                     </form>
-                    <form action={loginWithProvider.bind(null, 'github')}>
+                    <form action={loginWithProvider}>
+                         <input type="hidden" name="provider" value="github" />
                         <Button variant="outline" type="submit" className="w-full">
-                            <Github />
+                            <Github className="h-5 w-5" />
                         </Button>
                     </form>
-                    <form action={loginWithProvider.bind(null, 'facebook')}>
+                    <form action={loginWithProvider}>
+                        <input type="hidden" name="provider" value="facebook" />
                         <Button variant="outline" type="submit" className="w-full">
                             <FacebookIcon />
                         </Button>
