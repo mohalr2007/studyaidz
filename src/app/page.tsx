@@ -100,15 +100,21 @@ export default function AuthPage() {
                   </div>
 
                   <div className="grid grid-cols-3 gap-2">
-                    <Button variant="outline" onClick={() => loginWithProvider('google')}>
-                      <GoogleIcon />
-                    </Button>
-                    <Button variant="outline" onClick={() => loginWithProvider('github')}>
-                      <Github />
-                    </Button>
-                     <Button variant="outline" onClick={() => loginWithProvider('facebook')}>
-                      <FacebookIcon />
-                    </Button>
+                    <form action={() => loginWithProvider('google')}>
+                        <Button variant="outline" type="submit" className="w-full">
+                            <GoogleIcon />
+                        </Button>
+                    </form>
+                    <form action={() => loginWithProvider('github')}>
+                        <Button variant="outline" type="submit" className="w-full">
+                            <Github />
+                        </Button>
+                    </form>
+                    <form action={() => loginWithProvider('facebook')}>
+                        <Button variant="outline" type="submit" className="w-full">
+                            <FacebookIcon />
+                        </Button>
+                    </form>
                   </div>
 
                   <p className="mt-4 text-center text-sm text-muted-foreground">
@@ -143,7 +149,7 @@ export default function AuthPage() {
                           <Input id="email-signup" name="email" type="email" placeholder="البريد الإلكتروني" required className="pl-10" />
                       </div>
                       <div className="relative">
-                          <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                          <KeyRound className="absolute left-3 top-1-2 -translate-y-1-2 h-5 w-5 text-muted-foreground" />
                           <Input id="password-signup" name="password" type="password" placeholder="كلمة المرور (6 أحرف على الأقل)" required className="pl-10" />
                       </div>
                       <Button type="submit" className="w-full font-bold">

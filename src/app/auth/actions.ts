@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { type Provider } from '@supabase/supabase-js'
+import { headers } from "next/headers";
 
 export async function login(formData: FormData) {
   const supabase = createClient();
@@ -52,10 +53,12 @@ export async function signup(formData: FormData) {
 
 export async function loginWithProvider(provider: Provider) {
   const supabase = createClient();
+  const origin = headers().get("origin");
+
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: `${location.origin}/auth/callback`,
+      redirectTo: `${origin}/auth/callback`,
     },
   });
 
