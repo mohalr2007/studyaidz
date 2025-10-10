@@ -4,6 +4,9 @@ import { AppHeader } from '@/components/layout/app-header';
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import AuthGuard from '@/components/auth/auth-guard';
 
+// This forces the layout to be dynamic, preventing static rendering errors during build.
+export const dynamic = 'force-dynamic';
+
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <AuthGuard>

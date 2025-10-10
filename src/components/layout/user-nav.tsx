@@ -1,6 +1,3 @@
-
-'use server'
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -21,6 +18,7 @@ export async function UserNav() {
   const { data: student } = await supabase.from('students').select('full_name, username').eq('id', user?.id || '').single()
 
   const getInitials = (name: string) => {
+    if (!name) return 'U';
     return name.split(' ').map(n => n[0]).join('').toUpperCase()
   }
 
