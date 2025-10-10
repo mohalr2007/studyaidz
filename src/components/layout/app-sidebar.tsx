@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import Link from 'next/link';
@@ -18,8 +19,6 @@ import { UserNav } from './user-nav';
 
 export function AppSidebar() {
   const pathname = usePathname();
-  // TODO: Replace with Supabase user logic
-  const user = null; 
 
   return (
     <Sidebar side="right">
@@ -44,7 +43,7 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
-        {/* {user && <UserNav user={user} />} */}
+        <UserNav />
       </SidebarFooter>
     </Sidebar>
   );
