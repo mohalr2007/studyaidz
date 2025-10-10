@@ -4,7 +4,6 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { Github, KeyRound, Mail, User } from 'lucide-react';
-
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -20,7 +19,7 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Logo } from '@/components/logo';
 import { cn } from '@/lib/utils';
 import { AnimatePresence, motion } from 'framer-motion';
-import { redirect } from 'next/navigation';
+import { login, signup, loginWithProvider } from './auth/actions';
 
 const GoogleIcon = () => (
     <svg role="img" viewBox="0 0 24 24" className="h-4 w-4">
@@ -42,25 +41,6 @@ type AuthStep = 'signIn' | 'signUp';
 export default function AuthPage() {
   const [authStep, setAuthStep] = useState<AuthStep>('signIn');
   const loginHeroImage = PlaceHolderImages.find((p) => p.id === 'login-hero');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  const handleSignIn = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    // TODO: Implement Supabase email/password sign-in logic
-    // For now, simulate a successful login
-    setIsAuthenticated(true);
-  };
-
-  const handleSocialSignIn = async (provider: 'google' | 'github' | 'facebook') => {
-    // TODO: Implement Supabase social sign-in logic
-    // For now, simulate a successful login
-    setIsAuthenticated(true);
-  };
-
-  if (isAuthenticated) {
-    redirect('/dashboard');
-  }
-
 
   return (
     <div className="relative min-h-screen w-full">
@@ -94,7 +74,7 @@ export default function AuthPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4">
-                  <form onSubmit={handleSignIn} className="grid gap-4">
+                  <form action={login} className="grid gap-4">
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                       <Input id="email" name="email" type="email" placeholder="البريد الإلكتروني" required className="pl-10" />
@@ -120,13 +100,13 @@ export default function AuthPage() {
                   </div>
 
                   <div className="grid grid-cols-3 gap-2">
-                    <Button variant="outline" onClick={() => handleSocialSignIn('google')}>
+                    <Button variant="outline" onClick={() => loginWithProvider('google')}>
                       <GoogleIcon />
                     </Button>
-                    <Button variant="outline" onClick={() => handleSocialSignIn('github')}>
+                    <Button variant="outline" onClick={() => loginWithProvider('github')}>
                       <Github />
                     </Button>
-                     <Button variant="outline" onClick={() => handleSocialSignIn('facebook')}>
+                     <Button variant="outline" onClick={() => loginWithProvider('facebook')}>
                       <FacebookIcon />
                     </Button>
                   </div>
@@ -157,10 +137,19 @@ export default function AuthPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4">
-                  {/* The multi-step sign-up form will go here in the next step */}
-                  <div className="text-center py-8 text-muted-foreground">
-                    <p>سيتم بناء نموذج التسجيل هنا.</p>
-                  </div>
+                  <form action={signup} className="grid gap-4">
+                      <div className="relative">
+                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                          <Input id="email-signup" name="email" type="email" placeholder="البريد الإلكتروني" required className="pl-10" />
+                      </div>
+                      <div className="relative">
+                          <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                          <Input id="password-signup" name="password" type="password" placeholder="كلمة المرور (6 أحرف على الأقل)" required className="pl-10" />
+                      </div>
+                      <Button type="submit" className="w-full font-bold">
+                          إنشاء حساب
+                      </Button>
+                  </form>
 
                   <p className="mt-4 text-center text-sm text-muted-foreground">
                     لديك حساب بالفعل؟{' '}

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
@@ -28,7 +29,7 @@ export default function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   // TODO: Replace with Supabase user logic
-  const user = null;
+  const user = { name: 'User', photoURL: null };
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const {
