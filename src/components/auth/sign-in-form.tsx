@@ -63,17 +63,17 @@ export function SignInForm() {
                 </div>
 
                 <div className="grid grid-cols-3 gap-2">
-                    <form action={() => loginWithProvider('google')}>
+                    <form action={loginWithProvider.bind(null, 'google')}>
                         <Button variant="outline" type="submit" className="w-full">
                             <GoogleIcon />
                         </Button>
                     </form>
-                    <form action={() => loginWithProvider('github')}>
+                    <form action={loginWithProvider.bind(null, 'github')}>
                         <Button variant="outline" type="submit" className="w-full">
                             <Github />
                         </Button>
                     </form>
-                    <form action={() => loginWithProvider('facebook')}>
+                    <form action={loginWithProvider.bind(null, 'facebook')}>
                         <Button variant="outline" type="submit" className="w-full">
                             <FacebookIcon />
                         </Button>

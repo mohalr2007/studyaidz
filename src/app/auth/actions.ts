@@ -19,7 +19,7 @@ export async function login(formData: FormData) {
   if (error) {
     // TODO: Add better error handling and display to user
     console.error("Login Error:", error.message);
-    redirect("/?error=Could not authenticate user");
+    redirect("/auth?error=Could not authenticate user");
   }
 
   revalidatePath("/", "layout");
@@ -39,9 +39,9 @@ export async function signup(formData: FormData) {
   if (error) {
     console.error("Signup Error:", error.message);
     if (error.message.includes('Password should be at least 6 characters')) {
-      return redirect('/?error=Password should be at least 6 characters');
+      return redirect('/auth?error=Password should be at least 6 characters');
     }
-    return redirect("/?error=Could not authenticate user");
+    return redirect("/auth?error=Could not authenticate user");
   }
 
   // A new user is created, but their profile is not.
@@ -64,7 +64,7 @@ export async function loginWithProvider(provider: Provider) {
 
   if (error) {
     console.error('OAuth Error:', error);
-    return redirect('/?error=Could not authenticate with provider');
+    return redirect('/auth?error=Could not authenticate with provider');
   }
 
   return redirect(data.url);
