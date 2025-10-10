@@ -3,6 +3,7 @@ import Image from 'next/image';
 import {
   Card,
   CardContent,
+  CardFooter,
 } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Logo } from '@/components/logo';
@@ -10,16 +11,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SignInForm } from '@/components/auth/sign-in-form';
 import { SignUpForm } from '@/components/auth/sign-up-form';
 import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 
 export default async function AuthPage() {
   const supabase = createClient();
   const { data: { session }} = await supabase.auth.getSession();
-
-  if (session) {
-    redirect('/dashboard');
-  }
 
   const loginHeroImage = PlaceHolderImages.find((p) => p.id === 'login-hero');
 
@@ -53,8 +51,22 @@ export default async function AuthPage() {
                     </TabsContent>
                 </Tabs>
             </CardContent>
+            {session && (
+                 <CardFooter className="flex flex-col gap-2 bg-muted/50 p-4">
+                    <p className="text-sm text-muted-foreground">Navigation temporaire</p>
+                    <div className="flex gap-2 w-full">
+                        <Button asChild variant="outline" className="w-full">
+                            <Link href="/complete-profile">Page d'infos</Link>
+                        </Button>
+                        <Button asChild variant="outline" className="w-full">
+                            <Link href="/dashboard">Dashboard</Link>
+                        </Button>
+                    </div>
+                </CardFooter>
+            )}
         </Card>
       </div>
     </div>
   );
 }
+
