@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -12,99 +13,70 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const supabase = createClient();
   const router = useRouter();
   const pathname = usePathname();
-  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function checkUser() {
+    const checkSessionAndProfile = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        setLoading(false);
+      const user = session?.user;
+
+      // 1. If no user, redirect to /auth unless already there
+      if (!user) {
         if (pathname !== '/auth') {
-            router.replace('/auth');
+          router.replace('/auth');
         }
+        setLoading(false);
         return;
       }
 
-      const currentUser = session.user;
-      setUser(currentUser);
-
-      // Check if profile is complete
-      const { data: studentProfile, error } = await supabase
+      // 2. If user exists, check for profile completion
+      const { data: studentProfile } = await supabase
         .from('students')
         .select('is_profile_complete')
-        .eq('id', currentUser.id)
+        .eq('id', user.id)
         .single();
         
-      // If there's an error (other than no row found), or if the profile doesn't exist,
-      // assume the profile is not complete and redirect to the completion page.
-      // After adding RLS policies, the main error would be the profile not existing yet.
       const isProfileComplete = studentProfile?.is_profile_complete ?? false;
 
-      if (error && error.code !== 'PGRST116') { // PGRST116: row not found
-        // This case is now less likely with RLS, but as a fallback, we go to complete profile.
-         if (pathname !== '/complete-profile') {
-            router.replace('/complete-profile');
-         }
-         setLoading(false);
-         return;
-      }
-
+      // 3. If profile is not complete, redirect to /complete-profile unless already there
       if (!isProfileComplete) {
-         if (pathname !== '/complete-profile') {
-            router.replace('/complete-profile');
-         }
-      } else {
-         if (pathname === '/complete-profile' || pathname === '/auth') {
-            router.replace('/dashboard');
-         }
+        if (pathname !== '/complete-profile') {
+          router.replace('/complete-profile');
+        }
+        setLoading(false);
+        return;
       }
-      setLoading(false);
-    }
 
-    checkUser();
+      // 4. If profile is complete, redirect to /dashboard if on /auth or /complete-profile
+      if (isProfileComplete && (pathname === '/auth' || pathname === '/complete-profile')) {
+        router.replace('/dashboard');
+        setLoading(false);
+        return;
+      }
+
+      // 5. If everything is fine, stop loading
+      setLoading(false);
+    };
+
+    checkSessionAndProfile();
 
     const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-        const currentUser = session?.user ?? null;
-        setUser(currentUser);
-        if (!currentUser && pathname !== '/auth') {
-            router.replace('/auth');
-        }
+      // Re-run the check whenever the auth state changes
+      checkSessionAndProfile();
     });
 
     return () => {
-        authListener.subscription.unsubscribe();
+      authListener.subscription.unsubscribe();
     };
-  }, [router, supabase, pathname]);
+  }, [pathname, router, supabase]);
 
   if (loading) {
     return (
-        <div className="flex items-center justify-center h-screen">
-            <p>Loading...</p>
-        </div>
+      <div className="flex items-center justify-center h-screen">
+        <p>Loading...</p>
+      </div>
     );
   }
 
-  // If there's no user and we are on the auth page, show the auth page.
-  if (!user && pathname === '/auth') {
-    return <>{children}</>;
-  }
-
-  // If there is a user and the profile is not complete, show the complete-profile page
-  if (user && pathname === '/complete-profile') {
-      return <>{children}</>;
-  }
-
-  // If there is a user and the profile is complete, show the protected content.
-  if (user && pathname !== '/auth' && pathname !== '/complete-profile') {
-    return <>{children}</>;
-  }
-
-  // Otherwise, we are likely still loading or in a redirect state.
-  return (
-    <div className="flex items-center justify-center h-screen">
-        <p>Loading...</p>
-    </div>
-  );
+  return <>{children}</>;
 }
