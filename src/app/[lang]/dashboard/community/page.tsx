@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -10,6 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 import { formatDistanceToNow } from 'date-fns';
 import { ar } from 'date-fns/locale';
 import type { Database } from '@/types/supabase';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type Student = Database['public']['Tables']['students']['Row'];
 type Post = Database['public']['Tables']['posts']['Row'];
@@ -52,9 +52,30 @@ export default function CommunityPage() {
 
     if (loading) {
         return (
-            <div className="text-center p-10">
-                <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-                <p className="mt-4 text-muted-foreground">جاري تحميل المنشورات...</p>
+            <div className="container mx-auto p-4 max-w-3xl space-y-6">
+                 <div className="flex justify-between items-center mb-6">
+                    <Skeleton className="h-9 w-48" />
+                    <Skeleton className="h-10 w-32" />
+                </div>
+                <Card>
+                    <CardHeader>
+                        <div className="flex items-center gap-3">
+                            <Skeleton className="h-10 w-10 rounded-full" />
+                            <div>
+                                <Skeleton className="h-4 w-32" />
+                                <Skeleton className="h-3 w-24 mt-1" />
+                            </div>
+                        </div>
+                    </CardHeader>
+                    <CardContent>
+                        <Skeleton className="h-5 w-3/4" />
+                         <Skeleton className="h-4 w-full mt-2" />
+                         <Skeleton className="h-4 w-1/2 mt-2" />
+                    </CardContent>
+                    <CardFooter className="bg-muted/50 p-3">
+                        <Skeleton className="h-8 w-full" />
+                    </CardFooter>
+                </Card>
             </div>
         );
     }
