@@ -26,9 +26,9 @@ export async function login(formData: FormData) {
   }
 
   // After a successful login, the callback logic will handle redirection.
-  // We revalidate and redirect to the callback handler.
+  // We revalidate and redirect to the callback handler, passing the lang.
   revalidatePath("/", "layout");
-  return redirect(`/${lang}/auth/callback`);
+  return redirect(`/${lang}/auth/callback?lang=${lang}`);
 }
 
 export async function signup(formData: FormData) {
@@ -41,7 +41,13 @@ export async function signup(formData: FormData) {
     password: formData.get("password") as string,
   };
 
-  const { error } = await supabase.auth.signUp(data);
+  // We need to include the callback URL for email confirmation
+  const { error } = await supabase.auth.signUp({
+      ...data,
+      options: {
+          emailRedirectTo: `${origin}/${lang}/auth/callback?lang=${lang}`
+      }
+  });
 
   if (error) {
     console.error("Signup Error:", error.message);
@@ -50,12 +56,9 @@ export async function signup(formData: FormData) {
     }
     return redirect(`/${lang}/?error=Could not authenticate user`);
   }
-
-  // After signup, the user still needs to confirm their email,
-  // but we immediately direct them to complete their profile.
-  // The session will be available upon the next login or after email confirmation callback.
+  
+  // After signup, we immediately direct them to complete their profile.
   revalidatePath("/", "layout");
-  // AI: Redirect to the absolute URL for the complete-profile page to avoid 404 errors.
   return redirect(`${origin}/complete-profile`);
 }
 
@@ -77,7 +80,7 @@ export async function loginWithProvider(formData: FormData) {
     return redirect(`/${lang}/?error=Configuration error with authentication provider`);
   }
 
-  // AI FIX: The redirectTo URL must include the locale to work with the i18n setup.
+  // The redirectTo URL must include the locale to work with the i18n setup.
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {

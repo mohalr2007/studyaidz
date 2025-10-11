@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
   // The lang is now in the URL, but we still have a fallback just in case.
-  const lang = await getLocale().catch(() => 'ar');
+  const lang = searchParams.get('lang') || await getLocale().catch(() => 'ar');
   
   const supabase = createClient();
   let session;
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
     }
     session = data.session;
   } else {
-    // For password-based login, session is already in cookies
+    // For password-based login, session is already in cookies, we just need to retrieve it
     const { data } = await supabase.auth.getSession();
     session = data.session;
   }
@@ -48,6 +48,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(`${origin}/complete-profile`);
   }
 
-  // If no user session, redirect to home with an error
+  // Fallback: If no user session for any reason, redirect to home with an error
+  console.warn("Callback handled but no session found, redirecting to login.");
   return NextResponse.redirect(`${origin}/${lang}/?error=Could not process authentication`);
 }
