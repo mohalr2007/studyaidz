@@ -7,14 +7,14 @@ import { revalidatePath } from 'next/cache';
 
 export async function completeUserProfile(formData: FormData) {
   const supabase = createClient();
-  const lang = formData.get('lang') || 'ar';
+  const lang = 'ar';
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return redirect(`/${lang}/?error=User not found`);
+    return redirect(`/?error=User not found`);
   }
 
   const userData = {
@@ -33,9 +33,9 @@ export async function completeUserProfile(formData: FormData) {
 
   if (error) {
     console.error('Error updating profile:', error);
-    return redirect(`/${lang}/complete-profile?error=${error.message}`);
+    return redirect(`/complete-profile?error=${error.message}`);
   }
 
   revalidatePath('/', 'layout');
-  redirect(`/${lang}/dashboard`);
+  redirect(`/dashboard`);
 }

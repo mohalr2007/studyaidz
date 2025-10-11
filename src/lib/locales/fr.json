@@ -1,10 +1,2 @@
 
-{
-    "login": {
-        "welcome": "Bienvenue sur StudyAI DZ",
-        "description": "Votre passerelle intelligente vers la réussite scolaire. Connectez-vous et commencez votre parcours.",
-        "signInWithGoogle": "Se connecter avec Google",
-        "checkingAuth": "Vérification de la connexion...",
-        "redirecting": "Redirection en cours..."
-    }
-}
+    

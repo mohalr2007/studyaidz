@@ -22,7 +22,7 @@ export const NAV_LINKS: NavLink[] = [
     icon: LayoutDashboard,
   },
   {
-    href: '/dashboard/profile',
+    href: '/profile',
     label: 'الملف الشخصي',
     icon: User,
   },

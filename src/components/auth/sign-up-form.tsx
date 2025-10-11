@@ -9,10 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { signup } from '@/app/auth/actions';
 import { KeyRound, Mail } from 'lucide-react';
-import { useParams } from 'next/navigation';
 
 export function SignUpForm() {
-    const params = useParams();
     return (
         <>
             <CardHeader className="text-center">
@@ -25,7 +23,7 @@ export function SignUpForm() {
             </CardHeader>
             <CardContent className="grid gap-4">
                 <form action={signup} className="grid gap-4">
-                    <input type="hidden" name="lang" value={params.lang} />
+                    <input type="hidden" name="lang" value="ar" />
                     <div className="relative">
                         <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                         <Input id="email-signup" name="email" type="email" placeholder="البريد الإلكتروني" required className="pl-10" />
