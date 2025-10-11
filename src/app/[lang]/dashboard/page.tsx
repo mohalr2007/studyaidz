@@ -69,7 +69,8 @@ const RecentActivityPlaceholder = () => (
   </Card>
 );
 
-export default function DashboardPage({ params: { lang } }: { params: { lang: Locale } }) {
+export default function DashboardPage({ params }: { params: { lang: Locale } }) {
+  const { lang } = params;
   const { student, loading } = useUser();
 
   const welcomeMessage = student?.full_name
