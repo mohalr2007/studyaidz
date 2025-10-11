@@ -45,7 +45,7 @@ const NavItem = ({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
+                  transition={{ duration: 0.1 }}
                   className="truncate"
                 >
                   {link.label}
@@ -76,7 +76,7 @@ export function AppSidebar({ userNav }: { userNav: ReactNode }) {
     <motion.div
       initial={false}
       animate={{ width: isExpanded ? 240 : 80 }}
-      transition={{ type: 'spring', stiffness: 700, damping: 40 }}
+      transition={{ type: 'spring', stiffness: 1000, damping: 50 }}
       className={cn(
         'hidden md:flex flex-col justify-between border-e p-3 bg-card',
         isExpanded ? 'items-start' : 'items-center'
