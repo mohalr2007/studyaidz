@@ -1,7 +1,6 @@
 
 'use client';
 
-// AI FIX: Converted to a client component to prevent server render-blocking and improve stability.
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -17,9 +16,12 @@ import { logout } from "@/app/auth/actions"
 import Link from "next/link"
 import { useUser } from "@/hooks/use-user";
 import { Edit, LogOut, Settings } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export function UserNav() {
   const { user, student, loading } = useUser();
+  const pathname = usePathname();
+  const lang = pathname.split('/')[1] || 'ar';
 
   const getInitials = (name: string | null | undefined) => {
     if (!name) return 'U';
@@ -61,7 +63,7 @@ export function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link href="/profile">
+            <Link href={`/${lang}/profile`}>
               <Edit className="me-2" />
               <span>الملف الشخصي</span>
             </Link>

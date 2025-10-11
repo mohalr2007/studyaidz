@@ -14,6 +14,7 @@ export type NavLink = {
   icon: LucideIcon;
 };
 
+// Note: Hrefs should not include the locale prefix
 export const NAV_LINKS: NavLink[] = [
   {
     href: '/dashboard',

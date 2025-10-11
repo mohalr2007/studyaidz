@@ -1,8 +1,8 @@
-
 "use client"
 
 import * as React from "react"
 import { Languages } from "lucide-react"
+import { usePathname, useRouter } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -11,19 +11,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { usePathname, useRouter } from "next/navigation"
 
 export function LanguageToggle() {
-  const router = useRouter();
-  const pathname = usePathname();
+  const router = useRouter()
+  const pathname = usePathname()
 
-  const switchLanguage = (lang: 'en' | 'fr' | 'ar') => {
-    // In a real app, you would use a library like 'next-international'
-    // or 'next-i18next' to change the locale. For now, we use search params.
-    const currentUrl = new URL(window.location.href);
-    currentUrl.searchParams.set('lang', lang);
-    router.replace(currentUrl.toString());
-  };
+  const switchLanguage = (lang: 'ar' | 'en' | 'fr') => {
+    if (!pathname) return
+    // remove the current locale from the pathname
+    const newPath = pathname.split('/').slice(2).join('/');
+    router.replace(`/${lang}/${newPath}`)
+  }
 
   return (
     <DropdownMenu>
@@ -34,14 +32,14 @@ export function LanguageToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => switchLanguage('ar')}>
+          العربية
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={() => switchLanguage('en')}>
           English
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => switchLanguage('fr')}>
           Français
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => switchLanguage('ar')}>
-          العربية
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

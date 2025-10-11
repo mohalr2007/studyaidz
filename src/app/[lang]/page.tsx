@@ -8,29 +8,14 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { SignInForm } from '@/components/auth/sign-in-form';
 
 
-export default async function AuthPage() {
-  const supabase = createClient();
-  const { data: { session }} = await supabase.auth.getSession();
+export default async function AuthPage({ params }: { params: { lang: string } }) {
 
   const loginHeroImage = PlaceHolderImages.find((p) => p.id === 'login-hero');
-
-  // I am disabling the automatic redirects to allow manual testing with buttons.
-  // if (session) {
-  //   const { data: student } = await supabase.from('students').select('is_profile_complete').eq('id', session.user.id).single();
-  //   if (student && student.is_profile_complete) {
-  //       redirect('/dashboard');
-  //   } else if (student && !student.is_profile_complete) {
-  //       redirect('/complete-profile');
-  //   }
-  // }
-
 
   return (
     <div className="relative min-h-screen w-full">
@@ -54,10 +39,10 @@ export default async function AuthPage() {
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
               <Button asChild>
-                <Link href="/dashboard">Aller au Tableau de Bord</Link>
+                <Link href={`/${params.lang}/dashboard`}>Aller au Tableau de Bord</Link>
               </Button>
               <Button asChild variant="outline">
-                <Link href="/profile">Aller au Profil</Link>
+                <Link href={`/${params.lang}/profile`}>Aller au Profil</Link>
               </Button>
                <SignInForm />
           </CardContent>

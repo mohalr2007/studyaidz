@@ -18,7 +18,10 @@ import { LanguageToggle } from './language-toggle';
 
 export function AppHeader() {
   const pathname = usePathname();
-  const currentLink = NAV_LINKS.find((link) => pathname.startsWith(link.href));
+  // remove the locale from the path
+  const currentPath = pathname.split('/').slice(2).join('/');
+  const currentLink = NAV_LINKS.find((link) => link.href.substring(1) === currentPath);
+  const lang = pathname.split('/')[1];
 
   return (
     <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
@@ -30,7 +33,7 @@ export function AppHeader() {
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link href="/dashboard">StudyAI DZ</Link>
+                <Link href={`/${lang}/dashboard`}>StudyAI DZ</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
             {currentLink && (
