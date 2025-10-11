@@ -1,13 +1,16 @@
+// AI FIX: Converted to a client component to avoid server-side rendering errors when fetching user data.
+'use client';
 
-// Added by AI - Dashboard page
-import { createClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/client';
+import { useUser } from '@/hooks/use-user';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Sparkles, MessageSquare, Edit } from 'lucide-react';
+import { Sparkles, MessageSquare, Edit, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { logout } from '@/app/auth/actions';
+import { Skeleton } from '@/components/ui/skeleton';
 
-// Added by AI - Placeholder for a future ChatAssistant component
+// Placeholder for a future ChatAssistant component
 const ChatAssistantPlaceholder = () => (
     <Card className="bg-primary/5 border-primary/20">
         <CardHeader>
@@ -24,16 +27,18 @@ const ChatAssistantPlaceholder = () => (
                 <div className="p-4 bg-background/50 rounded-lg text-sm text-muted-foreground">
                     ... سيتم عرض واجهة الدردشة هنا ...
                 </div>
-                <Button variant="ghost" className="self-start">
-                    <MessageSquare className="me-2" />
-                    ابدأ محادثة جديدة
+                 <Button variant="outline" className="self-start" asChild>
+                    <Link href="/chat">
+                        <MessageSquare className="me-2" />
+                        ابدأ محادثة جديدة
+                    </Link>
                 </Button>
             </div>
         </CardContent>
     </Card>
 );
 
-// Added by AI - Placeholder for a future data display component
+// Placeholder for displaying recent user actions
 const RecentActivityPlaceholder = () => (
      <Card>
         <CardHeader>
@@ -53,12 +58,29 @@ const RecentActivityPlaceholder = () => (
 );
 
 
-export default async function DashboardPage() {
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  const { data: student } = await supabase.from('students').select('full_name').eq('id', user?.id || '').single();
+export default function DashboardPage() {
+  const { student, loading } = useUser();
   
   const welcomeMessage = student?.full_name ? `مرحباً بعودتك، ${student.full_name}!` : "مرحباً بعودتك!";
+
+  if (loading) {
+      return (
+          <div className="grid gap-6">
+              <div className="space-y-2">
+                  <Skeleton className="h-9 w-1/2" />
+                  <Skeleton className="h-5 w-3/4" />
+              </div>
+              <div className="flex items-center gap-4">
+                  <Skeleton className="h-10 w-36" />
+                  <Skeleton className="h-10 w-28" />
+              </div>
+              <div className="grid lg:grid-cols-2 gap-6">
+                  <Skeleton className="h-64" />
+                  <Skeleton className="h-64" />
+              </div>
+          </div>
+      )
+  }
 
   return (
     <div className="grid gap-6">
@@ -77,16 +99,16 @@ export default async function DashboardPage() {
                 </Link>
             </Button>
             <form action={logout}>
-                <Button variant="outline" type="submit">تسجيل الخروج</Button>
+                <Button variant="outline" type="submit">
+                    <LogOut className="me-2" />
+                    تسجيل الخروج
+                </Button>
             </form>
        </div>
 
 
       <div className="grid lg:grid-cols-2 gap-6">
-        {/* Placeholder for future AI Assistant integration */}
         <ChatAssistantPlaceholder />
-
-        {/* Placeholder for displaying recent user actions */}
         <RecentActivityPlaceholder />
       </div>
     </div>

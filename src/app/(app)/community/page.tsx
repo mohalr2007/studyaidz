@@ -1,39 +1,69 @@
+// AI FIX: Converted to a client component to safely handle data fetching and user interactions.
+'use client';
 
-
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ArrowUp, ArrowDown, MessageSquare } from "lucide-react";
-import Image from "next/image";
-import { createClient } from "@/lib/supabase/server";
+import { ArrowUp, ArrowDown, MessageSquare, Loader2 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 import { formatDistanceToNow } from 'date-fns';
 import { ar } from 'date-fns/locale';
 
-export const dynamic = 'force-dynamic';
+// Define a more specific type for posts with author info
+type PostWithAuthor = {
+    id: number;
+    created_at: string;
+    title: string;
+    content: string;
+    upvotes: number;
+    downvotes: number;
+    author: {
+        full_name: string | null;
+        username: string | null;
+    } | null;
+};
 
-export default async function CommunityPage() {
-    const supabase = createClient();
-    
-    // Fetch posts and join with student data to get author info
-    const { data: posts, error } = await supabase
-        .from('posts')
-        .select(`
-            *,
-            author:students(full_name, username)
-        `)
-        .order('created_at', { ascending: false });
 
-    if (error) {
-        console.error("Error fetching posts:", error);
-        // Handle error display if necessary
-    }
+export default function CommunityPage() {
+    const [posts, setPosts] = useState<PostWithAuthor[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchPosts = async () => {
+            const supabase = createClient();
+            const { data, error } = await supabase
+                .from('posts')
+                .select(`
+                    *,
+                    author:students(full_name, username)
+                `)
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error("Error fetching posts:", error);
+            } else {
+                setPosts(data as PostWithAuthor[]);
+            }
+            setLoading(false);
+        };
+
+        fetchPosts();
+    }, []);
     
-    // Fetch user avatars (in a real app, this might be stored with the user profile)
-    // For now, we'll generate initials.
     const getInitials = (name: string | undefined | null) => {
         if (!name) return 'U';
         return name.split(' ').map(n => n[0]).join('').toUpperCase();
     };
+
+    if (loading) {
+        return (
+            <div className="container mx-auto p-4 text-center">
+                <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
+                <p className="mt-4 text-muted-foreground">جاري تحميل المنشورات...</p>
+            </div>
+        );
+    }
 
     return (
         <div className="container mx-auto p-4">
@@ -48,10 +78,6 @@ export default async function CommunityPage() {
 
                     return (
                         <Card key={post.id} className="overflow-hidden">
-                            {/* In a real app, post images would be stored and retrieved */}
-                            {/* <div className="w-full h-48 relative">
-                                <Image src={"/placeholder.svg"} alt={"Post image"} layout="fill" objectFit="cover" />
-                            </div> */}
                             <CardHeader>
                                 <div className="flex items-center gap-3">
                                     <Avatar>
@@ -81,7 +107,6 @@ export default async function CommunityPage() {
                                 </div>
                                 <Button variant="ghost" size="sm" className="flex items-center gap-2">
                                     <MessageSquare className="h-4 w-4" />
-                                    {/* In a real app, you would fetch comments count */}
                                     <span>0 تعليقات</span>
                                 </Button>
                             </CardFooter>
