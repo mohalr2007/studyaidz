@@ -11,6 +11,7 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { SignInForm } from '@/components/auth/sign-in-form';
+import { ThemeToggle } from '@/components/layout/theme-toggle';
 
 
 export default async function AuthPage() {
@@ -30,7 +31,10 @@ export default async function AuthPage() {
         />
       )}
       <div className="relative z-10 flex min-h-screen items-center justify-center bg-background/50 backdrop-blur-sm p-4">
-        <Card className="w-full max-w-sm">
+        <Card className="w-full max-w-sm relative">
+           <div className="absolute top-4 right-4">
+            <ThemeToggle />
+          </div>
           <CardHeader>
             <CardTitle>Page de navigation</CardTitle>
             <CardDescription>
