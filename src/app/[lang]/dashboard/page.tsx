@@ -69,7 +69,7 @@ const RecentActivityPlaceholder = () => (
   </Card>
 );
 
-export default function DashboardPage({ params }: { params: { lang: Locale } }) {
+function DashboardClientPage({ lang }: { lang: Locale }) {
   const { student, loading } = useUser();
 
   const welcomeMessage = student?.full_name
@@ -109,9 +109,13 @@ export default function DashboardPage({ params }: { params: { lang: Locale } }) 
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        <ChatAssistantPlaceholder lang={params.lang} />
+        <ChatAssistantPlaceholder lang={lang} />
         <RecentActivityPlaceholder />
       </div>
     </div>
   );
+}
+
+export default function DashboardPage({ params }: { params: { lang: Locale } }) {
+    return <DashboardClientPage lang={params.lang} />;
 }
