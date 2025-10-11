@@ -41,7 +41,7 @@ export default function CommunityPage() {
 
             if (error) {
                 console.error("Error fetching posts:", error);
-            } else {
+            } else if (data) { // AI FIX: Ensure data is not null before setting state.
                 setPosts(data as PostWithAuthor[]);
             }
             setLoading(false);
