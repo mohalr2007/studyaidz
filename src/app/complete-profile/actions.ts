@@ -15,6 +15,7 @@ export async function completeUserProfile(formData: FormData) {
   } = await supabase.auth.getUser();
 
   if (!user) {
+    // This should ideally not happen if the user is on this page
     return redirect(`/${lang}/?error=User not found`);
   }
 
@@ -28,15 +29,19 @@ export async function completeUserProfile(formData: FormData) {
     is_profile_complete: true,
   };
   
-  // Upsert the student profile
+  // Upsert the student profile. 'upsert' will create the row if it doesn't exist (e.g., social login),
+  // or update it if it does (e.g., email signup where the row might be partially created).
   const { error } = await supabase.from('students').upsert(userData);
 
 
   if (error) {
-    console.error('Error updating profile:', error);
-    return redirect(`/complete-profile?error=${error.message}`);
+    console.error('Error completing profile:', error);
+    // Redirect back to the form with a specific error message
+    return redirect(`/complete-profile?error=${encodeURIComponent(error.message)}`);
   }
 
+  // Revalidate user-related data across the app
   revalidatePath('/', 'layout');
+  // Redirect to the dashboard in their selected language
   redirect(`/${lang}/dashboard`);
 }

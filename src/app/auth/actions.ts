@@ -25,8 +25,11 @@ export async function login(formData: FormData) {
     return redirect(`/${lang}/?error=Could not authenticate user`);
   }
 
+  // After a successful login, the callback logic will handle redirection.
+  // We revalidate and redirect to the callback handler.
   revalidatePath("/", "layout");
-  return redirect(`/${lang}/dashboard`);
+  const origin = headers().get("origin");
+  return redirect(`${origin}/auth/callback`);
 }
 
 export async function signup(formData: FormData) {
@@ -48,6 +51,9 @@ export async function signup(formData: FormData) {
     return redirect(`/${lang}/?error=Could not authenticate user`);
   }
 
+  // After signup, the user still needs to confirm their email,
+  // but we immediately direct them to complete their profile.
+  // The session will be available upon the next login or after email confirmation callback.
   revalidatePath("/", "layout");
   return redirect(`/complete-profile`);
 }
