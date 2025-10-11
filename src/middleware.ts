@@ -28,12 +28,13 @@ export async function middleware(request: NextRequest) {
   if (pathnameIsMissingLocale) {
     const locale = getLocale(request);
 
-    return NextResponse.redirect(
-      new URL(
-        `/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`,
-        request.url
-      )
-    );
+    // Add the locale prefix to the path, preserving search parameters.
+    const newUrl = new URL(`/${locale}${pathname}`, request.url);
+    if (request.nextUrl.search) {
+      newUrl.search = request.nextUrl.search;
+    }
+    
+    return NextResponse.redirect(newUrl);
   }
   
   // The rest of the middleware for Supabase auth
