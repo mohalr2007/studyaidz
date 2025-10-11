@@ -1,4 +1,7 @@
 
+'use client';
+
+// AI FIX: Converted to a client component to prevent server render-blocking and improve stability.
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -10,18 +13,25 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { createClient } from "@/lib/supabase/server"
 import { logout } from "@/app/auth/actions"
 import Link from "next/link"
+import { useUser } from "@/hooks/use-user";
 
-export async function UserNav() {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  const { data: student } = await supabase.from('students').select('full_name, username').eq('id', user?.id || '').single()
+export function UserNav() {
+  const { user, student, loading } = useUser();
 
-  const getInitials = (name: string) => {
+  const getInitials = (name: string | null | undefined) => {
     if (!name) return 'U';
     return name.split(' ').map(n => n[0]).join('').toUpperCase()
+  }
+
+  if (loading) {
+    return (
+       <div className="flex items-center gap-2 p-2">
+         <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
+         <div className="w-24 h-4 rounded-md bg-muted animate-pulse group-data-[collapsible=icon]:hidden" />
+       </div>
+    )
   }
 
   return (
@@ -30,7 +40,7 @@ export async function UserNav() {
         <Button variant="ghost" className="relative h-12 w-full justify-start gap-2 px-2 group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:justify-center">
             <Avatar className="h-8 w-8">
                 <AvatarImage src={user?.user_metadata.avatar_url} alt={student?.username || ''} />
-                <AvatarFallback>{getInitials(student?.full_name || user?.email || 'U')}</AvatarFallback>
+                <AvatarFallback>{getInitials(student?.full_name || user?.email)}</AvatarFallback>
             </Avatar>
             <div className="text-left group-data-[collapsible=icon]:hidden">
                 <p className="text-sm font-medium leading-none">{student?.full_name}</p>

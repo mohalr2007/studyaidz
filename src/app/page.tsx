@@ -12,15 +12,13 @@ import { SignInForm } from '@/components/auth/sign-in-form';
 import { SignUpForm } from '@/components/auth/sign-up-form';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 
 export default async function AuthPage() {
   const supabase = createClient();
   const { data: { session }} = await supabase.auth.getSession();
-
-  if (session) {
-    redirect('/dashboard');
-  }
 
   const loginHeroImage = PlaceHolderImages.find((p) => p.id === 'login-hero');
 
@@ -31,6 +29,7 @@ export default async function AuthPage() {
           src={loginHeroImage.imageUrl}
           alt={loginHeroImage.description}
           fill
+          priority
           className="object-cover dark:brightness-[0.2] dark:grayscale"
           data-ai-hint={loginHeroImage.imageHint}
         />
@@ -54,6 +53,19 @@ export default async function AuthPage() {
                     </TabsContent>
                 </Tabs>
             </CardContent>
+             {session && (
+              <div className="p-4 border-t bg-muted/50 text-center text-sm">
+                <p className="mb-2 text-muted-foreground">أنت مسجل الدخول بالفعل. هل تريد اختبار الصفحات؟</p>
+                <div className="flex justify-center gap-2">
+                  <Button asChild variant="outline" size="sm">
+                    <Link href="/profile">صفحة الملف الشخصي</Link>
+                  </Button>
+                  <Button asChild variant="outline" size="sm">
+                    <Link href="/dashboard">لوحة التحكم</Link>
+                  </Button>
+                </div>
+              </div>
+            )}
         </Card>
       </div>
     </div>
