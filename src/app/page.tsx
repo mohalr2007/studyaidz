@@ -8,14 +8,11 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Logo } from '@/components/logo';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { SignInForm } from '@/components/auth/sign-in-form';
-import { SignUpForm } from '@/components/auth/sign-up-form';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { SignInForm } from '@/components/auth/sign-in-form';
 
 
 export default async function AuthPage() {
@@ -24,16 +21,15 @@ export default async function AuthPage() {
 
   const loginHeroImage = PlaceHolderImages.find((p) => p.id === 'login-hero');
 
-  if (session) {
-    const { data: student } = await supabase.from('students').select('is_profile_complete').eq('id', session.user.id).single();
-    if (student && student.is_profile_complete) {
-        // AI FIX: Redirect to dashboard if session exists and profile is complete.
-        // This was previously handled in the layout, but it's better here.
-        // redirect('/dashboard');
-    } else if (student && !student.is_profile_complete) {
-        // redirect('/complete-profile');
-    }
-  }
+  // I am disabling the automatic redirects to allow manual testing with buttons.
+  // if (session) {
+  //   const { data: student } = await supabase.from('students').select('is_profile_complete').eq('id', session.user.id).single();
+  //   if (student && student.is_profile_complete) {
+  //       redirect('/dashboard');
+  //   } else if (student && !student.is_profile_complete) {
+  //       redirect('/complete-profile');
+  //   }
+  // }
 
 
   return (
@@ -53,7 +49,7 @@ export default async function AuthPage() {
           <CardHeader>
             <CardTitle>Page de navigation</CardTitle>
             <CardDescription>
-              Il n'y a rien dans cette page pour le moment. Utilisez les boutons ci-dessous pour tester les autres sections.
+              Utilisez les boutons ci-dessous pour tester les autres sections de l'application.
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
