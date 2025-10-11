@@ -33,7 +33,7 @@ const ChatAssistantPlaceholder = () => (
           ... سيتم عرض واجهة الدردشة هنا ...
         </div>
         <Button variant="outline" className="self-start" asChild>
-          <Link href="/chat">
+          <Link href="/dashboard/chat">
             <MessageSquare className="me-2" />
             ابدأ محادثة جديدة
           </Link>
@@ -104,20 +104,6 @@ export default function DashboardPage() {
           <p className="text-muted-foreground">
             هنا يمكنك رؤية ملخص لنشاطك والوصول السريع إلى ميزات المنصة.
           </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button asChild>
-            <Link href="/profile">
-              <Edit className="me-2" />
-              تعديل الملف الشخصي
-            </Link>
-          </Button>
-          <form action={logout}>
-            <Button variant="outline" type="submit">
-              <LogOut className="me-2" />
-              تسجيل الخروج
-            </Button>
-          </form>
         </div>
       </div>
 

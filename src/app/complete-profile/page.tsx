@@ -50,7 +50,7 @@ function SubmitButton() {
   );
 }
 
-export default function CompleteProfilePage() {
+export default function CompleteProfilePage({ params }: { params: { lang: string } }) {
   const form = useForm<UserProfileFormData>({
     resolver: zodResolver(UserProfileFormSchema),
     defaultValues: {
@@ -67,6 +67,7 @@ export default function CompleteProfilePage() {
     formData.append('gender', data.gender);
     formData.append('dateOfBirth', data.dateOfBirth.toISOString());
     formData.append('fieldOfStudy', data.fieldOfStudy);
+    formData.append('lang', params.lang);
 
     await completeUserProfile(formData);
   };

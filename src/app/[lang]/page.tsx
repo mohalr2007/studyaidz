@@ -11,6 +11,8 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { SignInForm } from '@/components/auth/sign-in-form';
+import { ThemeToggle } from '@/components/layout/theme-toggle';
+import { LanguageToggle } from '@/components/layout/language-toggle';
 
 
 export default async function AuthPage({ params }: { params: { lang: string } }) {
@@ -29,6 +31,10 @@ export default async function AuthPage({ params }: { params: { lang: string } })
           data-ai-hint={loginHeroImage.imageHint}
         />
       )}
+      <div className="absolute top-4 right-4 z-20 flex gap-2">
+        <LanguageToggle />
+        <ThemeToggle />
+      </div>
       <div className="relative z-10 flex min-h-screen items-center justify-center bg-background/50 backdrop-blur-sm p-4">
         <Card className="w-full max-w-sm">
           <CardHeader>

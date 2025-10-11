@@ -25,7 +25,9 @@ const NavItem = ({
   isExpanded: boolean;
 }) => {
   const pathname = usePathname();
-  const isActive = pathname === link.href;
+  // remove the locale from the pathname
+  const currentPath = '/' + pathname.split('/').slice(2).join('/');
+  const isActive = currentPath === link.href;
 
   return (
     <TooltipProvider>
