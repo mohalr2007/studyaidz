@@ -27,6 +27,12 @@ export async function middleware(request: NextRequest) {
   // Redirect if there is no locale
   if (pathnameIsMissingLocale) {
     const locale = getLocale(request);
+    
+    // Ajout d'une condition pour éviter de rediriger les chemins d'API ou de fichiers statiques
+    if (pathname.startsWith('/api/') || pathname.startsWith('/_next/') || pathname.includes('.')) {
+        return NextResponse.next();
+    }
+
     return NextResponse.redirect(
       new URL(
         `/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`,
@@ -67,7 +73,8 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
+  // Matcher mis à jour pour exclure les chemins spécifiques qui ne doivent pas être internationalisés
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|api/).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 };
