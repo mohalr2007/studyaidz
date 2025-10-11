@@ -1,4 +1,5 @@
 
+
 'use server';
 
 import { createClient } from '@/lib/supabase/server';
@@ -17,6 +18,7 @@ export async function completeUserProfile(formData: FormData) {
   }
 
   const userData = {
+    id: user.id, // Ensure id is included for upsert
     username: formData.get('username') as string,
     full_name: formData.get('name') as string,
     gender: formData.get('gender') as 'male' | 'female',
@@ -26,7 +28,7 @@ export async function completeUserProfile(formData: FormData) {
   };
   
   // Upsert the student profile
-  const { error } = await supabase.from('students').update(userData).eq('id', user.id);
+  const { error } = await supabase.from('students').upsert(userData);
 
 
   if (error) {

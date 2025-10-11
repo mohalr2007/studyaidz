@@ -1,4 +1,5 @@
 
+
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
@@ -10,7 +11,8 @@ export async function GET(request: Request) {
     const supabase = createClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
-        return NextResponse.redirect(origin)
+        // added by AI — safe fix: Redirect to complete profile after first login
+        return NextResponse.redirect(`${origin}/complete-profile`);
     }
   }
 

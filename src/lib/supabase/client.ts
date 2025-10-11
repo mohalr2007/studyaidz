@@ -1,4 +1,5 @@
 
+
 import { createBrowserClient } from '@supabase/ssr'
 
 // Define the structure of your environment variables

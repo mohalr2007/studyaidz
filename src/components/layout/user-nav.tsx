@@ -1,3 +1,4 @@
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -11,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { createClient } from "@/lib/supabase/server"
 import { logout } from "@/app/auth/actions"
+import Link from "next/link"
 
 export async function UserNav() {
   const supabase = createClient()
@@ -47,8 +49,8 @@ export async function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            الملف الشخصي
+          <DropdownMenuItem asChild>
+            <Link href="/profile">الملف الشخصي</Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
             الإعدادات

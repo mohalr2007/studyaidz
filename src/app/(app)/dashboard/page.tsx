@@ -1,8 +1,11 @@
+
 // Added by AI - Dashboard page
 import { createClient } from '@/lib/supabase/server';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Sparkles, MessageSquare } from 'lucide-react';
+import { Sparkles, MessageSquare, Edit } from 'lucide-react';
+import Link from 'next/link';
+import { logout } from '@/app/auth/actions';
 
 // Added by AI - Placeholder for a future ChatAssistant component
 const ChatAssistantPlaceholder = () => (
@@ -65,6 +68,19 @@ export default async function DashboardPage() {
             هنا يمكنك رؤية ملخص لنشاطك والوصول السريع إلى ميزات المنصة.
         </p>
       </div>
+
+       <div className="flex items-center gap-4">
+            <Button asChild>
+                <Link href="/profile">
+                    <Edit className="me-2" />
+                    تعديل الملف الشخصي
+                </Link>
+            </Button>
+            <form action={logout}>
+                <Button variant="outline" type="submit">تسجيل الخروج</Button>
+            </form>
+       </div>
+
 
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Placeholder for future AI Assistant integration */}
