@@ -47,7 +47,6 @@ export type Database = {
           is_profile_complete?: boolean
         }
       },
-      // AI FIX: Define the 'posts' table to resolve fetch errors and build the community feature.
       posts: {
         Row: {
             id: number

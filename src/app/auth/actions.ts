@@ -49,7 +49,7 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath("/", "layout");
-  return redirect(`/${lang}/complete-profile`);
+  return redirect(`/complete-profile`);
 }
 
 

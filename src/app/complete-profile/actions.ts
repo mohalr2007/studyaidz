@@ -34,7 +34,7 @@ export async function completeUserProfile(formData: FormData) {
 
   if (error) {
     console.error('Error updating profile:', error);
-    return redirect(`/${lang}/complete-profile?error=${error.message}`);
+    return redirect(`/complete-profile?error=${error.message}`);
   }
 
   revalidatePath('/', 'layout');

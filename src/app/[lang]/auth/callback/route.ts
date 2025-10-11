@@ -6,7 +6,8 @@ import { getLocale } from '@/lib/locales/get-locale';
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
-  const lang = await getLocale();
+  // The lang might not be in the URL, so we fallback to the default
+  const lang = await getLocale().catch(() => i18n.defaultLocale);
   
   if (code) {
     const supabase = createClient()
@@ -17,6 +18,7 @@ export async function GET(request: Request) {
         if (student && student.is_profile_complete) {
             return NextResponse.redirect(`${origin}/${lang}/dashboard`);
         }
+        // Redirect to a lang-less route for profile completion
         return NextResponse.redirect(`${origin}/complete-profile`);
     }
   }

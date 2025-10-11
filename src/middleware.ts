@@ -25,6 +25,25 @@ export async function middleware(request: NextRequest) {
   const pathnameIsMissingLocale = i18n.locales.every(
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
   );
+  
+  // Special case for the /complete-profile route
+  if (pathname.startsWith('/complete-profile')) {
+      const response = NextResponse.next();
+       const supabase = createServerClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+          cookies: {
+            get: (name) => request.cookies.get(name)?.value,
+            set: (name, value, options) => response.cookies.set({ name, value, ...options }),
+            remove: (name, options) => response.cookies.set({ name, value: '', ...options }),
+          },
+        }
+      );
+      await supabase.auth.getSession();
+      return response;
+  }
+
 
   // Redirect if there is no locale
   if (pathnameIsMissingLocale) {
