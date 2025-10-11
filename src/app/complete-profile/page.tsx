@@ -54,7 +54,7 @@ export default function CompleteProfilePage() {
   const form = useForm<UserProfileFormData>({
     resolver: zodResolver(UserProfileFormSchema),
     defaultValues: {
-      name: '',
+      full_name: '',
       username: '',
       fieldOfStudy: '',
     },
@@ -62,7 +62,7 @@ export default function CompleteProfilePage() {
 
   const onSubmit: SubmitHandler<UserProfileFormData> = async (data) => {
     const formData = new FormData();
-    formData.append('name', data.name);
+    formData.append('full_name', data.full_name);
     formData.append('username', data.username);
     formData.append('gender', data.gender);
     formData.append('dateOfBirth', data.dateOfBirth.toISOString());
@@ -91,7 +91,7 @@ export default function CompleteProfilePage() {
             >
               <FormField
                 control={form.control}
-                name="name"
+                name="full_name"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>الاسم الكامل</FormLabel>

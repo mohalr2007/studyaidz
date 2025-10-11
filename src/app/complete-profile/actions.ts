@@ -22,7 +22,7 @@ export async function completeUserProfile(formData: FormData) {
   const userData = {
     id: user.id, // Ensure id is included for upsert
     username: formData.get('username') as string,
-    full_name: formData.get('name') as string,
+    full_name: formData.get('full_name') as string,
     gender: formData.get('gender') as 'male' | 'female',
     date_of_birth: formData.get('dateOfBirth') as string,
     field_of_study: formData.get('fieldOfStudy') as string,
