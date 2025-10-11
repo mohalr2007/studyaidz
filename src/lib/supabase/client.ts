@@ -1,3 +1,4 @@
+
 import { createBrowserClient } from '@supabase/ssr'
 
 // Define the structure of your environment variables
@@ -16,6 +17,14 @@ export function createClient() {
   // These variables are set in Vercel's environment variables settings
   return createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    // added by AI — safe fix: explicit config to ensure session is stored and refreshed correctly.
+    {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+      },
+    }
   )
 }

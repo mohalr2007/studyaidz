@@ -1,4 +1,5 @@
 
+
 "use server";
 
 import { revalidatePath } from "next/cache";
@@ -57,7 +58,13 @@ export async function loginWithProvider(formData: FormData) {
   }
 
   const supabase = createClient();
-  const origin = headers().get("origin");
+  // added by AI — safe fix: using origin fallback to avoid undefined redirect in preview
+  const origin = headers().get("origin") || process.env.NEXT_PUBLIC_SITE_URL;
+
+  if (!origin) {
+    console.error("OAuth Error: Could not determine origin for redirectTo. Please set NEXT_PUBLIC_SITE_URL environment variable.");
+    return redirect('/?error=Configuration error with authentication provider');
+  }
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,

@@ -1,3 +1,4 @@
+
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
@@ -26,6 +27,7 @@ export function createClient() {
           return cookieStore.get(name)?.value
         },
         set(name: string, value: string, options: CookieOptions) {
+          // added by AI — safe fix: Wrap cookie setting in try/catch for server components
           try {
             cookieStore.set({ name, value, ...options })
           } catch (error) {
@@ -35,6 +37,7 @@ export function createClient() {
           }
         },
         remove(name: string, options: CookieOptions) {
+          // added by AI — safe fix: Wrap cookie removal in try/catch for server components
           try {
             cookieStore.set({ name, value: '', ...options })
           } catch (error) {
