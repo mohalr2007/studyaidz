@@ -14,6 +14,7 @@ import { NAV_LINKS } from '@/lib/constants';
 import Link from 'next/link';
 import { Fragment } from 'react';
 import { ThemeToggle } from './theme-toggle';
+import { LanguageToggle } from './language-toggle';
 
 export function AppHeader() {
   const pathname = usePathname();
@@ -43,7 +44,8 @@ export function AppHeader() {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      <div className="flex items-center gap-4 ms-auto">
+      <div className="flex items-center gap-2 ms-auto">
+        <LanguageToggle />
         <ThemeToggle />
       </div>
     </header>
