@@ -67,12 +67,10 @@ const NavItem = ({
   );
 };
 
-export function AppSidebar({ userNav }: { userNav: ReactNode }) {
+export function AppSidebar({ userNav, lang }: { userNav: ReactNode, lang: Locale }) {
   const isMobile = useIsMobile();
   const [isExpanded, setIsExpanded] = useState(!isMobile);
-  const pathname = usePathname();
-  const lang = pathname.split('/')[1] as Locale;
-
+  
   useEffect(() => {
     setIsExpanded(!isMobile);
   }, [isMobile]);
