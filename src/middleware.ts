@@ -18,21 +18,28 @@ function getLocale(request: NextRequest): string | undefined {
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+  
+  // 1. Exclude non-page paths first
+  if (
+    pathname.startsWith('/api') ||
+    pathname.startsWith('/_next/static') ||
+    pathname.startsWith('/_next/image') ||
+    pathname.includes('.') // Assumes files have extensions, like favicon.ico
+  ) {
+    return NextResponse.next();
+  }
 
-  // Check if there is any supported locale in the pathname
+  // 2. Check if there is any supported locale in the pathname
   const pathnameIsMissingLocale = i18n.locales.every(
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
   );
 
-  // Redirect if there is no locale
+  // 3. Redirect if there is no locale
   if (pathnameIsMissingLocale) {
     const locale = getLocale(request);
-    
-    // Ajout d'une condition pour éviter de rediriger les chemins d'API ou de fichiers statiques
-    if (pathname.startsWith('/api/') || pathname.startsWith('/_next/') || pathname.includes('.')) {
-        return NextResponse.next();
-    }
 
+    // e.g. incoming request is /dashboard
+    // The new URL is now /en/dashboard
     return NextResponse.redirect(
       new URL(
         `/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`,
@@ -40,6 +47,7 @@ export async function middleware(request: NextRequest) {
       )
     );
   }
+
 
   // The rest of the middleware for Supabase auth
   const response = NextResponse.next();
@@ -73,8 +81,17 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // Matcher mis à jour pour exclure les chemins spécifiques qui ne doivent pas être internationalisés
+  // We've moved the exclusion logic into the middleware itself.
+  // The matcher should now match all paths except for the ones we've
+  // explicitly excluded in the middleware.
   matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 };
