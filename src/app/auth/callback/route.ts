@@ -9,9 +9,13 @@ export async function GET(request: Request) {
   
   if (code) {
     const supabase = createClient()
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
-    if (!error) {
-        // added by AI — safe fix: Redirect to complete profile after first login
+    const { error, data } = await supabase.auth.exchangeCodeForSession(code)
+    if (!error && data.user) {
+        const { data: student } = await supabase.from('students').select('is_profile_complete').eq('id', data.user.id).single();
+
+        if (student && student.is_profile_complete) {
+            return NextResponse.redirect(`${origin}/dashboard`);
+        }
         return NextResponse.redirect(`${origin}/complete-profile`);
     }
   }

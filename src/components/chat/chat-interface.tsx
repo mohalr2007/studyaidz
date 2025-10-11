@@ -13,6 +13,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Send, Loader2, Sparkles, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useUser } from '@/hooks/use-user'; // Import the new hook
 
 const FormSchema = z.object({
   question: z.string().min(1, 'لا يمكن إرسال سؤال فارغ.'),
@@ -28,8 +29,7 @@ interface Message {
 export default function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  // TODO: Replace with Supabase user logic
-  const user = { name: 'User', photoURL: null };
+  const { user, student } = useUser(); // Use the hook to get user data
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -71,7 +71,7 @@ export default function ChatInterface() {
 
   const getInitials = (name: string | null | undefined) => {
     if (!name) return 'U';
-    return name.split(' ').map((n) => n[0]).join('');
+    return name.split(' ').map((n) => n[0]).join('').toUpperCase();
   };
 
   return (
@@ -107,8 +107,8 @@ export default function ChatInterface() {
                 </div>
                 {message.isUser && (
                    <Avatar className="h-8 w-8">
-                    <AvatarImage src={user?.photoURL || undefined} />
-                    <AvatarFallback>{getInitials(user?.name)}</AvatarFallback>
+                    <AvatarImage src={user?.user_metadata.avatar_url || undefined} />
+                    <AvatarFallback>{getInitials(student?.full_name)}</AvatarFallback>
                   </Avatar>
                 )}
               </div>
