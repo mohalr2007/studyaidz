@@ -74,11 +74,11 @@ export function AppSidebar({ userNav }: { userNav: ReactNode }) {
 
   return (
     <motion.div
-      initial={{ width: isExpanded ? 240 : 80 }}
+      initial={false}
       animate={{ width: isExpanded ? 240 : 80 }}
-      transition={{ duration: 0.3 }}
+      transition={{ type: 'tween', duration: 0.2, ease: [0.2, 0, 0, 1] }}
       className={cn(
-        'hidden md:flex flex-col justify-between border-e p-3 transition-[width] duration-300',
+        'hidden md:flex flex-col justify-between border-e p-3',
         isExpanded ? 'items-start' : 'items-center'
       )}
     >
