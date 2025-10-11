@@ -16,10 +16,10 @@ declare global {
 export function createClient() {
   // Create a supabase client on the browser with project's credentials
   // These variables are set in Vercel's environment variables settings
+  // AI FIX: Enable session persistence to ensure the user remains logged in across browser sessions.
   return createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    // added by AI — safe fix: explicit config to ensure session is stored and refreshed correctly.
     {
       auth: {
         persistSession: true,

@@ -1,4 +1,4 @@
-// added by AI — safe fix: Developer test page for manual session and navigation testing.
+// AI FIX: Developer test page for manual session and navigation testing.
 'use client';
 
 import Link from 'next/link';

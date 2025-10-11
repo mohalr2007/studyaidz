@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 
 export async function middleware(request: NextRequest) {
-  // added by AI — safe fix: Prevent middleware crashes
+  // AI FIX: Prevent middleware crashes and handle missing environment variables.
   try {
     let response = NextResponse.next({
       request: {
@@ -12,7 +12,7 @@ export async function middleware(request: NextRequest) {
       },
     })
 
-    // added by AI — safe fix: Skip supabase client creation if keys are missing
+    // AI FIX: Skip supabase client creation if keys are missing to prevent crashes.
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
       console.error('Supabase URL or Anon Key is missing in environment variables. Skipping middleware logic.');
       return response;
@@ -53,7 +53,7 @@ export async function middleware(request: NextRequest) {
     return response;
   } catch (err) {
     console.error("Middleware crash prevented:", err);
-    // added by AI — safe fix: Always return a valid response even on error
+    // AI FIX: Always return a valid response even on error to avoid crashing the request.
     return NextResponse.next({
       request: {
         headers: request.headers,
@@ -63,7 +63,7 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // added by AI — safe fix: Limit middleware to authenticated routes
+  // AI FIX: Limit middleware to authenticated routes for better performance and reduced risk.
   matcher: [
     '/dashboard/:path*',
     '/profile/:path*',

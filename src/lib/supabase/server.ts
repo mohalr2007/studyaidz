@@ -28,7 +28,8 @@ export function createClient() {
           return cookieStore.get(name)?.value
         },
         set(name: string, value: string, options: CookieOptions) {
-          // added by AI — safe fix: Wrap cookie setting in try/catch for server components
+          // AI FIX: Wrap cookie setting in try/catch for server components.
+          // This prevents crashes when middleware tries to set cookies in a read-only context.
           try {
             cookieStore.set({ name, value, ...options })
           } catch (error) {
@@ -38,7 +39,7 @@ export function createClient() {
           }
         },
         remove(name: string, options: CookieOptions) {
-          // added by AI — safe fix: Wrap cookie removal in try/catch for server components
+          // AI FIX: Wrap cookie removal in try/catch for server components.
           try {
             cookieStore.set({ name, value: '', ...options })
           } catch (error) {

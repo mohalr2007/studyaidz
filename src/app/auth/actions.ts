@@ -58,7 +58,8 @@ export async function loginWithProvider(formData: FormData) {
   }
 
   const supabase = createClient();
-  // added by AI — safe fix: using origin fallback to avoid undefined redirect in preview
+  
+  // AI FIX: Safe origin fallback for OAuth to avoid undefined redirect in preview environments.
   const origin = headers().get("origin") || process.env.NEXT_PUBLIC_SITE_URL;
 
   if (!origin) {
