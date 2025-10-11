@@ -1,13 +1,12 @@
+
 // AI FIX: Converted to a client component to avoid server-side rendering errors when fetching user data.
 'use client';
 
-import { createClient } from '@/lib/supabase/client';
 import { useUser } from '@/hooks/use-user';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Sparkles, MessageSquare, Edit, LogOut } from 'lucide-react';
+import { Sparkles, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
-import { logout } from '@/app/auth/actions';
 import { Skeleton } from '@/components/ui/skeleton';
 
 // Placeholder for a future ChatAssistant component
@@ -70,11 +69,7 @@ export default function DashboardPage() {
                   <Skeleton className="h-9 w-1/2" />
                   <Skeleton className="h-5 w-3/4" />
               </div>
-              <div className="flex items-center gap-4">
-                  <Skeleton className="h-10 w-36" />
-                  <Skeleton className="h-10 w-28" />
-              </div>
-              <div className="grid lg:grid-cols-2 gap-6">
+              <div className="grid lg:grid-cols-2 gap-6 mt-6">
                   <Skeleton className="h-64" />
                   <Skeleton className="h-64" />
               </div>
@@ -90,22 +85,6 @@ export default function DashboardPage() {
             هنا يمكنك رؤية ملخص لنشاطك والوصول السريع إلى ميزات المنصة.
         </p>
       </div>
-
-       <div className="flex items-center gap-4">
-            <Button asChild>
-                <Link href="/profile">
-                    <Edit className="me-2" />
-                    تعديل الملف الشخصي
-                </Link>
-            </Button>
-            <form action={logout}>
-                <Button variant="outline" type="submit">
-                    <LogOut className="me-2" />
-                    تسجيل الخروج
-                </Button>
-            </form>
-       </div>
-
 
       <div className="grid lg:grid-cols-2 gap-6">
         <ChatAssistantPlaceholder />

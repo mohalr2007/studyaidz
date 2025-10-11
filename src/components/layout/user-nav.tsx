@@ -16,6 +16,7 @@ import {
 import { logout } from "@/app/auth/actions"
 import Link from "next/link"
 import { useUser } from "@/hooks/use-user";
+import { Edit, LogOut, Settings } from "lucide-react";
 
 export function UserNav() {
   const { user, student, loading } = useUser();
@@ -60,17 +61,22 @@ export function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link href="/profile">الملف الشخصي</Link>
+            <Link href="/profile">
+              <Edit className="me-2" />
+              <span>الملف الشخصي</span>
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            الإعدادات
+            <Settings className="me-2" />
+            <span>الإعدادات</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <form action={logout}>
           <DropdownMenuItem asChild>
-            <button type="submit" className="w-full">
-              تسجيل الخروج
+            <button type="submit" className="w-full flex items-center">
+              <LogOut className="me-2" />
+              <span>تسجيل الخروج</span>
             </button>
           </DropdownMenuItem>
         </form>
