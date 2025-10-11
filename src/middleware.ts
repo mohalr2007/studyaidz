@@ -1,88 +1,21 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
-import { match } from '@formatjs/intl-localematcher';
-import Negotiator from 'negotiator';
-
-const locales = ['ar', 'en', 'fr'];
-const defaultLocale = 'ar';
-
-function getLocale(request: NextRequest): string {
-  const negotiatorHeaders: Record<string, string> = {};
-  request.headers.forEach((value, key) => (negotiatorHeaders[key] = value));
-  
-  const languages = new Negotiator({ headers: negotiatorHeaders }).languages();
-  
-  try {
-    return match(languages, locales, defaultLocale);
-  } catch (e) {
-    return defaultLocale;
-  }
-}
+import { type NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-
-  // Gérer les redirections de langue
-  const pathnameIsMissingLocale = locales.every(
-    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
-  );
-
-  if (pathnameIsMissingLocale) {
-    const locale = getLocale(request);
-    // Redirect to the same path with the detected locale prefix
-    return NextResponse.redirect(
-      new URL(`/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`, request.url)
-    );
-  }
-
-  // Gérer la session Supabase
   try {
-    let response = NextResponse.next({
-      request: {
-        headers: request.headers,
-      },
-    });
+    // This `try/catch` block is only here for the interactive tutorial.
+    // Feel free to remove once you have Supabase connected.
+    const { supabase, response } = createClient(request);
 
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-      console.error('Supabase URL or Anon Key is missing. Skipping Supabase middleware logic.');
-      return response;
-    }
-
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          get(name: string) {
-            return request.cookies.get(name)?.value;
-          },
-          set(name: string, value: string, options) {
-            request.cookies.set({ name, value, ...options });
-            response = NextResponse.next({
-              request: {
-                headers: request.headers,
-              },
-            });
-            response.cookies.set({ name, value, ...options });
-          },
-          remove(name: string, options) {
-            request.cookies.set({ name, value: '', ...options });
-            response = NextResponse.next({
-              request: {
-                headers: request.headers,
-              },
-            });
-            response.cookies.set({ name, value: '', ...options });
-          },
-        },
-      }
-    );
-
+    // Refresh session if expired - required for Server Components
+    // https://supabase.com/docs/guides/auth/auth-helpers/nextjs#managing-session-with-middleware
     await supabase.auth.getSession();
+
     return response;
-  } catch (err) {
-    console.error("Middleware crash prevented:", err);
-    // If Supabase logic fails, still proceed with the request without session handling
+  } catch (e) {
+    // If you are here, a Supabase client could not be created!
+    // This is likely because you have not set up environment variables.
+    // Check out http://localhost:6001/login?message=Supabase+not+configured for more details.
     return NextResponse.next({
       request: {
         headers: request.headers,
@@ -93,9 +26,13 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Skip all internal paths (_next)
-    // Also skip /api routes
-    // The main goal is to only run this on actual pages
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * Feel free to modify this pattern to include more paths.
+     */
+    '/((?!_next/static|_next/image|favicon.ico).*)',
   ],
 };
