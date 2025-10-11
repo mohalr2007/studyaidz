@@ -16,23 +16,26 @@ import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import type { Locale } from '@/i18n-config';
 
 const NavItem = ({
   link,
   isExpanded,
+  lang,
 }: {
   link: (typeof NAV_LINKS)[0];
   isExpanded: boolean;
+  lang: Locale;
 }) => {
   const pathname = usePathname();
-  const isActive = pathname.startsWith(link.href);
+  const isActive = pathname.startsWith(`/${lang}${link.href}`);
 
   return (
     <TooltipProvider>
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
           <Link
-            href={link.href}
+            href={`/${lang}${link.href}`}
             className={cn(
               'flex items-center gap-4 p-2 rounded-lg',
               isActive ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-muted'
@@ -67,6 +70,8 @@ const NavItem = ({
 export function AppSidebar({ userNav }: { userNav: ReactNode }) {
   const isMobile = useIsMobile();
   const [isExpanded, setIsExpanded] = useState(!isMobile);
+  const pathname = usePathname();
+  const lang = pathname.split('/')[1] as Locale;
 
   useEffect(() => {
     setIsExpanded(!isMobile);
@@ -105,7 +110,7 @@ export function AppSidebar({ userNav }: { userNav: ReactNode }) {
         </div>
         <nav className="mt-8 flex flex-col gap-2">
           {NAV_LINKS.map((link) => (
-            <NavItem key={link.href} link={link} isExpanded={isExpanded} />
+            <NavItem key={link.href} link={link} isExpanded={isExpanded} lang={lang} />
           ))}
         </nav>
       </div>

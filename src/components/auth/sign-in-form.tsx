@@ -52,7 +52,6 @@ export function SignInForm() {
             </CardHeader>
             <CardContent className="grid gap-4">
                 <form action={login} className="grid gap-4">
-                    <input type="hidden" name="lang" value="ar" />
                     <div className="relative">
                         <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                         <Input id="email" name="email" type="email" placeholder="البريد الإلكتروني" required className="pl-10" />
@@ -80,21 +79,18 @@ export function SignInForm() {
                 <div className="grid grid-cols-3 gap-3">
                     <form action={loginWithProvider}>
                         <input type="hidden" name="provider" value="google" />
-                        <input type="hidden" name="lang" value="ar" />
                         <SocialLoginButton provider="google">
                             <GoogleIcon />
                         </SocialLoginButton>
                     </form>
                     <form action={loginWithProvider}>
                          <input type="hidden" name="provider" value="github" />
-                         <input type="hidden" name="lang" value="ar" />
                         <SocialLoginButton provider="github">
                             <Github className="h-5 w-5" />
                         </SocialLoginButton>
                     </form>
                     <form action={loginWithProvider}>
                         <input type="hidden" name="provider" value="facebook" />
-                        <input type="hidden" name="lang" value="ar" />
                         <SocialLoginButton provider="facebook">
                            <FacebookIcon />
                         </SocialLoginButton>

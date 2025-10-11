@@ -1,3 +1,4 @@
+
 import {
   LayoutDashboard,
   MessageSquare,
@@ -14,7 +15,7 @@ export type NavLink = {
   icon: LucideIcon;
 };
 
-// Note: Hrefs should not include the locale prefix
+// Note: Hrefs should not include the locale prefix. They are relative to /:lang/
 export const NAV_LINKS: NavLink[] = [
   {
     href: '/dashboard',
@@ -22,7 +23,7 @@ export const NAV_LINKS: NavLink[] = [
     icon: LayoutDashboard,
   },
   {
-    href: '/profile',
+    href: '/dashboard/profile',
     label: 'الملف الشخصي',
     icon: User,
   },

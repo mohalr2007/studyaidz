@@ -1,21 +1,29 @@
+
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
+import { i18n } from '@/i18n-config';
 
 export const metadata: Metadata = {
   title: 'StudyAI DZ',
   description: 'منصة تعليمية ذكية لمساعدة الطلاب في الجزائر',
 };
 
+export async function generateStaticParams() {
+    return i18n.locales.map((locale) => ({ lang: locale }))
+}
+
 export default function RootLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: { lang: string };
 }>) {
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning>
+    <html lang={params.lang} dir={params.lang === 'ar' ? 'rtl' : 'ltr'} suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link

@@ -18,9 +18,14 @@ import { useUser } from "@/hooks/use-user";
 import { Edit, LogOut, Settings } from "lucide-react";
 import { Skeleton } from "../ui/skeleton";
 import { AnimatePresence, motion } from "framer-motion";
+import { usePathname } from "next/navigation";
+import { type Locale } from "@/i18n-config";
 
 export function UserNav() {
   const { user, student, loading } = useUser();
+  const pathname = usePathname();
+  const lang = pathname.split('/')[1] as Locale;
+
 
   const getInitials = (name: string | null | undefined) => {
     if (!name) return 'U';
@@ -66,7 +71,7 @@ export function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link href="/dashboard/profile">
+            <Link href={`/${lang}/dashboard/profile`}>
               <Edit className="me-2" />
               <span>الملف الشخصي</span>
             </Link>
@@ -78,7 +83,6 @@ export function UserNav() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <form action={logout}>
-          <input type="hidden" name="lang" value="ar" />
           <DropdownMenuItem asChild>
             <button type="submit" className="w-full flex items-center">
               <LogOut className="me-2" />

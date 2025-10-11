@@ -1,7 +1,6 @@
 
 import { AppHeader } from '@/components/layout/app-header';
 import { AppSidebar } from '@/components/layout/app-sidebar';
-import { Toaster } from '@/components/ui/toaster';
 import { UserNav } from '@/components/layout/user-nav';
 
 export default async function AppLayout({

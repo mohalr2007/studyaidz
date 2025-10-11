@@ -4,17 +4,18 @@
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
+import { getLocale } from '@/lib/locales/get-locale';
 
 export async function completeUserProfile(formData: FormData) {
   const supabase = createClient();
-  const lang = 'ar';
+  const lang = await getLocale();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return redirect(`/?error=User not found`);
+    return redirect(`/${lang}/?error=User not found`);
   }
 
   const userData = {
@@ -33,9 +34,9 @@ export async function completeUserProfile(formData: FormData) {
 
   if (error) {
     console.error('Error updating profile:', error);
-    return redirect(`/complete-profile?error=${error.message}`);
+    return redirect(`/${lang}/complete-profile?error=${error.message}`);
   }
 
   revalidatePath('/', 'layout');
-  redirect(`/dashboard`);
+  redirect(`/${lang}/dashboard`);
 }
