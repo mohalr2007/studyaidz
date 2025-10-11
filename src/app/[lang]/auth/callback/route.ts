@@ -6,7 +6,7 @@ import { getLocale } from '@/lib/locales/get-locale';
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
-  // The lang might not be in the URL, so we fallback to the default
+  // The lang is now in the URL, but we still have a fallback just in case.
   const lang = await getLocale().catch(() => 'ar');
   
   const supabase = createClient();
@@ -44,6 +44,7 @@ export async function GET(request: NextRequest) {
       }
       
       // Otherwise, user needs to complete their profile
+      // The /complete-profile page is outside the [lang] directory structure.
       return NextResponse.redirect(`${origin}/complete-profile`);
   }
 

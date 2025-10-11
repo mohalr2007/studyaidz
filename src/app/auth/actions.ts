@@ -28,8 +28,7 @@ export async function login(formData: FormData) {
   // After a successful login, the callback logic will handle redirection.
   // We revalidate and redirect to the callback handler.
   revalidatePath("/", "layout");
-  const origin = headers().get("origin");
-  return redirect(`${origin}/auth/callback`);
+  return redirect(`/${lang}/auth/callback`);
 }
 
 export async function signup(formData: FormData) {
@@ -78,10 +77,11 @@ export async function loginWithProvider(formData: FormData) {
     return redirect(`/${lang}/?error=Configuration error with authentication provider`);
   }
 
+  // AI FIX: The redirectTo URL must include the locale to work with the i18n setup.
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: `${origin}/auth/callback`,
+      redirectTo: `${origin}/${lang}/auth/callback`,
     },
   });
 
