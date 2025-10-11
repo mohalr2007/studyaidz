@@ -16,6 +16,8 @@ import { logout } from "@/app/auth/actions"
 import Link from "next/link"
 import { useUser } from "@/hooks/use-user";
 import { Edit, LogOut, Settings } from "lucide-react";
+import { Skeleton } from "../ui/skeleton";
+import { AnimatePresence, motion } from "framer-motion";
 
 export function UserNav() {
   const { user, student, loading } = useUser();
@@ -28,8 +30,8 @@ export function UserNav() {
   if (loading) {
     return (
        <div className="flex items-center gap-2 p-2">
-         <div className="h-8 w-8 rounded-full bg-muted animate-pulse" />
-         <div className="w-24 h-4 rounded-md bg-muted animate-pulse group-data-[collapsible=icon]:hidden" />
+         <Skeleton className="h-10 w-10 rounded-full" />
+         <div className="w-24 h-4 rounded-md" />
        </div>
     )
   }
@@ -37,14 +39,18 @@ export function UserNav() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-12 w-full justify-start gap-2 px-2 group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:justify-center">
-            <Avatar className="h-8 w-8">
+        <Button variant="ghost" className="relative h-auto w-full justify-start gap-3 p-2">
+            <Avatar className="h-9 w-9">
                 <AvatarImage src={user?.user_metadata.avatar_url} alt={student?.username || ''} />
                 <AvatarFallback>{getInitials(student?.full_name || user?.email)}</AvatarFallback>
             </Avatar>
-            <div className="text-left group-data-[collapsible=icon]:hidden">
-                <p className="text-sm font-medium leading-none">{student?.full_name}</p>
-                <p className="text-xs leading-none text-muted-foreground truncate">{user?.email}</p>
+            <div className="text-left">
+                <AnimatePresence>
+                  <motion.div initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}}>
+                    <p className="text-sm font-medium leading-none truncate">{student?.full_name || 'Anonymous'}</p>
+                    <p className="text-xs leading-none text-muted-foreground truncate">{user?.email}</p>
+                  </motion.div>
+                </AnimatePresence>
             </div>
         </Button>
       </DropdownMenuTrigger>

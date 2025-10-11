@@ -1,7 +1,7 @@
+
 "use client";
 
 import { usePathname } from 'next/navigation';
-import { SidebarTrigger } from '@/components/ui/sidebar';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -17,14 +17,12 @@ import { ThemeToggle } from './theme-toggle';
 
 export function AppHeader() {
   const pathname = usePathname();
-  const currentLink = NAV_LINKS.find((link) => link.href === pathname);
+  const currentLink = NAV_LINKS.find((link) => pathname.startsWith(link.href));
 
   return (
-    <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
       <div className="flex items-center gap-4">
-        <div className="sm:hidden">
-          <SidebarTrigger />
-        </div>
+        {/* Mobile sidebar trigger can be added here if needed */}
         <Breadcrumb className="hidden md:flex">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -32,7 +30,7 @@ export function AppHeader() {
                 <Link href="/dashboard">StudyAI DZ</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
-            {currentLink && (
+            {currentLink && currentLink.href !== '/dashboard' && (
               <Fragment>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
