@@ -1,6 +1,6 @@
 
 import { type NextRequest, NextResponse } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { i18n, type Locale } from './i18n-config';
 import { match as matchLocale } from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
@@ -19,28 +19,72 @@ function getLocale(request: NextRequest): string | undefined {
 }
 
 export async function middleware(request: NextRequest) {
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  });
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          request.cookies.set({
+            name,
+            value,
+            ...options,
+          })
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          })
+          response.cookies.set({
+            name,
+            value,
+            ...options,
+          })
+        },
+        remove(name: string, options: CookieOptions) {
+          request.cookies.set({
+            name,
+            value: '',
+            ...options,
+          })
+          response = NextResponse.next({
+            request: {
+              headers: request.headers,
+            },
+          })
+          response.cookies.set({
+            name,
+            value: '',
+            ...options,
+          })
+        },
+      },
+    }
+  );
+
+  // refreshing the session before loading server components
+  await supabase.auth.getSession();
+
   const pathname = request.nextUrl.pathname;
 
   // Check if there is any supported locale in the pathname
   const pathnameIsMissingLocale = i18n.locales.every(
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
   );
-  
+
   // Special case for the /complete-profile route
   if (pathname.startsWith('/complete-profile')) {
-      const response = NextResponse.next();
-       const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        {
-          cookies: {
-            get: (name) => request.cookies.get(name)?.value,
-            set: (name, value, options) => response.cookies.set({ name, value, ...options }),
-            remove: (name, options) => response.cookies.set({ name, value: '', ...options }),
-          },
-        }
-      );
-      await supabase.auth.getSession();
+      // No locale handling needed for this page, just pass through.
+      response.headers.set('x-next-pathname', pathname);
       return response;
   }
 
@@ -59,41 +103,8 @@ export async function middleware(request: NextRequest) {
     );
   }
 
-  // The rest of the middleware for Supabase auth
-  const response = NextResponse.next({
-    request: {
-        headers: new Headers(request.headers),
-    }
-  });
-
   // Add the pathname to the request headers for use in server components
   response.headers.set('x-next-pathname', request.nextUrl.pathname);
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get: (name) => request.cookies.get(name)?.value,
-        set: (name, value, options) => {
-          response.cookies.set({
-            name,
-            value,
-            ...options,
-          });
-        },
-        remove: (name, options) => {
-          response.cookies.set({
-            name,
-            value: '',
-            ...options,
-          });
-        },
-      },
-    }
-  );
-
-  await supabase.auth.getSession();
 
   return response;
 }
