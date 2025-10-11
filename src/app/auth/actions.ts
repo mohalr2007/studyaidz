@@ -35,6 +35,7 @@ export async function login(formData: FormData) {
 export async function signup(formData: FormData) {
   const supabase = createClient();
   const lang = await getLocale();
+  const origin = headers().get("origin");
   
   const data = {
     email: formData.get("email") as string,
@@ -55,7 +56,8 @@ export async function signup(formData: FormData) {
   // but we immediately direct them to complete their profile.
   // The session will be available upon the next login or after email confirmation callback.
   revalidatePath("/", "layout");
-  return redirect(`/complete-profile`);
+  // AI: Redirect to the absolute URL for the complete-profile page to avoid 404 errors.
+  return redirect(`${origin}/complete-profile`);
 }
 
 
