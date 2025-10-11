@@ -1,8 +1,3 @@
-// This file is a placeholder for your Supabase types.
-// You can generate the types for your database by running:
-// npx supabase gen types typescript --project-id <your-project-id> > src/types/supabase.ts
-//
-// For more information, see: https://supabase.com/docs/guides/api/generating-types
 
 export type Json =
   | string
