@@ -26,7 +26,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useFormStatus } from 'react-dom';
-import { updateStudentProfile } from './actions';
+import { updateStudentProfile } from '@/app/profile/actions';
 import { useToast } from '@/hooks/use-toast';
 
 const ProfileFormSchema = z.object({

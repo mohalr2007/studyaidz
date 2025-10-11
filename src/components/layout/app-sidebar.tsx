@@ -35,7 +35,7 @@ const NavItem = ({
             href={link.href}
             className={cn(
               'flex items-center gap-4 p-2 rounded-lg',
-              isActive ? 'bg-primary/10 text-primary' : 'hover:bg-muted'
+              isActive ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-muted'
             )}
           >
             <link.icon className="size-5 shrink-0" />
@@ -78,7 +78,7 @@ export function AppSidebar({ userNav }: { userNav: ReactNode }) {
       animate={{ width: isExpanded ? 240 : 80 }}
       transition={{ type: 'tween', duration: 0.2, ease: [0.2, 0, 0, 1] }}
       className={cn(
-        'hidden md:flex flex-col justify-between border-e p-3',
+        'hidden md:flex flex-col justify-between border-e p-3 bg-card',
         isExpanded ? 'items-start' : 'items-center'
       )}
     >

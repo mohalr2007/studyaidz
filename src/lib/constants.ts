@@ -22,27 +22,27 @@ export const NAV_LINKS: NavLink[] = [
     icon: LayoutDashboard,
   },
   {
-    href: '/profile',
+    href: '/dashboard/profile',
     label: 'الملف الشخصي',
     icon: User,
   },
   {
-    href: '/chat',
+    href: '/dashboard/chat',
     label: 'المساعد الذكي',
     icon: MessageSquare,
   },
   {
-    href: '/summaries',
+    href: '/dashboard/summaries',
     label: 'تلخيص الدروس',
     icon: FileText,
   },
   {
-    href: '/quizzes',
+    href: '/dashboard/quizzes',
     label: 'اختبارات قصيرة',
     icon: ClipboardCheck,
   },
   {
-    href: '/community',
+    href: '/dashboard/community',
     label: 'مجتمع الطلاب',
     icon: Users,
   },
