@@ -9,19 +9,15 @@ import { ArrowUp, ArrowDown, MessageSquare, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { formatDistanceToNow } from 'date-fns';
 import { ar } from 'date-fns/locale';
+import type { Database } from '@/types/supabase';
+
+// AI FIX: Use types generated from the database schema for consistency.
+type Student = Database['public']['Tables']['students']['Row'];
+type Post = Database['public']['Tables']['posts']['Row'];
 
 // Define a more specific type for posts with author info
-type PostWithAuthor = {
-    id: number;
-    created_at: string;
-    title: string;
-    content: string;
-    upvotes: number;
-    downvotes: number;
-    author: {
-        full_name: string | null;
-        username: string | null;
-    } | null;
+type PostWithAuthor = Post & {
+    students: Pick<Student, 'full_name' | 'username'> | null;
 };
 
 
@@ -32,11 +28,12 @@ export default function CommunityPage() {
     useEffect(() => {
         const fetchPosts = async () => {
             const supabase = createClient();
+            // AI FIX: Corrected the select query to match the actual foreign key relationship.
             const { data, error } = await supabase
                 .from('posts')
                 .select(`
                     *,
-                    author:students(full_name, username)
+                    students(full_name, username)
                 `)
                 .order('created_at', { ascending: false });
 
@@ -73,7 +70,8 @@ export default function CommunityPage() {
             </div>
             <div className="space-y-6">
                 {posts && posts.map(post => {
-                    const authorName = post.author?.full_name || 'مستخدم غير معروف';
+                    // AI FIX: Access nested author data correctly.
+                    const authorName = post.students?.full_name || 'مستخدم غير معروف';
                     const timeAgo = formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: ar });
 
                     return (

@@ -46,6 +46,36 @@ export type Database = {
           created_at?: string
           is_profile_complete?: boolean
         }
+      },
+      // AI FIX: Define the 'posts' table to resolve fetch errors and build the community feature.
+      posts: {
+        Row: {
+            id: number
+            created_at: string
+            title: string
+            content: string
+            author_id: string // Foreign key to students.id
+            upvotes: number
+            downvotes: number
+        }
+        Insert: {
+            id?: number
+            created_at?: string
+            title: string
+            content: string
+            author_id: string
+            upvotes?: number
+            downvotes?: number
+        }
+        Update: {
+            id?: number
+            created_at?: string
+            title?: string
+            content?: string
+            author_id?: string
+            upvotes?: number
+            downvotes?: number
+        }
       }
     }
     Views: {
