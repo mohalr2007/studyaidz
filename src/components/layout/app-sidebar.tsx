@@ -25,7 +25,7 @@ const NavItem = ({
   isExpanded: boolean;
 }) => {
   const pathname = usePathname();
-  const isActive = pathname.startsWith(link.href);
+  const isActive = pathname === link.href;
 
   return (
     <TooltipProvider>
@@ -76,7 +76,7 @@ export function AppSidebar({ userNav }: { userNav: ReactNode }) {
     <motion.div
       initial={false}
       animate={{ width: isExpanded ? 240 : 80 }}
-      transition={{ type: 'tween', duration: 0.2, ease: [0.2, 0, 0, 1] }}
+      transition={{ type: 'spring', stiffness: 700, damping: 40 }}
       className={cn(
         'hidden md:flex flex-col justify-between border-e p-3 bg-card',
         isExpanded ? 'items-start' : 'items-center'
