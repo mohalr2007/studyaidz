@@ -4,6 +4,7 @@ import {
   FileText,
   ClipboardCheck,
   Users,
+  User,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -18,6 +19,11 @@ export const NAV_LINKS: NavLink[] = [
     href: '/dashboard',
     label: 'لوحة التحكم',
     icon: LayoutDashboard,
+  },
+  {
+    href: '/profile',
+    label: 'الملف الشخصي',
+    icon: User,
   },
   {
     href: '/chat',
