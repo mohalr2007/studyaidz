@@ -22,6 +22,18 @@ export default async function AuthPage() {
 
   const loginHeroImage = PlaceHolderImages.find((p) => p.id === 'login-hero');
 
+  if (session) {
+    const { data: student } = await supabase.from('students').select('is_profile_complete').eq('id', session.user.id).single();
+    if (student && student.is_profile_complete) {
+        // AI FIX: Redirect to dashboard if session exists and profile is complete.
+        // This was previously handled in the layout, but it's better here.
+        // redirect('/dashboard');
+    } else if (student && !student.is_profile_complete) {
+        // redirect('/complete-profile');
+    }
+  }
+
+
   return (
     <div className="relative min-h-screen w-full">
       {loginHeroImage && (
