@@ -76,7 +76,7 @@ export function AppSidebar({ userNav }: { userNav: ReactNode }) {
     <motion.div
       initial={false}
       animate={{ width: isExpanded ? 240 : 80 }}
-      transition={{ type: 'spring', stiffness: 1000, damping: 50 }}
+      transition={{ type: 'spring', stiffness: 2000, damping: 70 }}
       className={cn(
         'hidden md:flex flex-col justify-between border-e p-3 bg-card',
         isExpanded ? 'items-start' : 'items-center'
