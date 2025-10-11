@@ -1,5 +1,4 @@
-
-'use client';
+"use client";
 
 import { Button } from '@/components/ui/button';
 import {
@@ -13,34 +12,33 @@ import { i18n, type Locale } from '@/i18n-config';
 import { Languages } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+
 const AlgerianFlag = () => (
-    <svg width="20" height="15" viewBox="0 0 20 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="10" height="15" fill="#006233"/>
-        <rect x="10" width="10" height="15" fill="white"/>
-        <path d="M11.25 4.875C10.8358 4.64601 10.3642 4.64601 9.95 4.875L9.5 5.145V4.375C9.5 3.95804 9.16421 3.625 8.75 3.625C8.33579 3.625 8 3.95804 8 4.375V6.03516L7.38281 6.38867C6.9686 6.61766 6.63281 7.03926 6.63281 7.5C6.63281 8.16421 7.18579 8.625 7.85 8.625H8.75V9.875C8.75 10.292 9.08579 10.625 9.5 10.625C9.91421 10.625 10.25 10.292 10.25 9.875V8.625H11.15C11.8142 8.625 12.3672 8.16421 12.3672 7.5C12.3672 7.03926 12.0314 6.61766 11.6172 6.38867L11 6.03516V4.375C11 3.95804 10.6642 3.625 10.25 3.625C9.83579 3.625 9.5 3.95804 9.5 4.375V5.145L10.05 4.875C10.4642 4.64601 10.9358 4.64601 11.35 4.875L11.95 5.20508L12.55 4.875C12.9642 4.64601 13.4358 4.64601 13.85 4.875L14.45 5.20508L15.05 4.875C15.4642 4.64601 15.9358 4.64601 16.35 4.875L16.95 5.20508L17.55 4.875C17.9642 4.64601 18.4358 4.64601 18.85 4.875C19.2642 4.64601 19.7358 4.64601 20.15 4.875" stroke="#D21034" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="15" viewBox="0 0 20 15" className="rounded-sm">
+      <rect width="10" height="15" fill="#006233"/>
+      <rect x="10" width="10" height="15" fill="#fff"/>
+      <path d="M12.5 5.833c-1.02.578-2.312 0-2.312-1.146 0-.638.513-1.156 1.156-1.156.644 0 1.156.518 1.156 1.156m-1.156-2.885c-1.488 0-2.693 1.205-2.693 2.693s1.205 2.692 2.693 2.692a2.68 2.68 0 002.54-1.72.575.575 0 011.082.413 3.842 3.842 0 01-3.622 2.45c-2.12 0-3.84-1.718-3.84-3.835S8.93 2.115 11.05 2.115s3.84 1.718 3.84 3.835a.578.578 0 11-1.156 0 2.69 2.69 0 00-2.684-2.688z" fill="#d21034"/>
     </svg>
 );
 
 
 const FrenchFlag = () => (
-    <svg width="20" height="15" viewBox="0 0 20 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="20" height="15" fill="white"/>
-        <path fillRule="evenodd" clipRule="evenodd" d="M0 0H6.66667V15H0V0Z" fill="#002654"/>
-        <path fillRule="evenodd" clipRule="evenodd" d="M13.3333 0H20V15H13.3333V0Z" fill="#ED2939"/>
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="15" viewBox="0 0 3 2" className="rounded-sm">
+        <rect width="3" height="2" fill="#fff"/>
+        <rect width="2" height="2" fill="#002654"/>
+        <rect width="1" height="2" fill="#ED2939"/>
     </svg>
 );
 
 
 const UKFlag = () => (
-    <svg width="20" height="15" viewBox="0 0 20 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="20" height="15" fill="#012169"/>
-        <path d="M0 0L20 15M20 0L0 15" stroke="white" strokeWidth="3"/>
-        <path d="M-1 2L7 -3.5M13 18.5L21 13" stroke="#C8102E" strokeWidth="2"/>
-        <path d="M0 15L8 9.5M12 5.5L20 0" stroke="#C8102E" strokeWidth="2"/>
-        <path d="M10 0V15M0 7.5H20" stroke="white" strokeWidth="5"/>
-        <path d="M10 0V15M0 7.5H20" stroke="#C8102E" strokeWidth="3"/>
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="15" viewBox="0 0 1000 500" className="rounded-sm">
+        <path fill="#00247d" d="M0 0h1000v500H0z"/>
+        <path fill="#fff" d="M0 0v56L444 250 0 444v56h56L500 306h0l444 194h56v-56L556 250 1000 56v-56h-56L500 194h0L56 0H0z"/>
+        <path fill="#cf142b" d="M121 0v-1L500 167l379-168v1L500 183 121 0zm-2-2h-1l-23 52H40L0 71v13l46-19h55l-24 53-1 2 2 1 24-53h400l-24 53 2 1 1-2 24-53h55l46 19v-13l-40-19h-55l23-52h1l-1 1-22 51H500l379-168h-1l-22 51zm760 504h1l23-52h55l40-18v-13l-46 19h-55l24-53 1-2-2-1-24 53H500l24-53-2-1-1 2-24 53h-55l-46-19v13l40 18h55l-23 52h-1l1-1 22-51H500l-379 168h1l22-51zM500 211l-433 193h22l411-183 411 183h22L500 211zm0 78l433-193h-22L500 272 89 88h-22l433 193z"/>
     </svg>
 );
+
 
 const languageOptions = {
     en: { name: 'English', flag: <UKFlag /> },
@@ -57,6 +55,7 @@ export function LanguageToggle() {
         const segments = pathname.split('/');
         segments[1] = locale;
         router.push(segments.join('/'));
+        router.refresh();
     };
     
     const currentLocale = (pathname.split('/')[1] as Locale) || i18n.defaultLocale;
