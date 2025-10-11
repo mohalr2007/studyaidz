@@ -30,11 +30,11 @@ export default async function AuthPage() {
           data-ai-hint={loginHeroImage.imageHint}
         />
       )}
+      <div className="absolute top-4 right-4 z-20">
+        <ThemeToggle />
+      </div>
       <div className="relative z-10 flex min-h-screen items-center justify-center bg-background/50 backdrop-blur-sm p-4">
-        <Card className="w-full max-w-sm relative">
-           <div className="absolute top-4 right-4">
-            <ThemeToggle />
-          </div>
+        <Card className="w-full max-w-sm">
           <CardHeader>
             <CardTitle>Page de navigation</CardTitle>
             <CardDescription>
