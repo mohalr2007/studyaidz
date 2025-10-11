@@ -42,11 +42,12 @@ export default function ChatInterface() {
   });
 
   useEffect(() => {
+    // Scroll to bottom when messages change
     if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTo({
-        top: scrollAreaRef.current.scrollHeight,
-        behavior: 'smooth',
-      });
+        const viewport = scrollAreaRef.current.querySelector('div');
+        if (viewport) {
+            viewport.scrollTop = viewport.scrollHeight;
+        }
     }
   }, [messages]);
 
@@ -75,7 +76,7 @@ export default function ChatInterface() {
   };
 
   return (
-    <Card className="h-full flex flex-col">
+    <Card className="h-full flex flex-col max-h-[calc(100vh-8rem)]">
       <CardHeader>
         <CardTitle className="font-headline">المساعد الذكي</CardTitle>
         <CardDescription>اطرح أي سؤال يتعلق بدراستك واحصل على إجابة فورية.</CardDescription>
@@ -83,6 +84,16 @@ export default function ChatInterface() {
       <CardContent className="flex-1 flex flex-col gap-4 overflow-hidden">
         <ScrollArea className="flex-1 pr-4" ref={scrollAreaRef}>
           <div className="space-y-6">
+             <div className="flex items-start gap-3 justify-start">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-primary text-primary-foreground">
+                      <Sparkles className="h-5 w-5" />
+                    </AvatarFallback>
+                  </Avatar>
+                <div className="bg-muted rounded-lg p-3 text-sm rounded-bl-none">
+                    <p>مرحباً! أنا مساعدك الدراسي. كيف يمكنني مساعدتك اليوم؟</p>
+                </div>
+              </div>
             {messages.map((message, index) => (
               <div
                 key={index}
@@ -127,7 +138,7 @@ export default function ChatInterface() {
             )}
           </div>
         </ScrollArea>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex w-full items-start gap-2">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex w-full items-start gap-2 pt-4 border-t">
           <Input
             {...register('question')}
             placeholder="اكتب سؤالك هنا..."

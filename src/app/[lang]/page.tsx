@@ -11,7 +11,6 @@ import { LanguageToggle } from '@/components/layout/language-toggle';
 import { type Locale } from '@/i18n-config';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 
 export default function AuthPage({ params: { lang } }: { params: { lang: Locale } }) {
 
@@ -55,7 +54,7 @@ export default function AuthPage({ params: { lang } }: { params: { lang: Locale 
                     <Link href={`/${lang}/dashboard`}>Dashboard</Link>
                 </Button>
                 <Button asChild variant="outline">
-                    <Link href={`/${lang}/profile`}>Profile</Link>
+                    <Link href={`/${lang}/dashboard/profile`}>Profile</Link>
                 </Button>
             </div>
           </div>

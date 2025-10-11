@@ -59,7 +59,7 @@ export function LanguageToggle() {
         router.push(segments.join('/'));
     };
     
-    const currentLocale = pathname.split('/')[1] as Locale || i18n.defaultLocale;
+    const currentLocale = (pathname.split('/')[1] as Locale) || i18n.defaultLocale;
 
     return (
         <DropdownMenu>
