@@ -30,6 +30,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  serverComponentsExternalPackages: ['@formatjs/intl-localematcher', 'negotiator'],
 };
 
 export default nextConfig;
