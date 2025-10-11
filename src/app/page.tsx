@@ -1,9 +1,11 @@
 
-
 import Image from 'next/image';
 import {
   Card,
   CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
 } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Logo } from '@/components/logo';
@@ -47,37 +49,22 @@ export default async function AuthPage() {
         />
       )}
       <div className="relative z-10 flex min-h-screen items-center justify-center bg-background/50 backdrop-blur-sm p-4">
-        <Card className="w-full max-w-sm overflow-hidden shadow-2xl">
-            <CardContent className="p-0">
-                <div className="p-6 pb-2 text-center">
-                    <Logo className="justify-center" />
-                </div>
-                <Tabs defaultValue="signIn" className="w-full">
-                    <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="signIn">تسجيل الدخول</TabsTrigger>
-                        <TabsTrigger value="signUp">إنشاء حساب</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="signIn">
-                       <SignInForm />
-                    </TabsContent>
-                    <TabsContent value="signUp">
-                        <SignUpForm />
-                    </TabsContent>
-                </Tabs>
-            </CardContent>
-             {session && (
-              <div className="p-4 border-t bg-muted/50 text-center text-sm">
-                <p className="mb-2 text-muted-foreground">أنت مسجل الدخول بالفعل. هل تريد اختبار الصفحات؟</p>
-                <div className="flex justify-center gap-2">
-                  <Button asChild variant="outline" size="sm">
-                    <Link href="/profile">صفحة الملف الشخصي</Link>
-                  </Button>
-                  <Button asChild variant="outline" size="sm">
-                    <Link href="/dashboard">لوحة التحكم</Link>
-                  </Button>
-                </div>
-              </div>
-            )}
+        <Card className="w-full max-w-sm">
+          <CardHeader>
+            <CardTitle>Page de navigation</CardTitle>
+            <CardDescription>
+              Il n'y a rien dans cette page pour le moment. Utilisez les boutons ci-dessous pour tester les autres sections.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+              <Button asChild>
+                <Link href="/dashboard">Aller au Tableau de Bord</Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link href="/profile">Aller au Profil</Link>
+              </Button>
+               <SignInForm />
+          </CardContent>
         </Card>
       </div>
     </div>
