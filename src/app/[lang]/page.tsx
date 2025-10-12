@@ -68,7 +68,7 @@ function AuthPageComponent({ lang }: { lang: Locale }) {
                 <p className="text-xs text-muted-foreground">Liens de développement :</p>
                 <div className="grid grid-cols-2 gap-2 w-full">
                     <Button variant="outline" size="sm" asChild>
-                        <Link href="/complete-profile">Compléter Profil</Link>
+                        <Link href={`/${lang}/complete-profile`}>Compléter Profil</Link>
                     </Button>
                     <Button variant="outline" size="sm" asChild>
                         <Link href={`/${lang}/dashboard`}>Dashboard</Link>

@@ -39,6 +39,7 @@ import {
 import { academicData, type AcademicInstitution } from '@/lib/academic-data';
 import { useState, useEffect } from 'react';
 import { Combobox } from '@/components/ui/combobox';
+import { useRouter } from 'next/navigation';
 
 const ProfileFormSchema = z.object({
   full_name: z.string().min(3, 'الاسم الكامل مطلوب.'),
@@ -60,6 +61,7 @@ function SubmitButton() {
 export default function ProfilePage() {
   const { user, student, loading } = useUser();
   const { toast } = useToast();
+  const router = useRouter();
 
   const [institutionType, setInstitutionType] = useState<
     'universite' | 'ecole' | ''
@@ -87,25 +89,32 @@ export default function ProfilePage() {
   });
 
   useEffect(() => {
-    if (student?.field_of_study) {
-      for (const inst of [
-        ...academicData.universites,
-        ...academicData.ecoles,
-      ]) {
-        if (inst.specializations.includes(student.field_of_study)) {
-          setInstitutionType(inst.type);
-          setSelectedInstitution(inst.name);
-          // Manually trigger specializations update for pre-fill
-          const institution = (
-            inst.type === 'universite'
-              ? academicData.universites
-              : academicData.ecoles
-          ).find((i) => i.name === inst.name);
-          setAvailableSpecializations(
-            institution ? institution.specializations : []
-          );
-          form.setValue('field_of_study', student.field_of_study);
-          break;
+    if (student) {
+        form.reset({
+             full_name: student.full_name || '',
+             date_of_birth: student.date_of_birth ? student.date_of_birth.split('T')[0] : '',
+             field_of_study: student.field_of_study || '',
+        });
+
+      if (student.field_of_study) {
+        for (const inst of [
+          ...academicData.universites,
+          ...academicData.ecoles,
+        ]) {
+          if (inst.specializations.includes(student.field_of_study)) {
+            setInstitutionType(inst.type);
+            setSelectedInstitution(inst.name);
+            const institution = (
+              inst.type === 'universite'
+                ? academicData.universites
+                : academicData.ecoles
+            ).find((i) => i.name === inst.name);
+            setAvailableSpecializations(
+              institution ? institution.specializations : []
+            );
+            form.setValue('field_of_study', student.field_of_study);
+            break;
+          }
         }
       }
     }
@@ -118,7 +127,6 @@ export default function ProfilePage() {
           ? academicData.universites
           : academicData.ecoles;
       setAvailableInstitutions(institutions);
-      // Don't reset selected institution if it's still valid for the new type
       const currentInst = institutions.find(i => i.name === selectedInstitution);
       if (!currentInst) {
         setSelectedInstitution('');
@@ -136,7 +144,6 @@ export default function ProfilePage() {
       setAvailableSpecializations(
         institution ? institution.specializations : []
       );
-       // Do not reset field_of_study if it's already set and valid
        if (!institution?.specializations.includes(form.getValues('field_of_study'))) {
         form.setValue('field_of_study', '');
        }
@@ -164,6 +171,7 @@ export default function ProfilePage() {
         title: 'تم بنجاح',
         description: 'تم تحديث ملفك الشخصي.',
       });
+      router.refresh();
     }
   };
   
@@ -366,3 +374,4 @@ export default function ProfilePage() {
     </Card>
   );
 }
+

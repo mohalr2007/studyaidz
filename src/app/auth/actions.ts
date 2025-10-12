@@ -59,7 +59,7 @@ export async function signup(formData: FormData) {
   
   // After signup, we immediately direct them to complete their profile.
   revalidatePath("/", "layout");
-  return redirect(`${origin}/complete-profile`);
+  return redirect(`/${lang}/complete-profile`);
 }
 
 
@@ -100,5 +100,7 @@ export async function logout() {
   const supabase = createClient();
   await supabase.auth.signOut();
   const lang = await getLocale();
+  // We perform a redirect which will be caught by the middleware to direct to the correct locale page.
+  // The client-side logout handler will force a page reload.
   redirect(`/${lang}`);
 }

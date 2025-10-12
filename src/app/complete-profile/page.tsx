@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm, type SubmitHandler, Controller } from 'react-hook-form';
@@ -39,7 +40,7 @@ import { format } from 'date-fns';
 import { completeUserProfile } from './actions';
 import { useFormStatus } from 'react-dom';
 import { Logo } from '@/components/logo';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { academicData, type AcademicInstitution } from '@/lib/academic-data';
 import { Combobox } from '@/components/ui/combobox';
 import { AvatarPicker } from '@/components/auth/avatar-picker';
@@ -49,6 +50,7 @@ import { Label } from '@/components/ui/label';
 import { ThemeToggle } from '@/components/layout/theme-toggle';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import type { Locale } from '@/i18n-config';
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -59,7 +61,8 @@ function SubmitButton() {
   );
 }
 
-export default function CompleteProfilePage() {
+export default function CompleteProfilePage({ params }: { params: Promise<{ lang: Locale }> }) {
+  const lang = use(params);
   const [institutionType, setInstitutionType] = useState<
     'universite' | 'ecole' | ''
   >('');
@@ -123,6 +126,7 @@ export default function CompleteProfilePage() {
 
   const onSubmit: SubmitHandler<UserProfileFormData> = async (data) => {
     const formData = new FormData();
+    formData.append('lang', lang);
     formData.append('full_name', data.full_name);
     formData.append('username', data.username);
     formData.append('gender', data.gender);

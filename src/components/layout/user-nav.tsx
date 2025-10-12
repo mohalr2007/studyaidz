@@ -18,14 +18,22 @@ import { useUser } from "@/hooks/use-user";
 import { Edit, LogOut, Settings } from "lucide-react";
 import { Skeleton } from "../ui/skeleton";
 import { AnimatePresence, motion } from "framer-motion";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { type Locale } from "@/i18n-config";
 
 export function UserNav() {
   const { user, student, loading } = useUser();
   const pathname = usePathname();
+  const router = useRouter();
   const lang = pathname.split('/')[1] as Locale;
 
+
+  const handleLogout = async (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      await logout();
+      // Force a hard reload to clear all state and redirect via middleware
+      window.location.href = `/${lang}`;
+  };
 
   const getInitials = (name: string | null | undefined) => {
     if (!name) return 'U';
@@ -82,7 +90,7 @@ export function UserNav() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <form action={logout}>
+        <form onSubmit={handleLogout}>
           <DropdownMenuItem asChild>
             <button type="submit" className="w-full flex items-center">
               <LogOut className="me-2" />

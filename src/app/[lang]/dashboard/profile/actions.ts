@@ -29,7 +29,6 @@ export async function updateStudentProfile(formData: FormData) {
     return { error: 'Failed to update profile.' };
   }
 
-  // Revalidate the profile page specifically
   revalidatePath('/[lang]/dashboard/profile', 'page');
   return { error: null };
 }
