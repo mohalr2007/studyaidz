@@ -128,6 +128,6 @@ function DashboardClientPage({ lang }: { lang: string }) {
   );
 }
 
-export default function DashboardPage({ params }: { params: { lang: string } }) {
-    return <DashboardClientPage lang={params.lang} />;
+export default function DashboardPage({ params: { lang } }: { params: { lang: string } }) {
+    return <DashboardClientPage lang={lang} />;
 }
