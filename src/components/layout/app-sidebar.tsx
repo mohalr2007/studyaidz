@@ -5,7 +5,7 @@ import {
   Menu,
 } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState, type ReactNode, useTransition } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 
 import { NAV_LINKS } from '@/lib/constants';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -27,14 +27,11 @@ const NavItem = ({
 }) => {
   const pathname = usePathname();
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
   const isActive = pathname.startsWith(`/${lang}${link.href}`);
 
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    startTransition(() => {
-      router.push(e.currentTarget.href);
-    });
+    router.push(e.currentTarget.href);
   };
 
   return (
@@ -46,8 +43,7 @@ const NavItem = ({
             onClick={handleClick}
             className={cn(
               'flex items-center gap-4 p-2 rounded-lg transition-colors duration-150',
-              isActive ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-muted',
-              isPending && 'opacity-75 cursor-wait'
+              isActive ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-muted'
             )}
           >
             <link.icon className="size-5 shrink-0" />
