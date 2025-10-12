@@ -2,7 +2,7 @@
 'use client';
 
 import Image from 'next/image';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { SignInForm } from '@/components/auth/sign-in-form';
 import { SignUpForm } from '@/components/auth/sign-up-form';
@@ -12,6 +12,8 @@ import { type Locale } from '@/i18n-config';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Logo } from '@/components/logo';
 import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default function AuthPage({
   params: { lang },
@@ -61,6 +63,19 @@ export default function AuthPage({
                 <SignUpForm />
               </CardContent>
             </TabsContent>
+            {process.env.NODE_ENV === 'development' && (
+              <CardFooter className="flex-col gap-2 pt-4">
+                <p className="text-xs text-muted-foreground">Liens de développement :</p>
+                <div className="grid grid-cols-2 gap-2 w-full">
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href="/complete-profile">Compléter Profil</Link>
+                    </Button>
+                    <Button variant="outline" size="sm" asChild>
+                        <Link href={`/${lang}/dashboard`}>Dashboard</Link>
+                    </Button>
+                </div>
+              </CardFooter>
+            )}
           </Card>
         </Tabs>
       </div>
