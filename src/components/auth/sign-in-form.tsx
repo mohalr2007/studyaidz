@@ -65,7 +65,7 @@ export function SocialLoginButtons() {
 }
 
 
-export function SignInForm() {
+export function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () => void }) {
     return (
         <>
             <CardHeader className="text-center">
@@ -90,6 +90,13 @@ export function SignInForm() {
                         تسجيل الدخول
                     </Button>
                 </form>
+
+                 <div className="text-center text-sm">
+                    ليس لديك حساب؟{' '}
+                    <Button variant="link" className="p-0 h-auto" onClick={onSwitchToSignUp}>
+                        قم بإنشاء حساب
+                    </Button>
+                </div>
 
                 <SocialLoginButtons />
             </CardContent>
