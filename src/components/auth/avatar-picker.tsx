@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Upload, Loader2, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { createClient } from '@/lib/supabase/client';
+import { useUser } from '@/hooks/use-user';
 
 const PRESET_AVATARS = [
   '/avatars/01.png',
@@ -27,6 +28,7 @@ export function AvatarPicker({ onAvatarChange }: AvatarPickerProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const supabase = createClient();
+  const { user } = useUser(); // Get the currently authenticated user
 
   const handlePresetSelect = (avatarPath: string) => {
     const publicUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatars${avatarPath}`;
@@ -37,6 +39,15 @@ export function AvatarPicker({ onAvatarChange }: AvatarPickerProps) {
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    if (!user) {
+        toast({
+            title: 'Utilisateur non authentifié',
+            description: 'Vous devez être connecté pour téléverser une image.',
+            variant: 'destructive'
+        });
+        return;
+    }
 
     if (file.size > 2 * 1024 * 1024) { // 2MB limit
         toast({
@@ -50,7 +61,8 @@ export function AvatarPicker({ onAvatarChange }: AvatarPickerProps) {
     setIsLoading(true);
 
     try {
-      const filePath = `public/${Date.now()}-${file.name}`;
+      // Use the user's ID as a folder to ensure policy compliance
+      const filePath = `${user.id}/${Date.now()}-${file.name}`;
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filePath, file);
@@ -107,7 +119,7 @@ export function AvatarPicker({ onAvatarChange }: AvatarPickerProps) {
               type="button"
               variant="outline"
               onClick={() => fileInputRef.current?.click()}
-              disabled={isLoading}
+              disabled={isLoading || !user}
             >
               <Upload className="me-2" />
               اختر ملفًا
@@ -118,7 +130,7 @@ export function AvatarPicker({ onAvatarChange }: AvatarPickerProps) {
               onChange={handleFileChange}
               className="hidden"
               accept="image/png, image/jpeg, image/webp"
-              disabled={isLoading}
+              disabled={isLoading || !user}
             />
             <p className="text-xs text-muted-foreground mt-2">
                 PNG, JPG, WEBP (بحد أقصى 2 ميغابايت)

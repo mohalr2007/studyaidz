@@ -20,6 +20,7 @@ export async function completeUserProfile(formData: FormData) {
   
   const avatarUrl = formData.get('avatar_url') as string;
 
+  // Update user metadata which is used across the app (e.g., in the UserNav)
   const { error: userUpdateError } = await supabase.auth.updateUser({
       data: { avatar_url: avatarUrl }
   })
@@ -29,6 +30,7 @@ export async function completeUserProfile(formData: FormData) {
       return redirect(`/complete-profile?error=${encodeURIComponent(userUpdateError.message)}`);
   }
 
+  // Then, upsert the student's profile data
   const studentData = {
     id: user.id,
     username: formData.get('username') as string,
@@ -37,7 +39,7 @@ export async function completeUserProfile(formData: FormData) {
     date_of_birth: formData.get('dateOfBirth') as string,
     field_of_study: formData.get('fieldOfStudy') as string,
     is_profile_complete: true,
-    avatar_url: avatarUrl,
+    avatar_url: avatarUrl, // Also save it in the students table
   };
   
   const { error } = await supabase.from('students').upsert(studentData);
