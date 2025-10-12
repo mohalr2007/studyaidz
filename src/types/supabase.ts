@@ -10,41 +10,44 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      profiles: { // added by AI — Supabase profile connection
-        Row: { // added by AI — Supabase profile connection
-          id: string // added by AI — Supabase profile connection
-          user_id: string // added by AI — Supabase profile connection
-          email: string // added by AI — Supabase profile connection
-          full_name: string | null // added by AI — Supabase profile connection
-          username: string | null // added by AI — Supabase profile connection
-          gender: string | null // added by AI — Supabase profile connection
-          field_of_study: string | null // added by AI — Supabase profile connection
-          birthdate: string | null // added by AI — Supabase profile connection
-          created_at: string | null // added by AI — Supabase profile connection
-        } // added by AI — Supabase profile connection
-        Insert: { // added by AI — Supabase profile connection
-          id?: string // added by AI — Supabase profile connection
-          user_id: string // added by AI — Supabase profile connection
-          email: string // added by AI — Supabase profile connection
-          full_name?: string | null // added by AI — Supabase profile connection
-          username?: string | null // added by AI — Supabase profile connection
-          gender?: string | null // added by AI — Supabase profile connection
-          field_of_study?: string | null // added by AI — Supabase profile connection
-          birthdate?: string | null // added by AI — Supabase profile connection
-          created_at?: string | null // added by AI — Supabase profile connection
-        } // added by AI — Supabase profile connection
-        Update: { // added by AI — Supabase profile connection
-          id?: string // added by AI — Supabase profile connection
-          user_id?: string // added by AI — Supabase profile connection
-          email?: string // added by AI — Supabase profile connection
-          full_name?: string | null // added by AI — Supabase profile connection
-          username?: string | null // added by AI — Supabase profile connection
-          gender?: string | null // added by AI — Supabase profile connection
-          field_of_study?: string | null // added by AI — Supabase profile connection
-          birthdate?: string | null // added by AI — Supabase profile connection
-          created_at?: string | null // added by AI — Supabase profile connection
-        } // added by AI — Supabase profile connection
-      } // added by AI — Supabase profile connection
+      profiles: {
+        Row: {
+          id: string
+          user_id: string
+          email: string
+          full_name: string | null
+          username: string | null
+          gender: string | null
+          field_of_study: string | null
+          birthdate: string | null
+          created_at: string | null
+          avatar_url: string | null;
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          email: string
+          full_name?: string | null
+          username?: string | null
+          gender?: string | null
+          field_of_study?: string | null
+          birthdate?: string | null
+          created_at?: string | null
+          avatar_url?: string | null;
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          email?: string
+          full_name?: string | null
+          username?: string | null
+          gender?: string | null
+          field_of_study?: string | null
+          birthdate?: string | null
+          created_at?: string | null
+          avatar_url?: string | null;
+        }
+      }
       students: {
         Row: {
           id: string
