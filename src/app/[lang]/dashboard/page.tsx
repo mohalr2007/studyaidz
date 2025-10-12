@@ -13,10 +13,9 @@ import { Sparkles, MessageSquare, Edit, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { logout } from '@/app/auth/actions';
-import { type Locale } from '@/i18n-config';
 
 // Placeholder for a future ChatAssistant component
-const ChatAssistantPlaceholder = ({ lang }: { lang: Locale }) => (
+const ChatAssistantPlaceholder = ({ lang }: { lang: string }) => (
   <Card className="bg-primary/5 border-primary/20">
     <CardHeader>
       <CardTitle className="flex items-center gap-2">
@@ -68,7 +67,7 @@ const RecentActivityPlaceholder = () => (
   </Card>
 );
 
-function DashboardClientPage({ lang }: { lang: Locale }) {
+function DashboardClientPage({ lang }: { lang: string }) {
   const { student, loading } = useUser();
 
   const welcomeMessage = student?.full_name
@@ -129,6 +128,6 @@ function DashboardClientPage({ lang }: { lang: Locale }) {
   );
 }
 
-export default function DashboardPage({ params }: { params: { lang: Locale } }) {
+export default function DashboardPage({ params }: { params: { lang: string } }) {
     return <DashboardClientPage lang={params.lang} />;
 }

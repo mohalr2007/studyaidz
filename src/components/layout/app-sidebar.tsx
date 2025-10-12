@@ -25,7 +25,7 @@ const NavItem = ({
 }: {
   link: (typeof NAV_LINKS)[0];
   isExpanded: boolean;
-  lang: Locale;
+  lang: string;
 }) => {
   const pathname = usePathname();
   const isActive = pathname.startsWith(`/${lang}${link.href}`);
@@ -67,7 +67,7 @@ const NavItem = ({
   );
 };
 
-export function AppSidebar({ userNav, lang }: { userNav: ReactNode, lang: Locale }) {
+export function AppSidebar({ userNav, lang }: { userNav: ReactNode, lang: string }) {
   const isMobile = useIsMobile();
   const [isExpanded, setIsExpanded] = useState(!isMobile);
   
