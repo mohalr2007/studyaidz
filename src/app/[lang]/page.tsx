@@ -66,11 +66,11 @@ function AuthPageComponent({ lang }: { lang: Locale }) {
             {process.env.NODE_ENV === 'development' && (
               <CardFooter className="flex-col gap-2 pt-4">
                 <p className="text-xs text-muted-foreground">Liens de développement :</p>
-                <div className="grid grid-cols-2 gap-2 w-full">
-                    <Button variant="outline" size="sm" asChild>
+                <div className="flex justify-center gap-4 text-sm">
+                    <Button asChild variant="link" className="p-0 h-auto text-xs">
                         <Link href={`/${lang}/complete-profile`}>Compléter Profil</Link>
                     </Button>
-                    <Button variant="outline" size="sm" asChild>
+                    <Button asChild variant="link" className="p-0 h-auto text-xs">
                         <Link href={`/${lang}/dashboard`}>Dashboard</Link>
                     </Button>
                 </div>
