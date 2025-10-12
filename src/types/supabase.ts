@@ -12,14 +12,15 @@ export type Database = {
     Tables: {
       students: {
         Row: {
-          id: string // UUID, linked to auth.users.id
+          id: string
           username: string
           full_name: string
           gender: "male" | "female"
           field_of_study: string
-          date_of_birth: string // ISO 8601 date string
+          date_of_birth: string
           created_at: string
           is_profile_complete: boolean
+          avatar_url: string | null
         }
         Insert: {
           id: string
@@ -30,6 +31,7 @@ export type Database = {
           date_of_birth: string
           created_at?: string
           is_profile_complete?: boolean
+          avatar_url?: string | null
         }
         Update: {
           id?: string
@@ -40,6 +42,7 @@ export type Database = {
           date_of_birth?: string
           created_at?: string
           is_profile_complete?: boolean
+          avatar_url?: string | null
         }
       },
       posts: {
@@ -48,7 +51,7 @@ export type Database = {
             created_at: string
             title: string
             content: string
-            author_id: string // Foreign key to students.id
+            author_id: string
             upvotes: number
             downvotes: number
         }

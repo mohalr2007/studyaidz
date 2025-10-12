@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useForm, type SubmitHandler, Controller } from 'react-hook-form';
@@ -43,6 +42,7 @@ import { Logo } from '@/components/logo';
 import { useState, useEffect } from 'react';
 import { academicData, type AcademicInstitution } from '@/lib/academic-data';
 import { Combobox } from '@/components/ui/combobox';
+import { AvatarPicker } from '@/components/auth/avatar-picker';
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -64,6 +64,8 @@ export default function CompleteProfilePage() {
   const [availableSpecializations, setAvailableSpecializations] = useState<
     string[]
   >([]);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+
 
   const form = useForm<UserProfileFormData>({
     resolver: zodResolver(UserProfileFormSchema),
@@ -71,8 +73,16 @@ export default function CompleteProfilePage() {
       full_name: '',
       username: '',
       fieldOfStudy: '',
+      avatar_url: '',
     },
   });
+  
+  useEffect(() => {
+    if(avatarUrl) {
+      form.setValue('avatar_url', avatarUrl);
+    }
+  }, [avatarUrl, form]);
+
 
   useEffect(() => {
     if (institutionType) {
@@ -106,6 +116,7 @@ export default function CompleteProfilePage() {
     formData.append('gender', data.gender);
     formData.append('dateOfBirth', data.dateOfBirth.toISOString());
     formData.append('fieldOfStudy', data.fieldOfStudy);
+    formData.append('avatar_url', data.avatar_url);
 
     await completeUserProfile(formData);
   };
@@ -133,6 +144,19 @@ export default function CompleteProfilePage() {
               onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-6"
             >
+              <FormField
+                  control={form.control}
+                  name="avatar_url"
+                  render={({ field }) => (
+                    <FormItem>
+                       <FormLabel>الصورة الشخصية</FormLabel>
+                       <FormControl>
+                          <AvatarPicker onAvatarChange={setAvatarUrl} />
+                       </FormControl>
+                       <FormMessage />
+                    </FormItem>
+                  )}
+                />
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}

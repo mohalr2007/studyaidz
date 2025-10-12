@@ -21,6 +21,7 @@ export const UserProfileFormSchema = z.object({
     gender: z.enum(["male", "female"], { required_error: "يرجى تحديد الجنس." }),
     dateOfBirth: z.date({ required_error: "تاريخ الميلاد مطلوب." }),
     fieldOfStudy: z.string().min(2, "التخصص الدراسي مطلوب."),
+    avatar_url: z.string().url("يجب أن يكون رابط الصورة صحيحًا.").min(1, "الصورة الشخصية مطلوبة."),
 });
 
 export type UserProfileFormData = z.infer<typeof UserProfileFormSchema>;

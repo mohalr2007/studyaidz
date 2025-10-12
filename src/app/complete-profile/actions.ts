@@ -15,33 +15,39 @@ export async function completeUserProfile(formData: FormData) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    // This should ideally not happen if the user is on this page
     return redirect(`/${lang}/?error=User not found`);
   }
+  
+  const avatarUrl = formData.get('avatar_url') as string;
 
-  const userData = {
-    id: user.id, // Ensure id is included for upsert
+  const { error: userUpdateError } = await supabase.auth.updateUser({
+      data: { avatar_url: avatarUrl }
+  })
+
+  if (userUpdateError) {
+      console.error('Error updating user metadata:', userUpdateError);
+      return redirect(`/complete-profile?error=${encodeURIComponent(userUpdateError.message)}`);
+  }
+
+  const studentData = {
+    id: user.id,
     username: formData.get('username') as string,
     full_name: formData.get('full_name') as string,
     gender: formData.get('gender') as 'male' | 'female',
     date_of_birth: formData.get('dateOfBirth') as string,
     field_of_study: formData.get('fieldOfStudy') as string,
     is_profile_complete: true,
+    avatar_url: avatarUrl,
   };
   
-  // Upsert the student profile. 'upsert' will create the row if it doesn't exist (e.g., social login),
-  // or update it if it does (e.g., email signup where the row might be partially created).
-  const { error } = await supabase.from('students').upsert(userData);
+  const { error } = await supabase.from('students').upsert(studentData);
 
 
   if (error) {
     console.error('Error completing profile:', error);
-    // Redirect back to the form with a specific error message
     return redirect(`/complete-profile?error=${encodeURIComponent(error.message)}`);
   }
 
-  // Revalidate user-related data across the app
   revalidatePath('/', 'layout');
-  // Redirect to the dashboard in their selected language
   redirect(`/${lang}/dashboard`);
 }
