@@ -3,10 +3,11 @@
 import { useState, useRef } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Upload, Loader2, User } from 'lucide-react';
+import { Camera, Loader2, User } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { createClient } from '@/lib/supabase/client';
 import { useUser } from '@/hooks/use-user';
+import { cn } from '@/lib/utils';
 
 interface AvatarPickerProps {
   onAvatarChange: (url: string | null) => void;
@@ -76,25 +77,22 @@ export function AvatarPicker({ onAvatarChange }: AvatarPickerProps) {
   };
 
   return (
-    <div className="flex flex-col items-center gap-4 p-4 border rounded-lg">
-      <Avatar className="w-24 h-24 text-4xl">
-        <AvatarImage src={preview || undefined} alt="Avatar Preview" />
-        <AvatarFallback>
-            {isLoading ? <Loader2 className="animate-spin" /> : <User />}
-        </AvatarFallback>
-      </Avatar>
-
-      <div className="flex flex-col items-center justify-center">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => fileInputRef.current?.click()}
-          disabled={isLoading}
+    <div className="flex flex-col items-center gap-4">
+        <div 
+            className="relative group w-24 h-24"
+            onClick={() => !isLoading && fileInputRef.current?.click()}
         >
-          <Upload className="me-2" />
-          {preview ? 'Changer de photo' : 'Choisir une photo'}
-        </Button>
-        <input
+            <Avatar className="w-full h-full text-4xl cursor-pointer">
+                <AvatarImage src={preview || undefined} alt="Avatar Preview" className="transition-opacity group-hover:opacity-50"/>
+                <AvatarFallback>
+                    {isLoading ? <Loader2 className="animate-spin" /> : <User />}
+                </AvatarFallback>
+            </Avatar>
+            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                 {!isLoading && <Camera className="w-8 h-8 text-white" />}
+            </div>
+        </div>
+         <input
           type="file"
           ref={fileInputRef}
           onChange={handleFileChange}
@@ -102,10 +100,9 @@ export function AvatarPicker({ onAvatarChange }: AvatarPickerProps) {
           accept="image/png, image/jpeg, image/webp"
           disabled={isLoading}
         />
-        <p className="text-xs text-muted-foreground mt-2">
-            PNG, JPG, WEBP (بحد أقصى 2 ميغابايت)
+        <p className="text-xs text-muted-foreground mt-1">
+            PNG, JPG, WEBP (max 2MB)
         </p>
-      </div>
     </div>
   );
 }
