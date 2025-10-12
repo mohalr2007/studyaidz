@@ -38,4 +38,4 @@ export async function completeUserProfile(formData: FormData) { // added by AI �
 
   revalidatePath('/complete-profile'); // added by AI — Supabase profile connection
   redirect(`/${lang}/dashboard`); // added by AI — Supabase profile connection
-} // added by AI — Supabase profile connection
+}

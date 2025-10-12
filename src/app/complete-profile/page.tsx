@@ -68,7 +68,7 @@ export default function CompleteProfilePage() {
   const [availableSpecializations, setAvailableSpecializations] = useState<
     string[]
   >([]);
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string>('');
   const { user } = useUser(); // added by AI — Supabase profile connection
   const { toast } = useToast(); // added by AI — Supabase profile connection
 
@@ -89,9 +89,7 @@ export default function CompleteProfilePage() {
   }, [user, form]); // added by AI — Supabase profile connection
 
   useEffect(() => {
-    if(avatarUrl) {
       form.setValue('avatar_url', avatarUrl);
-    }
   }, [avatarUrl, form]);
 
 
@@ -127,7 +125,7 @@ export default function CompleteProfilePage() {
     formData.append('gender', data.gender);
     formData.append('dateOfBirth', data.dateOfBirth.toISOString());
     formData.append('fieldOfStudy', data.fieldOfStudy);
-    formData.append('avatar_url', data.avatar_url);
+    formData.append('avatar_url', data.avatar_url || '');
 
     const result = await completeUserProfile(formData); // added by AI — Supabase profile connection
 
