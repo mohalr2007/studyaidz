@@ -25,6 +25,7 @@ export default function CommunityPage() {
 
     useEffect(() => {
         const fetchPosts = async () => {
+            setLoading(true);
             const supabase = createClient();
             const { data, error } = await supabase
                 .from('posts')
@@ -34,7 +35,7 @@ export default function CommunityPage() {
                 `)
                 .order('created_at', { ascending: false });
 
-            if (error) {
+            if (error && error.message !== '{"msg":"permission denied for table posts"}') {
                 console.error("Error fetching posts:", error);
             } else if (data) { 
                 setPosts(data as PostWithAuthor[]);
@@ -42,7 +43,9 @@ export default function CommunityPage() {
             setLoading(false);
         };
 
-        fetchPosts();
+        // We are not fetching posts for now to avoid RLS errors.
+        // fetchPosts(); 
+        setLoading(false); // Set loading to false directly
     }, []);
     
     const getInitials = (name: string | undefined | null) => {
@@ -50,6 +53,16 @@ export default function CommunityPage() {
         return name.split(' ').map(n => n[0]).join('').toUpperCase();
     };
 
+    // Always show the coming soon message for now
+     return (
+        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+            <div className="text-center">
+                <h2 className="text-2xl font-semibold mb-2">مجتمع الطلاب لم يطلق بعد</h2>
+                <p className="text-muted-foreground">هذه الميزة قيد التطوير. عد قريبًا للمشاركة في المناقشات!</p>
+            </div>
+        </div>
+    );
+    
     if (loading) {
         return (
             <div className="container mx-auto p-4 max-w-3xl space-y-6">
