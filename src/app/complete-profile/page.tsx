@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm, type SubmitHandler, Controller } from 'react-hook-form';
@@ -33,7 +34,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { Calendar as CalendarIcon } from 'lucide-react';
+import { Calendar as CalendarIcon, Mail } from 'lucide-react'; // added by AI — Supabase profile connection
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { completeUserProfile } from './actions';
@@ -43,6 +44,9 @@ import { useState, useEffect } from 'react';
 import { academicData, type AcademicInstitution } from '@/lib/academic-data';
 import { Combobox } from '@/components/ui/combobox';
 import { AvatarPicker } from '@/components/auth/avatar-picker';
+import { useUser } from '@/hooks/use-user'; // added by AI — Supabase profile connection
+import { useToast } from '@/hooks/use-toast'; // added by AI — Supabase profile connection
+import { Label } from '@/components/ui/label'; // added by AI — Supabase profile connection
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -65,7 +69,8 @@ export default function CompleteProfilePage() {
     string[]
   >([]);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-
+  const { user } = useUser(); // added by AI — Supabase profile connection
+  const { toast } = useToast(); // added by AI — Supabase profile connection
 
   const form = useForm<UserProfileFormData>({
     resolver: zodResolver(UserProfileFormSchema),
@@ -77,6 +82,12 @@ export default function CompleteProfilePage() {
     },
   });
   
+  useEffect(() => { // added by AI — Supabase profile connection
+    if (user?.email) { // added by AI — Supabase profile connection
+      // The schema doesn't have email, but we might need it for display
+    } // added by AI — Supabase profile connection
+  }, [user, form]); // added by AI — Supabase profile connection
+
   useEffect(() => {
     if(avatarUrl) {
       form.setValue('avatar_url', avatarUrl);
@@ -118,7 +129,20 @@ export default function CompleteProfilePage() {
     formData.append('fieldOfStudy', data.fieldOfStudy);
     formData.append('avatar_url', data.avatar_url);
 
-    await completeUserProfile(formData);
+    const result = await completeUserProfile(formData); // added by AI — Supabase profile connection
+
+    if (result?.error) { // added by AI — Supabase profile connection
+      toast({ // added by AI — Supabase profile connection
+        title: 'Error', // added by AI — Supabase profile connection
+        description: result.error, // added by AI — Supabase profile connection
+        variant: 'destructive', // added by AI — Supabase profile connection
+      }); // added by AI — Supabase profile connection
+    } else { // added by AI — Supabase profile connection
+      toast({ // added by AI — Supabase profile connection
+        title: 'Success', // added by AI — Supabase profile connection
+        description: 'Profile saved successfully.', // added by AI — Supabase profile connection
+      }); // added by AI — Supabase profile connection
+    } // added by AI — Supabase profile connection
   };
   
   const institutionOptions = availableInstitutions.map(inst => ({
@@ -144,6 +168,21 @@ export default function CompleteProfilePage() {
               onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-6"
             >
+              <div className="space-y-2"> 
+                <Label htmlFor="email">البريد الإلكتروني</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                  <Input
+                    id="email"
+                    type="email"
+                    value={user?.email || ''} // added by AI — Supabase profile connection
+                    readOnly // added by AI — Supabase profile connection
+                    disabled // added by AI — Supabase profile connection
+                    className="pl-10 bg-muted/50" // added by AI — Supabase profile connection
+                  />
+                </div>
+              </div>
+
               <FormField
                   control={form.control}
                   name="avatar_url"
