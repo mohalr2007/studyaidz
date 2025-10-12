@@ -26,13 +26,7 @@ const NavItem = ({
   lang: string;
 }) => {
   const pathname = usePathname();
-  const router = useRouter();
   const isActive = pathname.startsWith(`/${lang}${link.href}`);
-
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    router.push(e.currentTarget.href);
-  };
 
   return (
     <TooltipProvider>
@@ -40,7 +34,6 @@ const NavItem = ({
         <TooltipTrigger asChild>
           <Link
             href={`/${lang}${link.href}`}
-            onClick={handleClick}
             className={cn(
               'flex items-center gap-4 p-2 rounded-lg transition-colors duration-150',
               isActive ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-muted'
