@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useUser } from '@/hooks/use-user';
@@ -105,6 +104,20 @@ function DashboardClientPage({ lang }: { lang: Locale }) {
           <p className="text-muted-foreground">
             هنا يمكنك رؤية ملخص لنشاطك والوصول السريع إلى ميزات المنصة.
           </p>
+        </div>
+         <div className="flex items-center gap-4">
+          <Button variant="outline" asChild>
+            <Link href={`/${lang}/dashboard/profile`}>
+              <Edit className="me-2" />
+              تعديل الملف الشخصي
+            </Link>
+          </Button>
+          <form action={logout}>
+            <Button variant="destructive">
+              <LogOut className="me-2" />
+              تسجيل الخروج
+            </Button>
+          </form>
         </div>
       </div>
 
