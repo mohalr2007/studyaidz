@@ -19,7 +19,7 @@ interface AuthPageProps {
   params: { lang: Locale };
 }
 
-function AuthPageComponent({ params: { lang } }: AuthPageProps) {
+function AuthPageComponent({ lang }: { lang: Locale }) {
   const loginHeroImage = PlaceHolderImages.find((p) => p.id === 'login-hero');
   const [activeTab, setActiveTab] = useState('sign-in');
 
@@ -84,5 +84,5 @@ function AuthPageComponent({ params: { lang } }: AuthPageProps) {
 }
 
 export default function AuthPage({ params }: AuthPageProps) {
-    return <AuthPageComponent params={params} />;
+    return <AuthPageComponent lang={params.lang} />;
 }
