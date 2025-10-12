@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useUser } from '@/hooks/use-user';
@@ -13,6 +14,7 @@ import { Sparkles, MessageSquare, Edit, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { logout } from '@/app/auth/actions';
+import { use } from 'react';
 
 // Placeholder for a future ChatAssistant component
 const ChatAssistantPlaceholder = ({ lang }: { lang: string }) => (
@@ -128,6 +130,7 @@ function DashboardClientPage({ lang }: { lang: string }) {
   );
 }
 
-export default function DashboardPage({ params }: { params: { lang: string } }) {
-    return <DashboardClientPage lang={params.lang} />;
+export default function DashboardPage({ params }: { params: Promise<{ lang: string }> }) {
+    const { lang } = use(params);
+    return <DashboardClientPage lang={lang} />;
 }

@@ -11,12 +11,12 @@ import { LanguageToggle } from '@/components/layout/language-toggle';
 import { type Locale } from '@/i18n-config';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Logo } from '@/components/logo';
-import { useState } from 'react';
+import { useState, use } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 interface AuthPageProps {
-  params: { lang: Locale };
+  params: Promise<{ lang: Locale }>;
 }
 
 function AuthPageComponent({ lang }: { lang: Locale }) {
@@ -84,5 +84,6 @@ function AuthPageComponent({ lang }: { lang: Locale }) {
 }
 
 export default function AuthPage({ params }: AuthPageProps) {
-    return <AuthPageComponent lang={params.lang} />;
+    const { lang } = use(params);
+    return <AuthPageComponent lang={lang} />;
 }
