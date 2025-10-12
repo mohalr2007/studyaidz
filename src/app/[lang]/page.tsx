@@ -6,11 +6,12 @@ import {
 } from '@/components/ui/card';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { SignInForm } from '@/components/auth/sign-in-form';
+import { SignUpForm } from '@/components/auth/sign-up-form';
 import { ThemeToggle } from '@/components/layout/theme-toggle';
 import { LanguageToggle } from '@/components/layout/language-toggle';
 import { type Locale } from '@/i18n-config';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Logo } from '@/components/logo';
 
 export default function AuthPage({ params: { lang } }: { params: { lang: Locale } }) {
 
@@ -33,32 +34,27 @@ export default function AuthPage({ params: { lang } }: { params: { lang: Locale 
         <ThemeToggle />
       </div>
       <div className="relative z-10 flex min-h-screen items-center justify-center bg-background/50 backdrop-blur-sm p-4">
-        <Card className="w-full max-w-sm">
-          <CardContent className="pt-6">
-              <SignInForm />
-          </CardContent>
-          {/* AI: Temporary navigation buttons for testing */}
-          <div className="px-6 pb-6">
-              <div className="relative mb-4">
-                <div className="absolute inset-0 flex items-center">
-                    <span className="w-full border-t" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-card px-2 text-muted-foreground">
-                        Pour Test
-                    </span>
-                </div>
+        <Tabs defaultValue="sign-in" className="w-full max-w-sm">
+           <div className="flex justify-center mb-6">
+                <Logo />
             </div>
-            <div className="flex flex-col gap-2">
-                <Button asChild variant="outline">
-                    <Link href={`/${lang}/dashboard`}>Dashboard</Link>
-                </Button>
-                <Button asChild variant="outline">
-                    <Link href={`/${lang}/dashboard/profile`}>Profile</Link>
-                </Button>
-            </div>
-          </div>
-        </Card>
+            <Card>
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="sign-in">تسجيل الدخول</TabsTrigger>
+                    <TabsTrigger value="sign-up">إنشاء حساب</TabsTrigger>
+                </TabsList>
+                <TabsContent value="sign-in">
+                    <CardContent className="pt-0">
+                        <SignInForm />
+                    </CardContent>
+                </TabsContent>
+                <TabsContent value="sign-up">
+                    <CardContent className="pt-0">
+                        <SignUpForm />
+                    </CardContent>
+                </TabsContent>
+            </Card>
+        </Tabs>
       </div>
     </div>
   );
