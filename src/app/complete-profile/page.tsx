@@ -47,6 +47,7 @@ import { AvatarPicker } from '@/components/auth/avatar-picker';
 import { useUser } from '@/hooks/use-user'; // added by AI — Supabase profile connection
 import { useToast } from '@/hooks/use-toast'; // added by AI — Supabase profile connection
 import { Label } from '@/components/ui/label'; // added by AI — Supabase profile connection
+import { ThemeToggle } from '@/components/layout/theme-toggle';
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -149,7 +150,10 @@ export default function CompleteProfilePage() {
   }));
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
+    <div className="relative flex min-h-screen items-center justify-center bg-muted/40 p-4">
+       <div className="absolute top-4 right-4 z-20">
+        <ThemeToggle />
+      </div>
       <Card className="w-full max-w-2xl">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4">

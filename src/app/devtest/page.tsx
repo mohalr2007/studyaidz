@@ -1,8 +1,10 @@
+
 'use client';
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ThemeToggle } from '@/components/layout/theme-toggle';
 
 export default function DevTestPage() {
   const clearSession = () => {
@@ -23,7 +25,10 @@ export default function DevTestPage() {
   };
 
   return (
-    <div className="flex flex-col gap-8 items-center justify-center min-h-screen p-4 bg-muted/40">
+    <div className="relative flex flex-col gap-8 items-center justify-center min-h-screen p-4 bg-muted/40">
+        <div className="absolute top-4 right-4 z-20">
+            <ThemeToggle />
+        </div>
         <Card className="w-full max-w-md">
             <CardHeader>
                 <CardTitle className="text-center">Page de Test Développeur</CardTitle>
