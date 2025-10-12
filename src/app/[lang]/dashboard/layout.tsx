@@ -14,8 +14,9 @@ export default function AppLayout({
   children: React.ReactNode;
   params: { lang: Locale };
 }) {
-  const { lang } = params;
   const pathname = usePathname();
+  // Extract lang from pathname, which is reliable in a client component
+  const lang = pathname.split('/')[1] as Locale;
 
   return (
     <div className="flex min-h-screen">
