@@ -15,11 +15,11 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
-export default function AuthPage({
-  params: { lang },
-}: {
+interface AuthPageProps {
   params: { lang: Locale };
-}) {
+}
+
+function AuthPageComponent({ params: { lang } }: AuthPageProps) {
   const loginHeroImage = PlaceHolderImages.find((p) => p.id === 'login-hero');
   const [activeTab, setActiveTab] = useState('sign-in');
 
@@ -81,4 +81,8 @@ export default function AuthPage({
       </div>
     </div>
   );
+}
+
+export default function AuthPage({ params }: AuthPageProps) {
+    return <AuthPageComponent params={params} />;
 }
