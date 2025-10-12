@@ -90,7 +90,7 @@ export function AvatarPicker({ onAvatarChange }: AvatarPickerProps) {
           type="button"
           variant="outline"
           onClick={() => fileInputRef.current?.click()}
-          disabled={isLoading || !user}
+          disabled={isLoading}
         >
           <Upload className="me-2" />
           {preview ? 'Changer de photo' : 'Choisir une photo'}
@@ -101,7 +101,7 @@ export function AvatarPicker({ onAvatarChange }: AvatarPickerProps) {
           onChange={handleFileChange}
           className="hidden"
           accept="image/png, image/jpeg, image/webp"
-          disabled={isLoading || !user}
+          disabled={isLoading}
         />
         <p className="text-xs text-muted-foreground mt-2">
             PNG, JPG, WEBP (بحد أقصى 2 ميغابايت)
