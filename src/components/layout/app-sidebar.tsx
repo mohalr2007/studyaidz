@@ -1,12 +1,11 @@
-
 'use client';
 
 import {
   ChevronsRight,
   Menu,
 } from 'lucide-react';
-import { usePathname } from 'next/navigation';
-import { useEffect, useState, type ReactNode } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState, type ReactNode, useTransition } from 'react';
 
 import { NAV_LINKS } from '@/lib/constants';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -16,7 +15,6 @@ import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
-import type { Locale } from '@/i18n-config';
 
 const NavItem = ({
   link,
@@ -28,7 +26,16 @@ const NavItem = ({
   lang: string;
 }) => {
   const pathname = usePathname();
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const isActive = pathname.startsWith(`/${lang}${link.href}`);
+
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    startTransition(() => {
+      router.push(e.currentTarget.href);
+    });
+  };
 
   return (
     <TooltipProvider>
@@ -36,9 +43,11 @@ const NavItem = ({
         <TooltipTrigger asChild>
           <Link
             href={`/${lang}${link.href}`}
+            onClick={handleClick}
             className={cn(
-              'flex items-center gap-4 p-2 rounded-lg',
-              isActive ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-muted'
+              'flex items-center gap-4 p-2 rounded-lg transition-colors duration-150',
+              isActive ? 'bg-primary/10 text-primary font-semibold' : 'hover:bg-muted',
+              isPending && 'opacity-75 cursor-wait'
             )}
           >
             <link.icon className="size-5 shrink-0" />
