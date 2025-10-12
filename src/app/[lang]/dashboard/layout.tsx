@@ -1,16 +1,16 @@
 import { AppHeader } from '@/components/layout/app-header';
 import { AppSidebar } from '@/components/layout/app-sidebar';
 import { UserNav } from '@/components/layout/user-nav';
-import { use } from 'react';
+import { type Locale } from '@/i18n-config';
 
 export default function AppLayout({
   children,
   params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ lang: string }>;
+  params: { lang: Locale };
 }) {
-  const { lang } = use(params);
+  const { lang } = params;
   return (
     <div className="flex min-h-screen">
       <AppSidebar userNav={<UserNav />} lang={lang} />

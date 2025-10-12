@@ -101,6 +101,5 @@ export async function logout() {
   await supabase.auth.signOut();
   const lang = await getLocale();
   // We perform a redirect which will be caught by the middleware to direct to the correct locale page.
-  // The client-side logout handler will force a page reload.
   redirect(`/${lang}`);
 }

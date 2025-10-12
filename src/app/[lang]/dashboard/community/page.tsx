@@ -15,7 +15,7 @@ type Student = Database['public']['Tables']['students']['Row'];
 type Post = Database['public']['Tables']['posts']['Row'];
 
 type PostWithAuthor = Post & {
-    students: Pick<Student, 'full_name' | 'username'> | null;
+    students: Pick<Student, 'full_name' | 'username' | 'avatar_url'> | null;
 };
 
 
@@ -30,7 +30,7 @@ export default function CommunityPage() {
                 .from('posts')
                 .select(`
                     *,
-                    students(full_name, username)
+                    students(full_name, username, avatar_url)
                 `)
                 .order('created_at', { ascending: false });
 
@@ -57,34 +57,41 @@ export default function CommunityPage() {
                     <Skeleton className="h-9 w-48" />
                     <Skeleton className="h-10 w-32" />
                 </div>
-                <Card>
-                    <CardHeader>
-                        <div className="flex items-center gap-3">
-                            <Skeleton className="h-10 w-10 rounded-full" />
-                            <div>
-                                <Skeleton className="h-4 w-32" />
-                                <Skeleton className="h-3 w-24 mt-1" />
+                {[1, 2, 3].map((i) => (
+                    <Card key={i}>
+                        <CardHeader>
+                            <div className="flex items-center gap-3">
+                                <Skeleton className="h-10 w-10 rounded-full" />
+                                <div className='space-y-2'>
+                                    <Skeleton className="h-4 w-32" />
+                                    <Skeleton className="h-3 w-24" />
+                                </div>
                             </div>
-                        </div>
-                    </CardHeader>
-                    <CardContent>
-                        <Skeleton className="h-5 w-3/4" />
-                         <Skeleton className="h-4 w-full mt-2" />
-                         <Skeleton className="h-4 w-1/2 mt-2" />
-                    </CardContent>
-                    <CardFooter className="bg-muted/50 p-3">
-                        <Skeleton className="h-8 w-full" />
-                    </CardFooter>
-                </Card>
+                        </CardHeader>
+                        <CardContent className="space-y-2">
+                            <Skeleton className="h-5 w-3/4" />
+                             <Skeleton className="h-4 w-full" />
+                             <Skeleton className="h-4 w-1/2" />
+                        </CardContent>
+                        <CardFooter className="bg-muted/50 p-3">
+                            <div className="flex justify-between w-full">
+                                <Skeleton className="h-8 w-24" />
+                                <Skeleton className="h-8 w-24" />
+                            </div>
+                        </CardFooter>
+                    </Card>
+                ))}
             </div>
         );
     }
     
     if (posts.length === 0) {
         return (
-             <div className="text-center py-20">
-                <h2 className="text-2xl font-semibold mb-2">مجتمع الطلاب لم يطلق بعد</h2>
-                <p className="text-muted-foreground">هذه الميزة قيد التطوير. عد قريبًا للمشاركة في المناقشات!</p>
+            <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+                <div className="text-center">
+                    <h2 className="text-2xl font-semibold mb-2">مجتمع الطلاب لم يطلق بعد</h2>
+                    <p className="text-muted-foreground">هذه الميزة قيد التطوير. عد قريبًا للمشاركة في المناقشات!</p>
+                </div>
             </div>
         )
     }
@@ -98,6 +105,7 @@ export default function CommunityPage() {
             <div className="space-y-6">
                 {posts && posts.map(post => {
                     const authorName = post.students?.full_name || 'مستخدم غير معروف';
+                    const authorAvatar = post.students?.avatar_url;
                     const timeAgo = formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: ar });
 
                     return (
@@ -105,7 +113,7 @@ export default function CommunityPage() {
                             <CardHeader>
                                 <div className="flex items-center gap-3">
                                     <Avatar>
-                                        <AvatarImage src={''} />
+                                        <AvatarImage src={authorAvatar || ''} />
                                         <AvatarFallback>{getInitials(authorName)}</AvatarFallback>
                                     </Avatar>
                                     <div>
