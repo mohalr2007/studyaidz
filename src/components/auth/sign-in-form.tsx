@@ -79,12 +79,12 @@ export function SignInForm({ onSwitchToSignUp }: { onSwitchToSignUp: () => void 
             <CardContent className="grid gap-4">
                 <form action={login} className="grid gap-4">
                     <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                        <Input id="email" name="email" type="email" placeholder="البريد الإلكتروني" required className="pl-10" />
+                        <Mail className="absolute left-3 rtl:left-auto rtl:right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                        <Input id="email" name="email" type="email" placeholder="البريد الإلكتروني" required className="pl-10 rtl:pl-0 rtl:pr-10" />
                     </div>
                     <div className="relative">
-                        <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                        <Input id="password" name="password" type="password" placeholder="كلمة المرور" required className="pl-10" />
+                        <KeyRound className="absolute left-3 rtl:left-auto rtl:right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                        <Input id="password" name="password" type="password" placeholder="كلمة المرور" required className="pl-10 rtl:pl-0 rtl:pr-10" />
                     </div>
                     <Button type="submit" className="w-full font-bold">
                         تسجيل الدخول
