@@ -41,7 +41,8 @@ import { completeUserProfile } from './actions';
 import { useFormStatus } from 'react-dom';
 import { Logo } from '@/components/logo';
 import { useState, useEffect } from 'react';
-import { academicData } from '@/lib/academic-data';
+import { academicData, type AcademicInstitution } from '@/lib/academic-data';
+import { Combobox } from '@/components/ui/combobox';
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -53,12 +54,17 @@ function SubmitButton() {
 }
 
 export default function CompleteProfilePage() {
-
-  const [institutionType, setInstitutionType] = useState<'universite' | 'ecole' | ''>('');
-  const [availableInstitutions, setAvailableInstitutions] = useState<typeof academicData.universites>([]);
+  const [institutionType, setInstitutionType] = useState<
+    'universite' | 'ecole' | ''
+  >('');
+  const [availableInstitutions, setAvailableInstitutions] = useState<
+    AcademicInstitution[]
+  >([]);
   const [selectedInstitution, setSelectedInstitution] = useState('');
-  const [availableSpecializations, setAvailableSpecializations] = useState<string[]>([]);
-  
+  const [availableSpecializations, setAvailableSpecializations] = useState<
+    string[]
+  >([]);
+
   const form = useForm<UserProfileFormData>({
     resolver: zodResolver(UserProfileFormSchema),
     defaultValues: {
@@ -70,7 +76,10 @@ export default function CompleteProfilePage() {
 
   useEffect(() => {
     if (institutionType) {
-      const institutions = institutionType === 'universite' ? academicData.universites : academicData.ecoles;
+      const institutions =
+        institutionType === 'universite'
+          ? academicData.universites
+          : academicData.ecoles;
       setAvailableInstitutions(institutions);
       setSelectedInstitution('');
       setAvailableSpecializations([]);
@@ -80,8 +89,12 @@ export default function CompleteProfilePage() {
 
   useEffect(() => {
     if (selectedInstitution) {
-      const institution = availableInstitutions.find(inst => inst.name === selectedInstitution);
-      setAvailableSpecializations(institution ? institution.specializations : []);
+      const institution = availableInstitutions.find(
+        (inst) => inst.name === selectedInstitution
+      );
+      setAvailableSpecializations(
+        institution ? institution.specializations : []
+      );
       form.setValue('fieldOfStudy', '');
     }
   }, [selectedInstitution, availableInstitutions, form]);
@@ -96,6 +109,11 @@ export default function CompleteProfilePage() {
 
     await completeUserProfile(formData);
   };
+  
+  const institutionOptions = availableInstitutions.map(inst => ({
+      value: inst.name,
+      label: `${inst.name} (${inst.abbreviation})`
+  }));
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
@@ -144,7 +162,6 @@ export default function CompleteProfilePage() {
                   )}
                 />
               </div>
-
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
@@ -216,36 +233,38 @@ export default function CompleteProfilePage() {
                 />
               </div>
 
-               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
                 <FormItem>
-                    <FormLabel>نوع المؤسسة</FormLabel>
-                    <Select onValueChange={(value: 'universite' | 'ecole') => setInstitutionType(value)} value={institutionType}>
-                        <FormControl>
-                            <SelectTrigger>
-                                <SelectValue placeholder="اختر النوع" />
-                            </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                            <SelectItem value="universite">جامعة</SelectItem>
-                            <SelectItem value="ecole">مدرسة عليا</SelectItem>
-                        </SelectContent>
-                    </Select>
+                  <FormLabel>نوع المؤسسة</FormLabel>
+                  <Select
+                    onValueChange={(value: 'universite' | 'ecole') =>
+                      setInstitutionType(value)
+                    }
+                    value={institutionType}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="اختر النوع" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="universite">جامعة</SelectItem>
+                      <SelectItem value="ecole">مدرسة عليا</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </FormItem>
 
-                 <FormItem>
-                    <FormLabel>المؤسسة</FormLabel>
-                    <Select onValueChange={setSelectedInstitution} value={selectedInstitution} disabled={!institutionType}>
-                        <FormControl>
-                            <SelectTrigger>
-                                <SelectValue placeholder="اختر المؤسسة" />
-                            </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                            {availableInstitutions.map(inst => (
-                                <SelectItem key={inst.name} value={inst.name}>{inst.name}</SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                <FormItem className="flex flex-col">
+                  <FormLabel>المؤسسة</FormLabel>
+                  <Combobox
+                    options={institutionOptions}
+                    selectedValue={selectedInstitution}
+                    onSelect={setSelectedInstitution}
+                    placeholder="اختر المؤسسة"
+                    searchPlaceholder="ابحث عن مؤسسة..."
+                    notFoundText="لم يتم العثور على المؤسسة."
+                    disabled={!institutionType}
+                  />
                 </FormItem>
 
                 <FormField
@@ -254,24 +273,29 @@ export default function CompleteProfilePage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>التخصص الدراسي</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value} disabled={!selectedInstitution}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        disabled={!selectedInstitution}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="اختر التخصص" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                           {availableSpecializations.map(spec => (
-                                <SelectItem key={spec} value={spec}>{spec}</SelectItem>
-                            ))}
+                          {availableSpecializations.map((spec) => (
+                            <SelectItem key={spec} value={spec}>
+                              {spec}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-            </div>
-
+              </div>
 
               <SubmitButton />
             </form>
@@ -281,5 +305,3 @@ export default function CompleteProfilePage() {
     </div>
   );
 }
-
-    
