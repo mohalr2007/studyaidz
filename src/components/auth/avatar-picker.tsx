@@ -61,11 +61,13 @@ export function AvatarPicker({ onAvatarChange }: AvatarPickerProps) {
     setIsLoading(true);
 
     try {
-      // Use the user's ID as a folder to ensure policy compliance
-      const filePath = `${user.id}/${Date.now()}-${file.name}`;
+      // Corrected file path for policy compliance
+      const filePath = `${user.id}/${Date.now()}`;
       const { error: uploadError } = await supabase.storage
         .from('avatars')
-        .upload(filePath, file);
+        .upload(filePath, file, {
+            upsert: true, // This will overwrite the file if it already exists
+        });
 
       if (uploadError) {
         throw uploadError;
