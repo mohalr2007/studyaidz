@@ -1,32 +1,51 @@
-// AI FIX: Developer test page for manual session and navigation testing.
 'use client';
 
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-export default function DevTest() {
+export default function DevTestPage() {
   const clearSession = () => {
-    localStorage.clear();
+    // Clear Supabase session from localStorage
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('sb-')) {
+        localStorage.removeItem(key);
+      }
+    });
+    
+    // Clear cookies by setting their expiry date to the past
     document.cookie.split(";").forEach(c => {
       document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
     });
-    alert("Session cleared. Please refresh the page.");
+
+    alert("Session et cookies effacés. Veuillez rafraîchir la page.");
     window.location.reload();
   };
 
   return (
-    <div className="flex flex-col gap-4 items-center justify-center min-h-screen p-4 bg-background text-foreground">
-        <h1 className="text-2xl font-bold">Developer Test Page</h1>
-        <div className="p-6 border rounded-lg bg-card space-y-4">
-            <p className="text-center text-muted-foreground">Use these links to manually test navigation:</p>
-            <div className="flex gap-4">
-                <Link href="/" className="text-blue-500 underline hover:text-blue-700">Go to Home/Login</Link>
-                <Link href="/complete-profile" className="text-blue-500 underline hover:text-blue-700">Go to Complete Profile</Link>
-                <Link href="/dashboard" className="text-blue-500 underline hover:text-blue-700">Go to Dashboard</Link>
-            </div>
-            <button onClick={clearSession} className="w-full bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700">
-                Clear Session & Cookies
-            </button>
-        </div>
+    <div className="flex flex-col gap-8 items-center justify-center min-h-screen p-4 bg-muted/40">
+        <Card className="w-full max-w-md">
+            <CardHeader>
+                <CardTitle className="text-center">Page de Test Développeur</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <p className="text-center text-muted-foreground">Utilisez ces liens pour tester la navigation manuellement :</p>
+                <div className="grid grid-cols-1 gap-3">
+                    <Button asChild variant="outline">
+                        <Link href="/ar">Aller à la page de Connexion</Link>
+                    </Button>
+                    <Button asChild variant="outline">
+                        <Link href="/complete-profile">Aller à la page "Compléter Profil"</Link>
+                    </Button>
+                    <Button asChild variant="outline">
+                        <Link href="/ar/dashboard">Aller au Tableau de Bord</Link>
+                    </Button>
+                </div>
+                 <Button onClick={clearSession} variant="destructive" className="w-full mt-4">
+                    Vider la Session & les Cookies
+                </Button>
+            </CardContent>
+        </Card>
     </div>
   );
 }
