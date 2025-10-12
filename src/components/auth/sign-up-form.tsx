@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { signup } from '@/app/auth/actions';
 import { KeyRound, Mail } from 'lucide-react';
+import { SocialLoginButtons } from './sign-in-form';
 
 export function SignUpForm() {
     return (
@@ -36,6 +37,8 @@ export function SignUpForm() {
                         إنشاء حساب
                     </Button>
                 </form>
+
+                <SocialLoginButtons />
             </CardContent>
         </>
     )

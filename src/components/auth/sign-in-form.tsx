@@ -32,6 +32,38 @@ function SocialLoginButton({ provider, children }: { provider: string, children:
     );
 }
 
+export function SocialLoginButtons() {
+    return (
+        <>
+            <div className="relative my-4">
+                <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-card px-2 text-muted-foreground">
+                        أو أكمل بواسطة
+                    </span>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+                <form action={loginWithProvider}>
+                    <input type="hidden" name="provider" value="google" />
+                    <SocialLoginButton provider="google">
+                        <GoogleIcon />
+                    </SocialLoginButton>
+                </form>
+                <form action={loginWithProvider}>
+                    <input type="hidden" name="provider" value="github" />
+                    <SocialLoginButton provider="github">
+                        <Github className="h-5 w-5" />
+                    </SocialLoginButton>
+                </form>
+            </div>
+        </>
+    )
+}
+
 
 export function SignInForm() {
     return (
@@ -59,31 +91,7 @@ export function SignInForm() {
                     </Button>
                 </form>
 
-                <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                        <span className="w-full border-t" />
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-card px-2 text-muted-foreground">
-                            أو أكمل بواسطة
-                        </span>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                    <form action={loginWithProvider}>
-                        <input type="hidden" name="provider" value="google" />
-                        <SocialLoginButton provider="google">
-                            <GoogleIcon />
-                        </SocialLoginButton>
-                    </form>
-                    <form action={loginWithProvider}>
-                         <input type="hidden" name="provider" value="github" />
-                        <SocialLoginButton provider="github">
-                            <Github className="h-5 w-5" />
-                        </SocialLoginButton>
-                    </form>
-                </div>
+                <SocialLoginButtons />
             </CardContent>
         </>
     )
