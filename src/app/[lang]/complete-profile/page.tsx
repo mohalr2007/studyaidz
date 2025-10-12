@@ -61,8 +61,8 @@ function SubmitButton() {
   );
 }
 
-export default function CompleteProfilePage({ params }: { params: Promise<{ lang: Locale }> }) {
-  const lang = use(params);
+export default function CompleteProfilePage({ params }: { params: { lang: Locale } }) {
+  const { lang } = params;
   const [institutionType, setInstitutionType] = useState<
     'universite' | 'ecole' | ''
   >('');

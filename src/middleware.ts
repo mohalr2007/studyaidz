@@ -32,18 +32,12 @@ export async function middleware(request: NextRequest) {
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
   );
 
-  // Special case for the /complete-profile route
-  if (pathname.startsWith('/complete-profile')) {
-      // No locale handling needed for this page, just pass through.
-      response.headers.set('x-next-pathname', pathname);
-      return response;
-  }
-
-
   // 2. Redirect if there is no locale
   if (pathnameIsMissingLocale) {
     const locale = getLocale(request);
 
+    // e.g. incoming request is /dashboard
+    // The new URL is now /en/dashboard
     return NextResponse.redirect(
       new URL(
         `/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`,
