@@ -2,6 +2,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { type ReadonlyRequestCookies } from 'next/dist/server/web/spec-extension/adapters/request-cookies';
 import { cookies } from 'next/headers'
+import { type Database } from '@/types/supabase';
 
 // Define the structure of your environment variables
 declare global {
@@ -17,7 +18,7 @@ declare global {
 export function createClient(cookieStore?: ReadonlyRequestCookies) {
     const store = cookieStore || cookies();
   
-    return createServerClient(
+    return createServerClient<Database>(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
         {
