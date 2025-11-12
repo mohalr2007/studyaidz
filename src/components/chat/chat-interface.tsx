@@ -53,6 +53,7 @@ export default function ChatInterface() {
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(FormSchema),
@@ -253,7 +254,4 @@ export default function ChatInterface() {
         </form>
     </div>
   );
-}
-function watch(arg0: string): any {
-    throw new Error('Function not implemented.');
 }
