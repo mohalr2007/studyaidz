@@ -11,9 +11,11 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Send, Loader2, Sparkles, User } from 'lucide-react';
+import { Send, Loader2, Sparkles, User, Paperclip } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useUser } from '@/hooks/use-user'; // Import the new hook
+import { useUser } from '@/hooks/use-user';
+import { useToast } from '@/hooks/use-toast';
+
 
 const FormSchema = z.object({
   question: z.string().min(1, 'لا يمكن إرسال سؤال فارغ.'),
@@ -24,13 +26,16 @@ type FormValues = z.infer<typeof FormSchema>;
 interface Message {
   text: string;
   isUser: boolean;
+  fileName?: string;
 }
 
 export default function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { user, student } = useUser(); // Use the hook to get user data
+  const { user, student } = useUser();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   const {
     register,
@@ -50,6 +55,24 @@ export default function ChatInterface() {
         }
     }
   }, [messages]);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // For now, we'll just show a toast.
+      // In the future, you would handle the file upload here.
+      toast({
+        title: "تم تحديد الملف",
+        description: `اسم الملف: ${file.name}`,
+      });
+      // Here you would typically upload the file and get a URL,
+      // then include that information in the message to the AI.
+    }
+    // Reset file input to allow selecting the same file again
+    if(fileInputRef.current) {
+        fileInputRef.current.value = '';
+    }
+  };
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setIsLoading(true);
@@ -79,7 +102,7 @@ export default function ChatInterface() {
     <Card className="h-full flex flex-col max-h-[calc(100vh-8rem)]">
       <CardHeader>
         <CardTitle className="font-headline">المساعد الذكي</CardTitle>
-        <CardDescription>اطرح أي سؤال يتعلق بدراستك واحصل على إجابة فورية.</CardDescription>
+        <CardDescription>اطرح أي سؤال أو حمّل ملفًا للحصول على مساعدة فورية.</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 flex flex-col gap-4 overflow-hidden">
         <ScrollArea className="flex-1 pr-4" ref={scrollAreaRef}>
@@ -138,7 +161,24 @@ export default function ChatInterface() {
             )}
           </div>
         </ScrollArea>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex w-full items-start gap-2 pt-4 border-t">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex w-full items-center gap-2 pt-4 border-t">
+           <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            className="hidden"
+            accept="image/*,application/pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isLoading}
+          >
+            <Paperclip className="h-5 w-5" />
+            <span className="sr-only">Joindre un fichier</span>
+          </Button>
           <Input
             {...register('question')}
             placeholder="اكتب سؤالك هنا..."
@@ -150,7 +190,7 @@ export default function ChatInterface() {
             <Send className="h-4 w-4" />
           </Button>
         </form>
-        {errors.question && <p className="text-sm text-destructive">{errors.question.message}</p>}
+        {errors.question && <p className="text-sm text-destructive">{errors.question.message as string}</p>}
       </CardContent>
     </Card>
   );
