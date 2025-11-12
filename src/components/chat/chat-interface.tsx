@@ -32,13 +32,6 @@ interface Message {
   };
 }
 
-const promptSuggestions = [
-  "اشرح لي عملية التمثيل الضوئي بطريقة مبسطة.",
-  "ما هي أهم نظريات النسبية لأينشتاين؟",
-  "قم بتلخيص الفصل الأول من كتاب 'مقدمة ابن خلدون'.",
-  "ساعدني في كتابة بريد إلكتروني لطلب تدريب صيفي.",
-];
-
 export default function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -151,14 +144,7 @@ export default function ChatInterface() {
                         </AvatarFallback>
                     </Avatar>
                     <h2 className="text-2xl font-semibold">كيف يمكنني مساعدتك اليوم؟</h2>
-                    <p className="text-muted-foreground mt-2 mb-6">جرب أحد هذه الاقتراحات أو اطرح سؤالك الخاص.</p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-2xl">
-                        {promptSuggestions.map((prompt, i) => (
-                             <Button key={i} variant="outline" className="text-right justify-end h-auto py-3" onClick={() => handleSuggestionClick(prompt)}>
-                                {prompt}
-                            </Button>
-                        ))}
-                    </div>
+                    <p className="text-muted-foreground mt-2 mb-6">اطرح سؤالك الخاص لبدء المحادثة.</p>
                </motion.div>
             )}
 
