@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
@@ -7,11 +6,12 @@ import { Youtube, FolderKanban, BookText } from 'lucide-react';
 
 const GmailLogo = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" className="h-8 w-8">
-        <path fill="#ea4335" d="M5 26.5V5.5c0-1.1.9-2 2-2h18c1.1 0 2 .9 2 2v21c0 1.1-.9 2-2 2H7c-1.1 0-2-.9-2-2z"/>
-        <path fill="#c2c2c2" d="M27 5.5H7a2 2 0 0 0-2 2V9l11 8.25L27 9V7.5c0-1.1-.9-2-2-2z"/>
-        <path fill="#e0e0e0" d="m16 20.25l11-8.25v14.5c0 1.1-.9 2-2 2H7a2 2 0 0 1-2-2V12l11 8.25z"/>
-        <path fill="#b3b3b3" d="M5 12v14.5c0 .6.2 1.1.6 1.5L16 20.25 5.6 11.4A1.9 1.9 0 0 0 5 12z"/>
-        <path fill="#d1d1d1" d="M27 12v14.5c0 .6-.2 1.1-.6 1.5L16 20.25l10.4-8.85c.4-.3.6-.8.6-1.4z"/>
+        <path fill="#4285F4" d="M25 5H7a2 2 0 0 0-2 2v18a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z"/>
+        <path fill="#FFFFFF" d="M25 7L16 16L7 7v0c.1-.4.5-.7.9-.7h16.2c.4 0 .8.3.9.7V7z"/>
+        <path fill="#EA4335" d="M7.1 25.3c-.1.1.1.4.3.3l7.6-6.3-4-3.6-4 4.5v4.8c0 .1.1.2.1.3z"/>
+        <path fill="#34A853" d="M25 25h-.1c0-.1 0-.2-.1-.3v-4.8l-4-4.5-4 3.6 7.6 6.3c.2.1.3-.1.3-.3z"/>
+        <path fill="#FBBC05" d="M11.1 15.6l-4 3.5V7c0-.2.1-.4.2-.5L11 15.3c.1.1.1.2.1.3z"/>
+        <path fill="#FDBB05" d="M20.9 15.6l4-3.5V7c0-.2-.1-.4-.2-.5L21 15.3c-.1.1-.1.2-.1.3z"/>
     </svg>
 );
 
@@ -23,11 +23,11 @@ const YouTubeLogo = () => (
 );
 
 const GoogleDriveLogo = () => (
-     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 512 512" className="h-8 w-8">
-        <path fill="#3777e3" d="m179.9 88l-106.6 189.3l-73.3-127.8l253.2-61.5z"/>
-        <path fill="#ffcf63" d="m444.8 281.3l-105.6 186.7H63.2l110-192.7z"/>
-        <path fill="#11a861" d="M68.7 472.9L248 178.7L444.8 280.8z"/>
-        <path fillOpacity=".2" d="m248 178.7l-68.1 300.2h103.9z"/>
+     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" className="h-8 w-8">
+        <path fill="#0F9D58" d="M20.3 5.9L10.3 22.3l-6.2-10.8z"/>
+        <path fill="#FFC107" d="M4.1 11.5l6.2 10.8L20.3 5.9H9.4z"/>
+        <path fill="#4285F4" d="M14.5 22.3L24.4 5.9h-8.8L9.4 20.3z"/>
+        <path fill="#1976D2" d="M24.4 5.9L15.6 20.3l-1.9-3.4 8.7-15.1z"/>
     </svg>
 );
 
