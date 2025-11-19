@@ -6,6 +6,7 @@ import {
   ClipboardCheck,
   Users,
   User,
+  Grid,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -46,5 +47,10 @@ export const NAV_LINKS: NavLink[] = [
     href: '/dashboard/community',
     label: 'مجتمع الطلاب',
     icon: Users,
+  },
+  {
+    href: '/dashboard/google-tools',
+    label: 'أدوات جوجل',
+    icon: Grid,
   },
 ];
