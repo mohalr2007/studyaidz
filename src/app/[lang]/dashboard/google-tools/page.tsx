@@ -27,7 +27,7 @@ const GoogleDriveLogo = () => (
         <path fill="#3777e3" d="m179.9 88l-106.6 189.3l-73.3-127.8l253.2-61.5z"/>
         <path fill="#ffcf63" d="m444.8 281.3l-105.6 186.7H63.2l110-192.7z"/>
         <path fill="#11a861" d="M68.7 472.9L248 178.7L444.8 280.8z"/>
-        <path fill-opacity=".2" d="m248 178.7l-68.1 300.2h103.9z"/>
+        <path fillOpacity=".2" d="m248 178.7l-68.1 300.2h103.9z"/>
     </svg>
 );
 
