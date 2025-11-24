@@ -21,8 +21,46 @@ const AnswerQuestionWithAIChatbotOutputSchema = z.object({
 export type AnswerQuestionWithAIChatbotOutput = z.infer<typeof AnswerQuestionWithAIChatbotOutputSchema>;
 
 export async function answerQuestionWithAIChatbot(input: AnswerQuestionWithAIChatbotInput): Promise<AnswerQuestionWithAIChatbotOutput> {
-  return answerQuestionWithAIChatbotFlow(input);
+  // To connect to your AI system on Render, we call it here.
+  const renderApiUrl = process.env.RENDER_AI_API_URL;
+
+  if (!renderApiUrl) {
+    console.error("RENDER_AI_API_URL is not set in .env file.");
+    return { answer: "La connexion au système IA externe n'est pas configurée. Veuillez définir RENDER_AI_API_URL." };
+  }
+
+  try {
+    const response = await fetch(renderApiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // Add any other necessary headers, like an API key
+        // 'Authorization': `Bearer ${process.env.YOUR_AI_API_KEY}`
+      },
+      body: JSON.stringify({
+        question: input.question,
+        // You can pass other parameters your AI system needs
+      }),
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      throw new Error(`API request failed with status ${response.status}: ${errorBody}`);
+    }
+
+    // Assuming your Render API returns a JSON with an "answer" field, like: { "answer": "..." }
+    const result = await response.json();
+    
+    // We ensure the output matches the expected schema
+    return AnswerQuestionWithAIChatbotOutputSchema.parse(result);
+
+  } catch (error: any) {
+    console.error("Error calling external AI system:", error);
+    return { answer: `Désolé, une erreur est survenue lors de la communication avec le système IA. (${error.message})` };
+  }
 }
+
+// The original Genkit flow is kept below for reference but is no longer used by the function above.
 
 const prompt = ai.definePrompt({
   name: 'answerQuestionWithAIChatbotPrompt',
