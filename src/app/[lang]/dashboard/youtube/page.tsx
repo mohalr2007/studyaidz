@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
@@ -7,12 +6,6 @@ import { YouTubeLogo } from '@/components/google-logos';
 import { LogIn } from 'lucide-react';
 
 export default function YouTubePage() {
-  // In a real implementation, this function would trigger the OAuth flow.
-  const handleConnect = () => {
-    // This is a placeholder for the Google OAuth logic.
-    // For a real implementation, you would redirect the user to Google's auth screen.
-    alert("La logique de connexion à l'API YouTube n'est pas encore implémentée.");
-  };
 
   return (
     <div className="flex justify-center items-start pt-10 h-full">
@@ -26,11 +19,11 @@ export default function YouTubePage() {
           </CardHeader>
           <CardContent>
               <p className="text-sm text-muted-foreground p-4 border rounded-lg bg-muted/50">
-                  Pour accéder à vos vidéos éducatives, vous devez d'abord autoriser l'application à se connecter à votre compte YouTube.
+                  Cette fonctionnalité est en cours de développement. La logique de connexion à l'API YouTube n'est pas encore implémentée.
               </p>
           </CardContent>
           <CardFooter className="flex justify-center">
-              <Button onClick={handleConnect}>
+              <Button disabled>
                   <LogIn className="me-2" />
                   Se connecter à YouTube
               </Button>
