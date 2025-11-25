@@ -25,3 +25,4 @@ export const YouTubeLogo = () => (
         <path fill="#FFFFFF" d="M11.2 13.4V6.6l6.8 3.4-6.8 3.4z"/>
     </svg>
 );
+

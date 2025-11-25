@@ -70,3 +70,4 @@ export const NAV_LINKS: NavLink[] = [
     icon: YouTubeLogo,
   },
 ];
+
