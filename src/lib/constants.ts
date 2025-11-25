@@ -36,11 +36,6 @@ export const NAV_LINKS: NavLink[] = [
     icon: MessageSquare,
   },
   {
-    href: '/dashboard/summaries',
-    label: 'تلخيص الدروس',
-    icon: FileText,
-  },
-  {
     href: '/dashboard/community',
     label: 'مجتمع الطلاب',
     icon: Users,
