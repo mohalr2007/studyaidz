@@ -52,6 +52,6 @@ export const NAV_LINKS: NavLink[] = [
   {
     href: '/dashboard/youtube',
     label: 'YouTube',
-    icon: (props) => <YouTubeLogo {...props} className="size-5" />,
+    icon: YouTubeLogo,
   },
 ];
