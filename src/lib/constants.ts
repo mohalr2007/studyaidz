@@ -2,7 +2,6 @@
 import {
   LayoutDashboard,
   MessageSquare,
-  FileText,
   Users,
   User,
   Mail,
@@ -53,6 +52,6 @@ export const NAV_LINKS: NavLink[] = [
   {
     href: '/dashboard/youtube',
     label: 'YouTube',
-    icon: YouTubeLogo,
+    icon: (props) => <YouTubeLogo {...props} className="size-5" />,
   },
 ];

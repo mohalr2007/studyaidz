@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
@@ -11,7 +12,7 @@ export default function YouTubePage() {
     <div className="flex justify-center items-start pt-10 h-full">
       <Card className="w-full max-w-lg text-center">
           <CardHeader className="flex flex-col items-center gap-4">
-              <YouTubeLogo />
+              <YouTubeLogo className="h-7 w-10" />
               <div>
                   <CardTitle>Intégration YouTube</CardTitle>
                   <CardDescription>Connectez votre compte pour rechercher et gérer vos ressources.</CardDescription>
