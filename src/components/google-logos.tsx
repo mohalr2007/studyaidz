@@ -3,12 +3,13 @@
 
 export const GmailLogo = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" className="h-8 w-8">
-        <path fill="#ea4335" d="M5 26.5V5.5c0-.83.67-1.5 1.5-1.5h19c.83 0 1.5.67 1.5 1.5v21c0 .83-.67 1.5-1.5 1.5h-19c-.83 0-1.5-.67-1.5-1.5Z"/>
-        <path fill="#fff" d="m16 17.5l-11-7.5V7l11 7.5L27 7v3l-11 7.5Z"/>
-        <path fill="#4285f4" d="M5 26.5V9l11 7.5l11-7.5V26.5c0 .83-.67 1.5-1.5 1.5h-19c-.83 0-1.5-.67-1.5-1.5Z"/>
+      <path fill="#ea4335" d="M4.5 10.375v11.25L16 28l11.5-6.375v-11.25L16 4Z"/>
+      <path fill="#4285f4" d="M27.5 10.375v11.25L16 4l11.5 6.375Z" opacity=".3"/>
+      <path fill="#c5221f" d="m4.5 10.375l11.5-6.375L27.5 10.375l-11.5 6.375Z"/>
+      <path fill="#fbbc04" d="M4.5 21.625V10.375L16 16.75l-11.5 4.875Z" opacity=".5"/>
+      <path fill="#34a853" d="m16 28l11.5-6.375v-11.25l-11.5 6.375Z"/>
     </svg>
 );
-
 
 export const GoogleDriveLogo = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" className="h-8 w-8">
@@ -25,4 +26,3 @@ export const YouTubeLogo = () => (
         <path fill="#FFFFFF" d="M11.2 13.4V6.6l6.8 3.4-6.8 3.4z"/>
     </svg>
 );
-
