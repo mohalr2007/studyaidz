@@ -3,12 +3,8 @@ import {
   LayoutDashboard,
   MessageSquare,
   FileText,
-  ClipboardCheck,
   Users,
   User,
-  Grid,
-  Briefcase,
-  BrainCircuit,
   Mail,
   Folder,
   type LucideIcon,
@@ -45,11 +41,6 @@ export const NAV_LINKS: NavLink[] = [
     icon: FileText,
   },
   {
-    href: '/dashboard/quizzes',
-    label: 'اختبارات قصيرة',
-    icon: ClipboardCheck,
-  },
-  {
     href: '/dashboard/community',
     label: 'مجتمع الطلاب',
     icon: Users,
@@ -70,4 +61,3 @@ export const NAV_LINKS: NavLink[] = [
     icon: YouTubeLogo,
   },
 ];
-
