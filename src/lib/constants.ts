@@ -7,6 +7,8 @@ import {
   Users,
   User,
   Grid,
+  Briefcase,
+  BrainCircuit,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -49,8 +51,13 @@ export const NAV_LINKS: NavLink[] = [
     icon: Users,
   },
   {
-    href: '/dashboard/google-tools',
-    label: 'أدوات جوجل',
-    icon: Grid,
+    href: '/dashboard/google-workspace',
+    label: 'Google Workspace',
+    icon: Briefcase,
+  },
+  {
+    href: '/dashboard/google-ai',
+    label: 'Google AI',
+    icon: BrainCircuit,
   },
 ];
