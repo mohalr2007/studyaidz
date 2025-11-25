@@ -9,13 +9,17 @@ import {
   Grid,
   Briefcase,
   BrainCircuit,
+  Mail,
+  Folder,
   type LucideIcon,
 } from 'lucide-react';
+import { YouTubeLogo } from '@/components/google-logos';
+
 
 export type NavLink = {
   href: string;
   label: string;
-  icon: LucideIcon;
+  icon: LucideIcon | React.FC<any>;
 };
 
 // Note: Hrefs should not include the locale prefix. They are relative to /:lang/
@@ -51,13 +55,18 @@ export const NAV_LINKS: NavLink[] = [
     icon: Users,
   },
   {
-    href: '/dashboard/google-workspace',
-    label: 'Google Workspace',
-    icon: Briefcase,
+    href: '/dashboard/gmail',
+    label: 'Gmail',
+    icon: Mail,
+  },
+    {
+    href: '/dashboard/drive',
+    label: 'Google Drive',
+    icon: Folder,
   },
   {
-    href: '/dashboard/google-ai',
-    label: 'Google AI',
-    icon: BrainCircuit,
+    href: '/dashboard/youtube',
+    label: 'YouTube',
+    icon: YouTubeLogo,
   },
 ];
