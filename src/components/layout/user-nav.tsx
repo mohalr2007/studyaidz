@@ -78,20 +78,20 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem asChild suppressHydrationWarning>
+          <DropdownMenuItem asChild>
             <Link href={`/${lang}/dashboard/profile`}>
               <Edit className="me-2" />
               <span>الملف الشخصي</span>
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem suppressHydrationWarning>
+          <DropdownMenuItem>
             <Settings className="me-2" />
             <span>الإعدادات</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <form onSubmit={handleLogout}>
-          <DropdownMenuItem asChild suppressHydrationWarning>
+          <DropdownMenuItem asChild>
             <button type="submit" className="w-full flex items-center">
               <LogOut className="me-2" />
               <span>تسجيل الخروج</span>
