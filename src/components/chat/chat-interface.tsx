@@ -53,6 +53,8 @@ export default function ChatInterface() {
     defaultValues: { question: '' }
   });
 
+  const isAuthenticated = !!user;
+
   useEffect(() => {
     if (scrollAreaRef.current) {
         const viewport = scrollAreaRef.current.querySelector('div:first-child');
@@ -63,6 +65,10 @@ export default function ChatInterface() {
   }, [messages]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!isAuthenticated) {
+        toast({ title: "Authentification requise", description: "Vous devez être connecté pour joindre un fichier.", variant: "destructive" });
+        return;
+    }
     const file = event.target.files?.[0];
     if (file) {
         if (file.size > 5 * 1024 * 1024) { // 5MB limit
@@ -75,13 +81,13 @@ export default function ChatInterface() {
   };
   
   const submitQuestion = async (questionText: string, file?: File) => {
-    if (!questionText && !file) {
-        toast({ description: "لا يمكن إرسال رسالة فارغة.", variant: "destructive" });
+    if (!isAuthenticated) {
+        toast({ title: "Authentification requise", description: "يجب أن تكون مسجلاً للدخول لطرح سؤال.", variant: "destructive" });
         return;
     }
     
-    if (!user) {
-        toast({ description: "يجب أن تكون مسجلاً للدخول لطرح سؤال.", variant: "destructive" });
+    if (!questionText && !file) {
+        toast({ description: "لا يمكن إرسال رسالة فارغة.", variant: "destructive" });
         return;
     }
 
@@ -210,13 +216,14 @@ export default function ChatInterface() {
             onChange={handleFileChange}
             className="hidden"
             accept="image/*,application/pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            disabled={!isAuthenticated || isLoading}
           />
           <Button
             type="button"
             variant="ghost"
             size="icon"
             onClick={() => fileInputRef.current?.click()}
-            disabled={isLoading}
+            disabled={!isAuthenticated || isLoading}
             className="shrink-0"
           >
             <Paperclip className="h-5 w-5" />
@@ -233,13 +240,13 @@ export default function ChatInterface() {
             )}
             <Input
                 {...register('question')}
-                placeholder="اكتب سؤالك هنا..."
+                placeholder={isAuthenticated ? "اكتب سؤالك هنا..." : "يجب أن تكون مسجلاً للدخول لطرح سؤال."}
                 autoComplete="off"
                 className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent shadow-none"
-                disabled={isLoading}
+                disabled={!isAuthenticated || isLoading}
             />
           </div>
-          <Button type="submit" size="icon" disabled={isLoading || (!watch('question') && !attachedFile)} className="shrink-0">
+          <Button type="submit" size="icon" disabled={!isAuthenticated || isLoading || (!watch('question') && !attachedFile)} className="shrink-0">
             <Send className="h-4 w-4" />
           </Button>
         </form>
