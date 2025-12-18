@@ -12,6 +12,7 @@ import {z} from 'genkit';
 
 const AnswerQuestionWithAIChatbotInputSchema = z.object({
   question: z.string().describe('The question to be answered by the chatbot.'),
+  userId: z.string().describe('The ID of the user asking the question.'),
 });
 export type AnswerQuestionWithAIChatbotInput = z.infer<typeof AnswerQuestionWithAIChatbotInputSchema>;
 
@@ -39,6 +40,7 @@ export async function answerQuestionWithAIChatbot(input: AnswerQuestionWithAICha
       },
       body: JSON.stringify({
         question: input.question,
+        user_id: input.userId,
         // You can pass other parameters your AI system needs
       }),
     });

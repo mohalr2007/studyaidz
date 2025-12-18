@@ -79,6 +79,11 @@ export default function ChatInterface() {
         toast({ description: "لا يمكن إرسال رسالة فارغة.", variant: "destructive" });
         return;
     }
+    
+    if (!user) {
+        toast({ description: "يجب أن تكون مسجلاً للدخول لطرح سؤال.", variant: "destructive" });
+        return;
+    }
 
     setIsLoading(true);
     const userMessage: Message = { 
@@ -93,7 +98,7 @@ export default function ChatInterface() {
 
     try {
       // Here you would handle file upload and pass a URL to the AI
-      const result = await answerQuestionWithAIChatbot({ question: questionText });
+      const result = await answerQuestionWithAIChatbot({ question: questionText, userId: user.id });
       const aiMessage: Message = { id: Date.now() + 1, text: result.answer, isUser: false };
       setMessages((prev) => [...prev, aiMessage]);
     } catch (error) {
