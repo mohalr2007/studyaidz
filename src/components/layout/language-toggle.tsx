@@ -71,6 +71,7 @@ export function LanguageToggle() {
             <DropdownMenuContent align="end">
                 {Object.entries(languageOptions).map(([locale, { name, flag }]) => (
                     <DropdownMenuItem
+                        suppressHydrationWarning
                         key={locale}
                         onClick={() => changeLocale(locale as Locale)}
                         className={cn("flex items-center gap-2", currentLocale === locale && "bg-accent")}
