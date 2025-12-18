@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview An AI agent that answers student questions using a chatbot interface.
@@ -13,6 +14,7 @@ import {z} from 'genkit';
 const AnswerQuestionWithAIChatbotInputSchema = z.object({
   question: z.string().describe('The question to be answered by the chatbot.'),
   userId: z.string().describe('The ID of the user asking the question.'),
+  fileDataUri: z.string().optional().describe('An optional file (image or PDF) encoded as a Data URI.'),
 });
 export type AnswerQuestionWithAIChatbotInput = z.infer<typeof AnswerQuestionWithAIChatbotInputSchema>;
 
@@ -31,18 +33,27 @@ export async function answerQuestionWithAIChatbot(input: AnswerQuestionWithAICha
   }
 
   try {
+    // We construct the payload to match what the Python backend expects.
+    const payload: {
+        question: string;
+        user_id: string;
+        file_data_uri?: string;
+    } = {
+        question: input.question,
+        user_id: input.userId,
+    };
+
+    if (input.fileDataUri) {
+        payload.file_data_uri = input.fileDataUri;
+    }
+
+
     const response = await fetch(renderApiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // Add any other necessary headers, like an API key
-        // 'Authorization': `Bearer ${process.env.YOUR_AI_API_KEY}`
       },
-      body: JSON.stringify({
-        question: input.question,
-        user_id: input.userId,
-        // You can pass other parameters your AI system needs
-      }),
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
@@ -50,7 +61,6 @@ export async function answerQuestionWithAIChatbot(input: AnswerQuestionWithAICha
       throw new Error(`API request failed with status ${response.status}: ${errorBody}`);
     }
 
-    // Assuming your Render API returns a JSON with an "answer" field, like: { "answer": "..." }
     const result = await response.json();
     
     // We ensure the output matches the expected schema

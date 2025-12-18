@@ -33,6 +33,15 @@ interface Message {
   };
 }
 
+const fileToDataUri = (file: File): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+
+
 export default function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -82,7 +91,7 @@ export default function ChatInterface() {
         toast({ description: "لا يمكن إرسال رسالة فارغة.", variant: "destructive" });
         return;
     }
-
+    
     setIsLoading(true);
     const userMessage: Message = { 
         id: Date.now(), 
@@ -95,9 +104,15 @@ export default function ChatInterface() {
     setAttachedFile(null);
 
     try {
-      // For testing, we allow guest users. We'll use a placeholder ID.
+      const fileDataUri = file ? await fileToDataUri(file) : undefined;
       const userIdForApi = user?.id || "guest_user";
-      const result = await answerQuestionWithAIChatbot({ question: questionText, userId: userIdForApi });
+      
+      const result = await answerQuestionWithAIChatbot({ 
+        question: questionText, 
+        userId: userIdForApi,
+        fileDataUri 
+      });
+
       const aiMessage: Message = { id: Date.now() + 1, text: result.answer, isUser: false };
       setMessages((prev) => [...prev, aiMessage]);
     } catch (error) {
@@ -203,7 +218,7 @@ export default function ChatInterface() {
       </ScrollArea>
       <div className="p-4 pt-0">
         <form onSubmit={handleSubmit(onSubmit)}>
-            <fieldset disabled={isLoading} className="group">
+           <fieldset disabled={isLoading} className="group">
                 <div className="relative border rounded-lg flex items-center gap-2 focus-within:ring-2 focus-within:ring-ring group-disabled:opacity-50">
                     <input
                         type="file"
@@ -233,7 +248,7 @@ export default function ChatInterface() {
                         )}
                         <Input
                             {...register('question')}
-                            placeholder="اكتب سؤالك هنا..."
+                             placeholder="اكتب سؤالك هنا أو حمّل ملفًا..."
                             autoComplete="off"
                             className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent shadow-none"
                         />
