@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 import { useUser } from '@/hooks/use-user';
 import { useToast } from '@/hooks/use-toast';
 import { AnimatePresence, motion } from 'framer-motion';
+import Link from 'next/link';
 
 const FormSchema = z.object({
   question: z.string(),
@@ -86,7 +87,7 @@ export default function ChatInterface() {
         return;
     }
     
-    if (!questionText && !file) {
+    if (!questionText.trim() && !file) {
         toast({ description: "لا يمكن إرسال رسالة فارغة.", variant: "destructive" });
         return;
     }
@@ -117,6 +118,10 @@ export default function ChatInterface() {
   }
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
+      if (!isAuthenticated) {
+        toast({ title: "Authentification requise", description: "يجب أن تكون مسجلاً للدخول لطرح سؤال.", variant: "destructive" });
+        return;
+      }
     submitQuestion(data.question, attachedFile || undefined);
   };
   
@@ -208,50 +213,56 @@ export default function ChatInterface() {
           </AnimatePresence>
         </div>
       </ScrollArea>
-
-       <form onSubmit={handleSubmit(onSubmit)} className="m-4 p-2 border rounded-lg flex items-center gap-2 focus-within:ring-2 focus-within:ring-ring">
-           <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            className="hidden"
-            accept="image/*,application/pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            disabled={!isAuthenticated || isLoading}
-          />
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={!isAuthenticated || isLoading}
-            className="shrink-0"
-          >
-            <Paperclip className="h-5 w-5" />
-            <span className="sr-only">Joindre un fichier</span>
-          </Button>
-          <div className='flex-1 relative'>
-            {attachedFile && (
-                <div className="absolute bottom-full left-0 mb-2 w-full">
-                    <div className="bg-muted p-2 rounded-md flex items-center justify-between text-xs">
-                        <span className="truncate">{attachedFile.name}</span>
-                        <Button type="button" variant="ghost" size="icon" className="h-5 w-5" onClick={() => setAttachedFile(null)}>X</Button>
+      <div className="p-4 pt-0">
+        <form onSubmit={handleSubmit(onSubmit)}>
+            <fieldset disabled={!isAuthenticated || isLoading} className="group">
+                <div className="relative border rounded-lg flex items-center gap-2 focus-within:ring-2 focus-within:ring-ring group-disabled:opacity-50">
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                        className="hidden"
+                        accept="image/*,application/pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    />
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="shrink-0"
+                    >
+                        <Paperclip className="h-5 w-5" />
+                        <span className="sr-only">Joindre un fichier</span>
+                    </Button>
+                    <div className='flex-1 relative'>
+                        {attachedFile && (
+                            <div className="absolute bottom-full left-0 mb-2 w-full">
+                                <div className="bg-muted p-2 rounded-md flex items-center justify-between text-xs">
+                                    <span className="truncate">{attachedFile.name}</span>
+                                    <Button type="button" variant="ghost" size="icon" className="h-5 w-5" onClick={() => setAttachedFile(null)}>X</Button>
+                                </div>
+                            </div>
+                        )}
+                        <Input
+                            {...register('question')}
+                            placeholder="اكتب سؤالك هنا..."
+                            autoComplete="off"
+                            className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent shadow-none"
+                        />
                     </div>
+                    <Button type="submit" size="icon" disabled={!watch('question') && !attachedFile} className="shrink-0 me-2">
+                        <Send className="h-4 w-4" />
+                    </Button>
                 </div>
-            )}
-            <Input
-                {...register('question')}
-                placeholder={isAuthenticated ? "اكتب سؤالك هنا..." : "يجب أن تكون مسجلاً للدخول لطرح سؤال."}
-                autoComplete="off"
-                className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent shadow-none"
-                disabled={!isAuthenticated || isLoading}
-            />
-          </div>
-          <Button type="submit" size="icon" disabled={!isAuthenticated || isLoading || (!watch('question') && !attachedFile)} className="shrink-0">
-            <Send className="h-4 w-4" />
-          </Button>
+            </fieldset>
         </form>
+        {!isAuthenticated && (
+            <p className="text-xs text-center text-muted-foreground mt-2">
+                الرجاء <Link href="/ar" className="underline font-semibold">تسجيل الدخول</Link> لاستخدام المساعد الذكي.
+            </p>
+        )}
+      </div>
     </div>
   );
 }
-
     
