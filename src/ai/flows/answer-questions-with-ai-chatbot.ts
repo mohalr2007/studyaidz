@@ -34,6 +34,7 @@ export async function answerQuestionWithAIChatbot(input: AnswerQuestionWithAICha
 
   try {
     // We construct the payload to match what the Python backend expects.
+    // The keys sent to the python backend must match what it expects.
     const payload: {
         question: string;
         user_id: string;
@@ -46,7 +47,6 @@ export async function answerQuestionWithAIChatbot(input: AnswerQuestionWithAICha
     if (input.fileDataUri) {
         payload.file_data_uri = input.fileDataUri;
     }
-
 
     const response = await fetch(renderApiUrl, {
       method: 'POST',

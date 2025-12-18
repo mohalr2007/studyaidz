@@ -122,7 +122,7 @@ export default function ChatInterface() {
       setMessages((prev) => [...prev, aiMessage]);
     } catch (error) {
       console.error('Error with AI chatbot:', error);
-      const errorMessage: Message = { id: Date.now() + 1, text: 'عذرًا، حدث خطأ ما. يرجى المحاولة مرة أخرى.', isUser: false };
+      const errorMessage: Message = { id: Date.now() + 1, text: 'عذرًا, حدث خطأ ما. يرجى المحاولة مرة أخرى.', isUser: false };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
