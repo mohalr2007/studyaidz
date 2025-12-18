@@ -66,10 +66,6 @@ export default function ChatInterface() {
   }, [messages]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!isAuthenticated) {
-        toast({ title: "Authentification requise", description: "Vous devez être connecté pour joindre un fichier.", variant: "destructive" });
-        return;
-    }
     const file = event.target.files?.[0];
     if (file) {
         if (file.size > 5 * 1024 * 1024) { // 5MB limit
@@ -82,11 +78,6 @@ export default function ChatInterface() {
   };
   
   const submitQuestion = async (questionText: string, file?: File) => {
-    if (!isAuthenticated) {
-        toast({ title: "Authentification requise", description: "يجب أن تكون مسجلاً للدخول لطرح سؤال.", variant: "destructive" });
-        return;
-    }
-    
     if (!questionText.trim() && !file) {
         toast({ description: "لا يمكن إرسال رسالة فارغة.", variant: "destructive" });
         return;
@@ -104,8 +95,9 @@ export default function ChatInterface() {
     setAttachedFile(null);
 
     try {
-      // Here you would handle file upload and pass a URL to the AI
-      const result = await answerQuestionWithAIChatbot({ question: questionText, userId: user.id });
+      // For testing, we allow guest users. We'll use a placeholder ID.
+      const userIdForApi = user?.id || "guest_user";
+      const result = await answerQuestionWithAIChatbot({ question: questionText, userId: userIdForApi });
       const aiMessage: Message = { id: Date.now() + 1, text: result.answer, isUser: false };
       setMessages((prev) => [...prev, aiMessage]);
     } catch (error) {
@@ -118,10 +110,6 @@ export default function ChatInterface() {
   }
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-      if (!isAuthenticated) {
-        toast({ title: "Authentification requise", description: "يجب أن تكون مسجلاً للدخول لطرح سؤال.", variant: "destructive" });
-        return;
-      }
     submitQuestion(data.question, attachedFile || undefined);
   };
   
@@ -131,7 +119,7 @@ export default function ChatInterface() {
   }
 
   const getInitials = (name: string | null | undefined) => {
-    if (!name) return 'U';
+    if (!name) return 'GU'; // Guest User
     return name.split(' ').map((n) => n[0]).join('').toUpperCase();
   };
 
@@ -192,8 +180,8 @@ export default function ChatInterface() {
                 </div>
                 {message.isUser && (
                    <Avatar className="h-8 w-8">
-                    <AvatarImage src={user?.user_metadata.avatar_url || undefined} />
-                    <AvatarFallback>{getInitials(student?.full_name)}</AvatarFallback>
+                    <AvatarImage src={isAuthenticated ? user?.user_metadata.avatar_url : undefined} />
+                    <AvatarFallback>{getInitials(isAuthenticated ? student?.full_name : 'Guest User')}</AvatarFallback>
                   </Avatar>
                 )}
               </motion.div>
@@ -215,7 +203,7 @@ export default function ChatInterface() {
       </ScrollArea>
       <div className="p-4 pt-0">
         <form onSubmit={handleSubmit(onSubmit)}>
-            <fieldset disabled={!isAuthenticated || isLoading} className="group">
+            <fieldset disabled={isLoading} className="group">
                 <div className="relative border rounded-lg flex items-center gap-2 focus-within:ring-2 focus-within:ring-ring group-disabled:opacity-50">
                     <input
                         type="file"
@@ -256,11 +244,6 @@ export default function ChatInterface() {
                 </div>
             </fieldset>
         </form>
-        {!isAuthenticated && (
-            <p className="text-xs text-center text-muted-foreground mt-2">
-                الرجاء <Link href="/ar" className="underline font-semibold">تسجيل الدخول</Link> لاستخدام المساعد الذكي.
-            </p>
-        )}
       </div>
     </div>
   );
