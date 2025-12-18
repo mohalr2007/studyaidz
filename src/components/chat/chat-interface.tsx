@@ -87,7 +87,12 @@ export default function ChatInterface() {
   };
   
   const submitQuestion = async (questionText: string, file?: File) => {
-    if (!questionText.trim() && !file) {
+    // If there's a file but no question, create a default question.
+    const questionForApi = (file && !questionText.trim()) 
+      ? "Analyse ce fichier" 
+      : questionText;
+      
+    if (!questionForApi.trim() && !file) {
         toast({ description: "لا يمكن إرسال رسالة فارغة.", variant: "destructive" });
         return;
     }
@@ -95,7 +100,7 @@ export default function ChatInterface() {
     setIsLoading(true);
     const userMessage: Message = { 
         id: Date.now(), 
-        text: questionText, 
+        text: questionText,  // Display the original text, which might be empty
         isUser: true, 
         file: file ? { name: file.name, type: file.type } : undefined
     };
@@ -108,7 +113,7 @@ export default function ChatInterface() {
       const userIdForApi = user?.id || "guest_user";
       
       const result = await answerQuestionWithAIChatbot({ 
-        question: questionText, 
+        question: questionForApi, // Use the potentially modified question for the API
         userId: userIdForApi,
         fileDataUri 
       });
