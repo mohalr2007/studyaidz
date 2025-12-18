@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useForm, type SubmitHandler, Controller } from 'react-hook-form';
+import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { UserProfileFormSchema, type UserProfileFormData } from '@/types';
 import {
@@ -61,8 +61,7 @@ function SubmitButton() {
   );
 }
 
-export default function CompleteProfilePage({ params }: { params: { lang: Locale } }) {
-  const { lang } = params;
+function CompleteProfileClientPage({ lang }: { lang: Locale }) {
   const [institutionType, setInstitutionType] = useState<
     'universite' | 'ecole' | ''
   >('');
@@ -387,4 +386,10 @@ export default function CompleteProfilePage({ params }: { params: { lang: Locale
       </div>
     </div>
   );
+}
+
+
+export default function CompleteProfilePage({ params }: { params: Promise<{ lang: Locale }> }) {
+    const { lang } = use(params);
+    return <CompleteProfileClientPage lang={lang} />;
 }

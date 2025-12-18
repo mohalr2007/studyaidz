@@ -37,9 +37,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { academicData, type AcademicInstitution } from '@/lib/academic-data';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { Combobox } from '@/components/ui/combobox';
 import { useRouter } from 'next/navigation';
+import type { Locale } from '@/i18n-config';
 
 const ProfileFormSchema = z.object({
   full_name: z.string().min(3, 'الاسم الكامل مطلوب.'),
@@ -58,7 +59,7 @@ function SubmitButton() {
   );
 }
 
-export default function ProfilePage() {
+function ProfileClientPage() {
   const { user, student, loading } = useUser();
   const { toast } = useToast();
   const router = useRouter();
@@ -375,3 +376,9 @@ export default function ProfilePage() {
   );
 }
 
+export default function ProfilePage({ params }: { params: Promise<{ lang: Locale }> }) {
+    const { lang } = use(params);
+    // Although lang is available, the client component doesn't need it directly.
+    // It's here to show the correct pattern.
+    return <ProfileClientPage />;
+}

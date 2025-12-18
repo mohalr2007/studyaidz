@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 interface AuthPageProps {
-  params: Promise<{ lang: Locale }>;
+  params: { lang: Locale };
 }
 
 function AuthPageComponent({ lang }: { lang: Locale }) {
@@ -83,7 +83,7 @@ function AuthPageComponent({ lang }: { lang: Locale }) {
   );
 }
 
-export default function AuthPage({ params }: AuthPageProps) {
+export default function AuthPage({ params }: { params: Promise<{ lang: Locale }> }) {
     const { lang } = use(params);
     return <AuthPageComponent lang={lang} />;
 }
