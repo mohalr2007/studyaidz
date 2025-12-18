@@ -62,7 +62,7 @@ export function LanguageToggle() {
     const currentLocale = (pathname.split('/')[1] as Locale) || i18n.defaultLocale;
 
     return (
-        <DropdownMenu>
+        <DropdownMenu suppressHydrationWarning>
             <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="icon">
                     <Languages className="h-[1.2rem] w-[1.2rem]" />
@@ -72,7 +72,6 @@ export function LanguageToggle() {
             <DropdownMenuContent align="end">
                 {Object.entries(languageOptions).map(([locale, { name, flag }]) => (
                     <DropdownMenuItem
-                        suppressHydrationWarning
                         key={locale}
                         onClick={() => changeLocale(locale as Locale)}
                         className={cn("flex items-center gap-2", currentLocale === locale && "bg-accent")}
