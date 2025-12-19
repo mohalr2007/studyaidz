@@ -44,75 +44,69 @@ export async function answerQuestionWithAIChatbot(input: AnswerQuestionWithAICha
   const renderApiBaseUrl = process.env.RENDER_AI_API_BASE_URL;
 
   if (!renderApiBaseUrl) {
-    console.error("RENDER_AI_API_BASE_URL is not set in .env file.");
-    return { answer: "La connexion au système IA externe n'est pas configurée. Veuillez définir les variables d'environnement nécessaires." };
+    console.error("RENDER_AI_API_BASE_URL is not set.");
+    return { answer: "Erreur de configuration: URL de l'API manquante." };
   }
 
   try {
     let response;
-    let result;
-
-    if (input.fileDataUri) {
-      // Endpoint /upload_and_analyze for files
-      const fullApiUrl = new URL('/upload_and_analyze', renderApiBaseUrl).toString();
-      const { blob, extension } = dataUriToBlob(input.fileDataUri);
-
-      const formData = new FormData();
-      // Use a generic filename but with the correct extension
-      formData.append('file', blob, `uploaded_file.${extension}`);
-      formData.append('user_id', input.userId);
-      formData.append('publish_to_kb', 'true');
-      if (input.question) {
-        formData.append('message', input.question);
-      }
-
-      response = await fetch(fullApiUrl, {
-        method: 'POST',
-        body: formData,
-        // No 'Content-Type' header, fetch sets it automatically for FormData
-      });
-
-      if (!response.ok) {
-        const errorBody = await response.text();
-        throw new Error(`API request failed with status ${response.status}: ${errorBody}`);
-      }
-
-      const uploadResult = await response.json();
-      
-      const answer = uploadResult.analysis || uploadResult.answer || "Le fichier a été analysé, mais aucune réponse textuelle n'a été générée.";
-      result = { answer };
-
-    } else {
-      // Endpoint /chat for text-only
-      const renderApiPath = process.env.RENDER_AI_API_PATH || '/chat';
-      const fullApiUrl = new URL(renderApiPath, renderApiBaseUrl).toString();
-
-      const payload = {
-        question: input.question,
-        user_id: input.userId,
-        language_preference: 'ar',
-      };
-
-      response = await fetch(fullApiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const errorBody = await response.text();
-        throw new Error(`API request failed with status ${response.status}: ${errorBody}`);
-      }
-      result = await response.json();
-    }
     
-    return AnswerQuestionWithAIChatbotOutputSchema.parse(result);
+    // CAS 1 : Si on a une image/fichier -> Utiliser /upload_and_analyze (FormData)
+    if (input.fileDataUri) {
+        const uploadUrl = new URL("/upload_and_analyze", renderApiBaseUrl).toString();
+        const formData = new FormData();
+
+        // Conversion du Data URI en Blob pour l'envoi
+        const { blob, extension } = dataUriToBlob(input.fileDataUri);
+        
+        formData.append("file", blob, `uploaded_file.${extension}`); // Nom de fichier dynamique
+        formData.append("user_id", input.userId);
+        formData.append("publish_to_kb", "true"); 
+        
+        if (input.question) {
+            formData.append("message", input.question);
+        }
+
+        response = await fetch(uploadUrl, {
+            method: 'POST',
+            body: formData, // Pas de Content-Type manuel, fetch le gère pour FormData
+        });
+
+    } 
+    // CAS 2 : Texte seulement -> Utiliser /chat (JSON)
+    else {
+        const chatUrl = new URL("/chat", renderApiBaseUrl).toString();
+        const payload = {
+            user_id: input.userId,
+            question: input.question,
+            language_preference: "fr"
+        };
+
+        response = await fetch(chatUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        });
+    }
+
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Erreur API (${response.status}): ${text}`);
+    }
+
+    const result = await response.json();
+    
+    // Le backend renvoie soit "answer" (chat) soit "analysis" (upload)
+    // On normalise tout dans "answer" pour le frontend
+    const finalAnswer = result.answer || result.analysis || "Aucune réponse reçue.";
+
+    return { answer: finalAnswer };
 
   } catch (error: any) {
-    console.error("Error calling external AI system:", error);
-    return { answer: `Désolé, une erreur est survenue lors de la communication avec le système IA. (${error.message})` };
+    console.error("Erreur IA:", error);
+    return { answer: `Erreur technique: ${error.message}` };
   }
 }
 
