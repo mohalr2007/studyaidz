@@ -52,7 +52,7 @@ export function UserNav() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-auto w-full justify-start gap-3 p-2">
+        <Button variant="ghost" className="relative h-auto w-full justify-start gap-3 p-2" suppressHydrationWarning>
             <Avatar className="h-9 w-9">
                 <AvatarImage src={user?.user_metadata.avatar_url} alt={student?.username || ''} />
                 <AvatarFallback>{getInitials(student?.full_name || user?.email)}</AvatarFallback>
@@ -67,7 +67,7 @@ export function UserNav() {
             </div>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount suppressHydrationWarning>
+      <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{student?.full_name}</p>

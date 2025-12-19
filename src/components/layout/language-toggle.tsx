@@ -64,12 +64,12 @@ export function LanguageToggle() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="icon">
+                <Button variant="outline" size="icon" suppressHydrationWarning>
                     <Languages className="h-[1.2rem] w-[1.2rem]" />
                     <span className="sr-only">Change language</span>
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" suppressHydrationWarning>
+            <DropdownMenuContent align="end">
                 {Object.entries(languageOptions).map(([locale, { name, flag }]) => (
                     <DropdownMenuItem
                         key={locale}
