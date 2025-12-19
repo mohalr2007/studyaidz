@@ -6,11 +6,10 @@ import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { answerQuestionWithAIChatbot } from '@/ai/flows/answer-questions-with-ai-chatbot';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Send, Loader2, Sparkles, User, Paperclip, File as FileIcon, GraduationCap } from 'lucide-react';
+import { Send, Loader2, User, Paperclip, File as FileIcon, GraduationCap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useUser } from '@/hooks/use-user';
 import { useToast } from '@/hooks/use-toast';
@@ -18,6 +17,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Logo } from '../logo';
 import { Card } from '../ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import { Textarea } from '@/components/ui/textarea';
 
 const FormSchema = z.object({
   question: z.string(),
@@ -51,6 +51,7 @@ export default function ChatInterface() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [attachedFile, setAttachedFile] = useState<File | null>(null);
   const { toast } = useToast();
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const {
     register,
@@ -64,6 +65,7 @@ export default function ChatInterface() {
     defaultValues: { question: '' }
   });
 
+  const questionValue = watch('question');
   const isAuthenticated = !!user;
 
   useEffect(() => {
@@ -89,6 +91,15 @@ export default function ChatInterface() {
       document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
+
+  // Auto-resize textarea
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [questionValue]);
+
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -147,6 +158,15 @@ export default function ChatInterface() {
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     submitQuestion(data.question, attachedFile || undefined);
   };
+  
+  const handleTextareaKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && !event.ctrlKey) {
+      event.preventDefault();
+      handleSubmit(onSubmit)();
+    }
+    // Ctrl+Enter or Shift+Enter will create a new line by default in a textarea
+  };
+
 
   const getInitials = (name: string | null | undefined) => {
     if (!name) return 'GU'; // Guest User
@@ -250,8 +270,8 @@ export default function ChatInterface() {
                                 </Button>
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p>Joindre un fichier <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
-                                  <span className="text-xs">CTRL</span>U
+                              <p className='flex gap-1 items-center'>Joindre un fichier <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+                                  <span>CTRL</span>+<span>U</span>
                                 </kbd></p>
                             </TooltipContent>
                           </Tooltip>
@@ -265,14 +285,17 @@ export default function ChatInterface() {
                                     </div>
                                 </div>
                             )}
-                            <Input
+                            <Textarea
                                 {...register('question')}
-                                placeholder="Écrivez votre question ici, ou téléchargez un fichier..."
+                                ref={textareaRef}
+                                rows={1}
+                                onKeyDown={handleTextareaKeyDown}
+                                placeholder="Envoyer (Entrée), Nouvelle ligne (Ctrl+Entrée)..."
                                 autoComplete="off"
-                                className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent shadow-none"
+                                className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent shadow-none resize-none max-h-48"
                             />
                         </div>
-                        <Button type="submit" size="icon" disabled={!watch('question') && !attachedFile} className="shrink-0 me-2">
+                        <Button type="submit" size="icon" disabled={!watch('question') && !attachedFile} className="shrink-0 me-2 self-end">
                            {isLoading ? <Loader2 className="animate-spin" /> : <Send className="h-4 w-4" />}
                         </Button>
                     </div>
@@ -284,7 +307,6 @@ export default function ChatInterface() {
   );
 }
     
-
     
 
-
+    
