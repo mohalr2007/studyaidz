@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import '../globals.css';
 import { Toaster } from '@/components/ui/toaster';
@@ -5,19 +6,13 @@ import { cn } from '@/lib/utils';
 import { ThemeProvider } from '@/components/theme-provider';
 import { i18n, type Locale } from '@/i18n-config';
 
-const faviconSvg = `
-<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22currentColor%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22>
-  <path d=%22M21.42 10.72L12 16l-9.42-5.28A2 2 0 0 1 2 9.06V7a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v2.06a2 2 0 0 1-.58 1.66z%22/>
-  <path d=%22M22 10v6%22/>
-  <path d=%22M6 12.5V16%22/>
-</svg>
-`;
+const faviconSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`;
 
 export const metadata: Metadata = {
   title: 'StudyAI DZ',
   description: 'منصة تعليمية ذكية لمساعدة الطلاب في الجزائر',
   icons: {
-    icon: `data:image/svg+xml,${faviconSvg}`,
+    icon: `data:image/svg+xml,${encodeURIComponent(faviconSvg)}`,
   },
 };
 
