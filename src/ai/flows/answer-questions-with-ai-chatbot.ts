@@ -23,51 +23,86 @@ const AnswerQuestionWithAIChatbotOutputSchema = z.object({
 });
 export type AnswerQuestionWithAIChatbotOutput = z.infer<typeof AnswerQuestionWithAIChatbotOutputSchema>;
 
-export async function answerQuestionWithAIChatbot(input: AnswerQuestionWithAIChatbotInput): Promise<AnswerQuestionWithAIChatbotOutput> {
-  // To connect to your AI system on Render, we call it here.
-  const renderApiBaseUrl = process.env.RENDER_AI_API_BASE_URL;
-  const renderApiPath = process.env.RENDER_AI_API_PATH;
+// Helper to convert Data URI to Blob
+const dataUriToBlob = (dataUri: string) => {
+  const byteString = atob(dataUri.split(',')[1]);
+  const mimeString = dataUri.split(',')[0].split(':')[1].split(';')[0];
+  const ab = new ArrayBuffer(byteString.length);
+  const ia = new Uint8Array(ab);
+  for (let i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+  return new Blob([ab], { type: mimeString });
+};
 
-  if (!renderApiBaseUrl || !renderApiPath) {
-    console.error("RENDER_AI_API_BASE_URL or RENDER_AI_API_PATH is not set in .env file.");
+export async function answerQuestionWithAIChatbot(input: AnswerQuestionWithAIChatbotInput): Promise<AnswerQuestionWithAIChatbotOutput> {
+  const renderApiBaseUrl = process.env.RENDER_AI_API_BASE_URL;
+
+  if (!renderApiBaseUrl) {
+    console.error("RENDER_AI_API_BASE_URL is not set in .env file.");
     return { answer: "La connexion au système IA externe n'est pas configurée. Veuillez définir les variables d'environnement nécessaires." };
   }
 
-  const fullApiUrl = new URL(renderApiPath, renderApiBaseUrl).toString();
-
   try {
-    // We construct the payload to match what the Python backend expects.
-    const payload: {
-        question: string;
-        user_id: string;
-        fileDataUri?: string;
-    } = {
-        question: input.question,
-        user_id: input.userId,
-    };
+    let response;
+    let result;
 
     if (input.fileDataUri) {
-        // Ensure the key matches the Zod schema for consistency,
-        // assuming the Python backend expects `fileDataUri`.
-        payload.fileDataUri = input.fileDataUri;
+      // Endpoint /upload_and_analyze for files
+      const fullApiUrl = new URL('/upload_and_analyze', renderApiBaseUrl).toString();
+      const fileBlob = dataUriToBlob(input.fileDataUri);
+
+      const formData = new FormData();
+      // Use a generic filename if not available
+      formData.append('file', fileBlob, 'uploaded_file');
+      formData.append('user_id', input.userId);
+      formData.append('publish_to_kb', 'true');
+      if (input.question) {
+        formData.append('message', input.question);
+      }
+
+      response = await fetch(fullApiUrl, {
+        method: 'POST',
+        body: formData,
+        // No 'Content-Type' header, fetch sets it automatically for FormData
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        throw new Error(`API request failed with status ${response.status}: ${errorBody}`);
+      }
+
+      const uploadResult = await response.json();
+      
+      // The response from /upload_and_analyze is different
+      result = { answer: uploadResult.analysis || "Le fichier a été analysé, mais aucune réponse textuelle n'a été générée." };
+
+    } else {
+      // Endpoint /chat for text-only
+      const renderApiPath = process.env.RENDER_AI_API_PATH || '/chat';
+      const fullApiUrl = new URL(renderApiPath, renderApiBaseUrl).toString();
+
+      const payload = {
+        question: input.question,
+        user_id: input.userId,
+        language_preference: 'ar',
+      };
+
+      response = await fetch(fullApiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        throw new Error(`API request failed with status ${response.status}: ${errorBody}`);
+      }
+      result = await response.json();
     }
-
-    const response = await fetch(fullApiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
-
-    if (!response.ok) {
-      const errorBody = await response.text();
-      throw new Error(`API request failed with status ${response.status}: ${errorBody}`);
-    }
-
-    const result = await response.json();
     
-    // We ensure the output matches the expected schema
     return AnswerQuestionWithAIChatbotOutputSchema.parse(result);
 
   } catch (error: any) {
@@ -75,6 +110,7 @@ export async function answerQuestionWithAIChatbot(input: AnswerQuestionWithAICha
     return { answer: `Désolé, une erreur est survenue lors de la communication avec le système IA. (${error.message})` };
   }
 }
+
 
 // The original Genkit flow is kept below for reference but is no longer used by the function above.
 
