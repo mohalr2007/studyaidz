@@ -74,8 +74,9 @@ export async function answerQuestionWithAIChatbot(input: AnswerQuestionWithAICha
 
       const uploadResult = await response.json();
       
-      // The response from /upload_and_analyze is different
-      result = { answer: uploadResult.analysis || "Le fichier a été analysé, mais aucune réponse textuelle n'a été générée." };
+      // The response from /upload_and_analyze contains 'analysis' or other keys
+      const answer = uploadResult.analysis || uploadResult.answer || "Le fichier a été analysé, mais aucune réponse textuelle n'a été générée.";
+      result = { answer };
 
     } else {
       // Endpoint /chat for text-only
