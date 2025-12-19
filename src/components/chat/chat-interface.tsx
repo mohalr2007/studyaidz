@@ -17,6 +17,7 @@ import { useToast } from '@/hooks/use-toast';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Logo } from '../logo';
 import { Card } from '../ui/card';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 
 const FormSchema = z.object({
   question: z.string(),
@@ -73,6 +74,21 @@ export default function ChatInterface() {
         }
     }
   }, [messages]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === 'u') {
+        event.preventDefault();
+        fileInputRef.current?.click();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -219,16 +235,27 @@ export default function ChatInterface() {
                             className="hidden"
                             accept="image/*,application/pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                         />
-                        <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => fileInputRef.current?.click()}
-                            className="shrink-0"
-                        >
-                            <Paperclip className="h-5 w-5" />
-                            <span className="sr-only">Joindre un fichier</span>
-                        </Button>
+                         <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                               <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => fileInputRef.current?.click()}
+                                  className="shrink-0"
+                                >
+                                  <Paperclip className="h-5 w-5" />
+                                  <span className="sr-only">Joindre un fichier</span>
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Joindre un fichier <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+                                  <span className="text-xs">CTRL</span>U
+                                </kbd></p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                         <div className='flex-1 relative'>
                             {attachedFile && (
                                 <div className="absolute bottom-full left-0 mb-2 w-full">
@@ -259,4 +286,5 @@ export default function ChatInterface() {
     
 
     
+
 
