@@ -50,7 +50,7 @@ export function UserNav() {
   }
 
   return (
-    <DropdownMenu suppressHydrationWarning>
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-auto w-full justify-start gap-3 p-2">
             <Avatar className="h-9 w-9">
@@ -67,7 +67,7 @@ export function UserNav() {
             </div>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
+      <DropdownMenuContent className="w-56" align="end" forceMount suppressHydrationWarning>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{student?.full_name}</p>

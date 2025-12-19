@@ -62,14 +62,14 @@ export function LanguageToggle() {
     const currentLocale = (pathname.split('/')[1] as Locale) || i18n.defaultLocale;
 
     return (
-        <DropdownMenu suppressHydrationWarning>
+        <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="icon">
                     <Languages className="h-[1.2rem] w-[1.2rem]" />
                     <span className="sr-only">Change language</span>
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" suppressHydrationWarning>
                 {Object.entries(languageOptions).map(([locale, { name, flag }]) => (
                     <DropdownMenuItem
                         key={locale}
