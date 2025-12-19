@@ -23,16 +23,21 @@ const AnswerQuestionWithAIChatbotOutputSchema = z.object({
 });
 export type AnswerQuestionWithAIChatbotOutput = z.infer<typeof AnswerQuestionWithAIChatbotOutputSchema>;
 
-// Helper to convert Data URI to Blob
-const dataUriToBlob = (dataUri: string) => {
-  const byteString = atob(dataUri.split(',')[1]);
+// Helper to convert Data URI to Blob and get file extension
+const dataUriToBlob = (dataUri: string): { blob: Blob; extension: string } => {
   const mimeString = dataUri.split(',')[0].split(':')[1].split(';')[0];
+  const byteString = atob(dataUri.split(',')[1]);
   const ab = new ArrayBuffer(byteString.length);
   const ia = new Uint8Array(ab);
   for (let i = 0; i < byteString.length; i++) {
     ia[i] = byteString.charCodeAt(i);
   }
-  return new Blob([ab], { type: mimeString });
+  const blob = new Blob([ab], { type: mimeString });
+  
+  // Basic mapping from MIME type to file extension
+  const extension = mimeString.split('/')[1] || 'bin';
+
+  return { blob, extension };
 };
 
 export async function answerQuestionWithAIChatbot(input: AnswerQuestionWithAIChatbotInput): Promise<AnswerQuestionWithAIChatbotOutput> {
@@ -50,11 +55,11 @@ export async function answerQuestionWithAIChatbot(input: AnswerQuestionWithAICha
     if (input.fileDataUri) {
       // Endpoint /upload_and_analyze for files
       const fullApiUrl = new URL('/upload_and_analyze', renderApiBaseUrl).toString();
-      const fileBlob = dataUriToBlob(input.fileDataUri);
+      const { blob, extension } = dataUriToBlob(input.fileDataUri);
 
       const formData = new FormData();
-      // Use a generic filename if not available
-      formData.append('file', fileBlob, 'uploaded_file');
+      // Use a generic filename but with the correct extension
+      formData.append('file', blob, `uploaded_file.${extension}`);
       formData.append('user_id', input.userId);
       formData.append('publish_to_kb', 'true');
       if (input.question) {
@@ -74,7 +79,6 @@ export async function answerQuestionWithAIChatbot(input: AnswerQuestionWithAICha
 
       const uploadResult = await response.json();
       
-      // The response from /upload_and_analyze contains 'analysis' or other keys
       const answer = uploadResult.analysis || uploadResult.answer || "Le fichier a été analysé, mais aucune réponse textuelle n'a été générée.";
       result = { answer };
 
