@@ -160,11 +160,11 @@ export default function ChatInterface() {
   };
   
   const handleTextareaKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === 'Enter' && !event.ctrlKey) {
+    if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       handleSubmit(onSubmit)();
     }
-    // Ctrl+Enter or Shift+Enter will create a new line by default in a textarea
+    // Shift+Enter will create a new line by default in a textarea, so we don't need to handle it.
   };
 
 
@@ -290,7 +290,7 @@ export default function ChatInterface() {
                                 ref={textareaRef}
                                 rows={1}
                                 onKeyDown={handleTextareaKeyDown}
-                                placeholder="Envoyer (Entrée), Nouvelle ligne (Ctrl+Entrée)..."
+                                placeholder="Envoyer (Entrée), Nouvelle ligne (Shift+Entrée)..."
                                 autoComplete="off"
                                 className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent shadow-none resize-none max-h-48"
                             />
