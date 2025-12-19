@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Send, Loader2, Sparkles, User, Paperclip, File as FileIcon, Bot } from 'lucide-react';
+import { Send, Loader2, Sparkles, User, Paperclip, File as FileIcon, GraduationCap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useUser } from '@/hooks/use-user';
 import { useToast } from '@/hooks/use-toast';
@@ -171,7 +171,7 @@ export default function ChatInterface() {
                 {!message.isUser && (
                   <Avatar className="h-8 w-8 border">
                     <AvatarFallback className="bg-primary/10 text-primary">
-                      <Bot className="h-5 w-5" />
+                      <GraduationCap className="h-5 w-5" />
                     </AvatarFallback>
                   </Avatar>
                 )}
@@ -196,7 +196,7 @@ export default function ChatInterface() {
               <motion.div layout className="flex items-start gap-3 justify-start">
                   <Avatar className="h-8 w-8 border">
                     <AvatarFallback className="bg-primary/10 text-primary">
-                      <Bot className="h-5 w-5" />
+                      <GraduationCap className="h-5 w-5" />
                     </AvatarFallback>
                   </Avatar>
                 <div className="bg-muted rounded-lg p-3 text-sm">
@@ -259,3 +259,4 @@ export default function ChatInterface() {
     
 
     
+
