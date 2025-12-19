@@ -42,13 +42,6 @@ const fileToDataUri = (file: File): Promise<string> =>
     reader.readAsDataURL(file);
   });
 
-const suggestionPrompts = [
-    "Résume-moi ce cours en PDF",
-    "Explique-moi la photosynthèse",
-    "Génère un quiz sur l'histoire de l'Algérie",
-];
-
-
 export default function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -138,14 +131,6 @@ export default function ChatInterface() {
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     submitQuestion(data.question, attachedFile || undefined);
   };
-  
-  const handleSuggestionClick = (suggestion: string) => {
-      setValue('question', suggestion);
-      // Automatically submit if it's a generic prompt. If it's about a file, let the user attach it.
-      if (!suggestion.toLowerCase().includes('pdf') && !suggestion.toLowerCase().includes('fichier')) {
-          submitQuestion(suggestion);
-      }
-  }
 
   const getInitials = (name: string | null | undefined) => {
     if (!name) return 'GU'; // Guest User
@@ -170,13 +155,6 @@ export default function ChatInterface() {
                     <p className="text-muted-foreground max-w-md mx-auto">
                         Je suis là pour vous aider avec vos études. Que ce soit pour résumer un cours, expliquer un concept complexe ou vous tester, n'hésitez pas.
                     </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-8 w-full max-w-2xl">
-                        {suggestionPrompts.map(prompt => (
-                            <Button key={prompt} variant="outline" size="lg" className="h-auto py-3" onClick={() => handleSuggestionClick(prompt)}>
-                                {prompt}
-                            </Button>
-                        ))}
-                    </div>
                </motion.div>
             )}
 
