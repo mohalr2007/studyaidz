@@ -25,30 +25,34 @@ export type AnswerQuestionWithAIChatbotOutput = z.infer<typeof AnswerQuestionWit
 
 export async function answerQuestionWithAIChatbot(input: AnswerQuestionWithAIChatbotInput): Promise<AnswerQuestionWithAIChatbotOutput> {
   // To connect to your AI system on Render, we call it here.
-  const renderApiUrl = process.env.RENDER_AI_API_URL;
+  const renderApiBaseUrl = process.env.RENDER_AI_API_BASE_URL;
+  const renderApiPath = process.env.RENDER_AI_API_PATH;
 
-  if (!renderApiUrl) {
-    console.error("RENDER_AI_API_URL is not set in .env file.");
-    return { answer: "La connexion au système IA externe n'est pas configurée. Veuillez définir RENDER_AI_API_URL." };
+  if (!renderApiBaseUrl || !renderApiPath) {
+    console.error("RENDER_AI_API_BASE_URL or RENDER_AI_API_PATH is not set in .env file.");
+    return { answer: "La connexion au système IA externe n'est pas configurée. Veuillez définir les variables d'environnement nécessaires." };
   }
+
+  const fullApiUrl = new URL(renderApiPath, renderApiBaseUrl).toString();
 
   try {
     // We construct the payload to match what the Python backend expects.
-    // The keys sent to the python backend must match what it expects.
     const payload: {
         question: string;
         user_id: string;
-        file_data_uri?: string;
+        fileDataUri?: string;
     } = {
         question: input.question,
         user_id: input.userId,
     };
 
     if (input.fileDataUri) {
-        payload.file_data_uri = input.fileDataUri;
+        // Ensure the key matches the Zod schema for consistency,
+        // assuming the Python backend expects `fileDataUri`.
+        payload.fileDataUri = input.fileDataUri;
     }
 
-    const response = await fetch(renderApiUrl, {
+    const response = await fetch(fullApiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
