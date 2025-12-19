@@ -1,5 +1,5 @@
 import { GraduationCap } from 'lucide-react';
-import { ImageResponse } from 'next/server';
+import { ImageResponse } from 'next/og';
 
 export const size = {
   width: 32,
