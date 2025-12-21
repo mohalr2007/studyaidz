@@ -125,9 +125,7 @@ export default function ChatInterface() {
         file: file ? { name: file.name, type: file.type } : undefined
     };
     setMessages((prev) => [...prev, userMessage]);
-    reset();
-    setAttachedFile(null);
-
+    
     try {
       const fileDataUri = file ? await fileToDataUri(file) : undefined;
       const userIdForApi = user?.id || "guest_user";
@@ -146,6 +144,8 @@ export default function ChatInterface() {
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
+      reset();
+      setAttachedFile(null);
     }
   }
 
@@ -310,5 +310,7 @@ export default function ChatInterface() {
 
     
 
+
+    
 
     
