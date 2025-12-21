@@ -3,8 +3,6 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { answerQuestionWithAIChatbot } from '@/ai/flows/answer-questions-with-ai-chatbot';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -19,11 +17,9 @@ import { Card } from '../ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { Textarea } from '@/components/ui/textarea';
 
-const FormSchema = z.object({
-  question: z.string(),
-});
-
-type FormValues = z.infer<typeof FormSchema>;
+interface FormValues {
+  question: string;
+}
 
 interface Message {
   id: number;
@@ -57,11 +53,8 @@ export default function ChatInterface() {
     register,
     handleSubmit,
     reset,
-    setValue,
     watch,
-    formState: { errors },
   } = useForm<FormValues>({
-    resolver: zodResolver(FormSchema),
     defaultValues: { question: '' }
   });
 
@@ -114,7 +107,7 @@ export default function ChatInterface() {
   };
   
   const submitQuestion = async (questionText: string, file?: File) => {
-    const trimmedQuestion = questionText.trim();
+    const trimmedQuestion = questionText ? questionText.trim() : "";
     if (!trimmedQuestion && !file) {
         toast({ description: "لا يمكن إرسال رسالة فارغة.", variant: "destructive" });
         return;
