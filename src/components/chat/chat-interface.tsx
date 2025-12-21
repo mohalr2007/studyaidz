@@ -295,7 +295,7 @@ export default function ChatInterface() {
                                 className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent shadow-none resize-none max-h-48"
                             />
                         </div>
-                        <Button type="submit" size="icon" disabled={!questionValue && !attachedFile} className="shrink-0 me-2 self-end">
+                        <Button type="submit" size="icon" disabled={!questionValue.trim() && !attachedFile} className="shrink-0 me-2 self-end">
                            {isLoading ? <Loader2 className="animate-spin" /> : <Send className="h-4 w-4" />}
                         </Button>
                     </div>
@@ -310,4 +310,5 @@ export default function ChatInterface() {
     
 
     
+
 
