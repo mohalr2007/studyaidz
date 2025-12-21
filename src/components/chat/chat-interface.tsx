@@ -47,7 +47,7 @@ export default function ChatInterface() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [attachedFile, setAttachedFile] = useState<File | null>(null);
   const { toast } = useToast();
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const {
     register,
@@ -60,6 +60,9 @@ export default function ChatInterface() {
 
   const questionValue = watch('question');
   const isAuthenticated = !!user;
+
+  const { ref: registerRef, ...restRegister } = register('question');
+
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -108,6 +111,7 @@ export default function ChatInterface() {
   
   const submitQuestion = async (questionText: string, file?: File) => {
     const trimmedQuestion = questionText ? questionText.trim() : "";
+
     if (!trimmedQuestion && !file) {
         toast({ description: "لا يمكن إرسال رسالة فارغة.", variant: "destructive" });
         return;
@@ -158,7 +162,6 @@ export default function ChatInterface() {
       event.preventDefault();
       handleSubmit(onSubmit)();
     }
-    // Shift+Enter will create a new line by default in a textarea, so we don't need to handle it.
   };
 
 
@@ -280,8 +283,11 @@ export default function ChatInterface() {
                                 </div>
                             )}
                             <Textarea
-                                {...register('question')}
-                                ref={textareaRef}
+                                {...restRegister}
+                                ref={(e) => {
+                                  registerRef(e);
+                                  textareaRef.current = e;
+                                }}
                                 rows={1}
                                 onKeyDown={handleTextareaKeyDown}
                                 placeholder="Envoyer (Entrée), Nouvelle ligne (Shift+Entrée)..."
@@ -300,17 +306,3 @@ export default function ChatInterface() {
     </div>
   );
 }
-    
-    
-
-    
-
-
-
-
-    
-
-
-    
-
-    
