@@ -114,19 +114,20 @@ export default function ChatInterface() {
   };
   
   const submitQuestion = async (questionText: string, file?: File) => {
-    const questionForApi = (file && !questionText.trim()) 
-      ? "Analyse ce fichier et décris son contenu."
-      : questionText;
-      
-    if (!questionForApi.trim() && !file) {
+    const trimmedQuestion = questionText.trim();
+    if (!trimmedQuestion && !file) {
         toast({ description: "لا يمكن إرسال رسالة فارغة.", variant: "destructive" });
         return;
     }
     
+    const questionForApi = (file && !trimmedQuestion) 
+      ? "Analyse ce fichier et décris son contenu."
+      : trimmedQuestion;
+      
     setIsLoading(true);
     const userMessage: Message = { 
         id: Date.now(), 
-        text: questionText,
+        text: trimmedQuestion,
         isUser: true, 
         file: file ? { name: file.name, type: file.type } : undefined
     };
@@ -312,6 +313,9 @@ export default function ChatInterface() {
     
 
 
+
+
+    
 
 
     
